@@ -41,6 +41,7 @@ func (c *CardController) Post() {
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &card); err != nil {
 		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
 	}
 	o := orm.NewOrm()
 	if _, err := o.Insert(&card); err != nil {
@@ -48,5 +49,4 @@ func (c *CardController) Post() {
 		c.Ctx.ResponseWriter.WriteHeader(403)
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200)
-	//c.ServeJSON()
 }
