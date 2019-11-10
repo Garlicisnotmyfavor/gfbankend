@@ -21,7 +21,7 @@ func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	card := models.Card{CardId: id}
+	card := models.Card{Id: id}
 	// 查询记录
 	err := o.Read(&card)
 	// 初始化返回
@@ -45,5 +45,8 @@ func (c *CardController) Post() {
 	o := orm.NewOrm()
 	if _, err := o.Insert(&card); err != nil {
 		models.Log.Error("insert error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(403)
 	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	//c.ServeJSON()
 }
