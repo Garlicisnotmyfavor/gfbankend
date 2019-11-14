@@ -6,7 +6,8 @@ import (
 )
 
 func init() {
-	beego.Router("/api/user/cards/:id", &controllers.CardController{})
-	beego.Router("/api/user/cards/", &controllers.CardController{})
+	beego.Router("/api/user/card/:id", &controllers.CardController{})
+	beego.Router("/api/user/card/", &controllers.CardController{})
+	beego.Router("/api/user/", &controllers.UserController{})
 
 }
