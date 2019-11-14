@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"miller/models"
 )
 
 type UserController struct {
@@ -13,7 +12,7 @@ type UserController struct {
 
 func (c *UserController) Get() {
 	var cardList []orm.Params                                                    //存储所有卡片信息
-	sql := fmt.Sprintf(`select * from %s;`, beego.AppConfig.String("tablename")) //需要存储卡信息的table名
+	sql := fmt.Sprintf(`select * from %s;`, beego.AppConfig.String("tablename")) //需要卡的table名
 	o := orm.NewOrm()
 
 	//根据sql指令将table中所有卡信息读入到carList中
