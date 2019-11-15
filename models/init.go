@@ -33,5 +33,7 @@ func init() {
 		Log.Error("fail to register database", err)
 	}
 	orm.RegisterModel(new(Card)) //登记orm
-
+	orm.RegisterModel(new(User))
+	orm.RegisterModel(new(Enterprise))
+	orm.RegisterModel(new(DelCard))
 }

@@ -35,10 +35,11 @@ type Enterprise struct {
 
 type DelCard struct {
 	CardId  string `orm:"pk;column(card_id)"`
-	UserId  string `orm:"column(user_id);rel(fk)"`
+	UserId  string `orm:"column(user_id)"`
 	Remark  string
 	DelTime time.Time `orm:"column(del_time)"`
 }
+
 type ParseStruct struct {
 	EnterpriseMap map[string]string
 	KindMap       map[string]string
@@ -113,6 +114,12 @@ func (card *Card) CardParse() error {
 	return nil
 }
 
+<<<<<<< HEAD
 // func (delCard *DelCard) GetTime() {
 // 	delCard.DelTime = time.Now();
 // }
+=======
+func (delCard *DelCard) GetTime() {
+	delCard.DelTime = time.Now()
+}
+>>>>>>> 3d762cf41058398b6a45d157f75ae8db1c27c362

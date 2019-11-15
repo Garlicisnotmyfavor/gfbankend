@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
-	"gfbankend/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	"github.com/gfbankend/models"
 )
 
 type CardController struct {
@@ -52,17 +52,24 @@ func (c *CardController) Post() {
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	card := models.Card{Id:id}
-	if err := o.Read(&card);err==nil{
-		count,_:=o.Delete(&card)
-		if(count==0){
+	card := models.Card{Id: id}
+	if err := o.Read(&card); err == nil {
+		count, _ := o.Delete(&card)
+		if count == 0 {
 			models.Log.Error("delete fail")
+<<<<<<< HEAD
 		}else {
 			delCard := models.DelCard{CardId:card.Id,UserId:card.UserId,Remark:card.Remark}
 			delCard.DelTime = time.Now()
 			o.Insert(&delCard)
+=======
+		} else {
+			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
+			delCard.GetTime()
+			o.Insert(&delCard) // 下次记得进行错误处理！！！
+>>>>>>> 3d762cf41058398b6a45d157f75ae8db1c27c362
 		}
-	}else{
-		models.Log.Error("read error: ",err)
+	} else {
+		models.Log.Error("read error: ", err)
 	}
 }
