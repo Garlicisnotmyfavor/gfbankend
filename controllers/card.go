@@ -2,6 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
+	"time"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -57,17 +59,13 @@ func (c *CardController) Delete() {
 		count, _ := o.Delete(&card)
 		if count == 0 {
 			models.Log.Error("delete fail")
-<<<<<<< HEAD
-		}else {
-			delCard := models.DelCard{CardId:card.Id,UserId:card.UserId,Remark:card.Remark}
-			delCard.DelTime = time.Now()
-			o.Insert(&delCard)
-=======
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.GetTime()
-			o.Insert(&delCard) // 下次记得进行错误处理！！！
->>>>>>> 3d762cf41058398b6a45d157f75ae8db1c27c362
+			delCard.DelTime = time.Now()
+			_, ERR := o.Insert(&delCard)
+			if ERR != nil {
+				models.Log.Error("Insert error: ", ERR)
+			}
 		}
 	} else {
 		models.Log.Error("read error: ", err)
