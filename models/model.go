@@ -2,15 +2,16 @@ package models
 
 import (
 	"errors"
+	"time"
 )
 
 type Card struct {
 	Id         string `orm:"pk"`
-	UserId     string `orm:"column(user_id);rel(fk)"`
-	Remark     string
-	EName      string `orm:"column(e_name)"`
+	UserId     string `orm:"column(user_id);"` //rel(fk)
 	Kind       string `orm:"column(type)"`
 	Style      string
+	Remark     string
+	EName      string `orm:"column(e_name)"`
 	State      string
 	City       string
 	FactoryNum string `orm:"column(factory_num)"` //印刷厂编号
@@ -36,7 +37,7 @@ type DelCard struct {
 	CardId  string `orm:"pk;column(card_id)"`
 	UserId  string `orm:"column(user_id);rel(fk)"`
 	Remark  string
-	DelTime string `orm:"column(del_time)"`
+	DelTime time.Time `orm:"column(del_time)"`
 }
 
 type ParseStruct struct {
@@ -111,4 +112,8 @@ func (card *Card) CardParse() error {
 		return errors.New("INVALID CONTENT CARD ID")
 	}
 	return nil
+}
+
+func (delCard *DelCard) GetTime() {
+	delCard.DelTime = time.Now();
 }

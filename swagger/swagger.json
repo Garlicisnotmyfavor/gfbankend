@@ -1,0 +1,93 @@
+{
+    "swagger": "2.0",
+    "info": {
+<<<<<<< HEAD
+        "contact": {}
+    },
+    "paths": null
+=======
+        "title": "beego Test API",
+        "description": "beego has a very cool tools to autogenerate documents for your API",
+        "version": "1.0.0",
+        "termsOfService": "http://beego.me/",
+        "contact": {
+            "email": "astaxie@gmail.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/v1",
+    "paths": {
+        "/api/user/": {
+            "get": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "show all cards(test2)",
+                "operationId": "UserController.showAllCards",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "true",
+                        "schema": {
+                            "$ref": "#/definitions/models.Card"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Read successfully"
+                    },
+                    "404": {
+                        "description": "Fail to read"
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Card": {
+            "title": "Card",
+            "type": "object",
+            "properties": {
+                "BatchNum": {
+                    "type": "string"
+                },
+                "City": {
+                    "type": "string"
+                },
+                "EName": {
+                    "type": "string"
+                },
+                "FactoryNum": {
+                    "type": "string"
+                },
+                "Id": {
+                    "type": "string"
+                },
+                "Kind": {
+                    "type": "string"
+                },
+                "Remark": {
+                    "type": "string"
+                },
+                "SerialNum": {
+                    "type": "string"
+                },
+                "State": {
+                    "type": "string"
+                },
+                "Style": {
+                    "type": "string"
+                },
+                "UserId": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+>>>>>>> 6bd6c64bc49bd5455df0fcd8be7d8a1716ed6dac
+}
