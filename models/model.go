@@ -35,7 +35,7 @@ type Enterprise struct {
 
 type DelCard struct {
 	CardId  string `orm:"pk;column(card_id)"`
-	UserId  string `orm:"column(user_id);rel(fk)"`
+	UserId  string `orm:"column(user_id)"`
 	Remark  string
 	DelTime time.Time `orm:"column(del_time)"`
 }
