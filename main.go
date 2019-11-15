@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"gfbankend/routers"
+	_"gfbankend/routers"
 )
 
 func main() {
@@ -11,5 +11,5 @@ func main() {
 		beego.SetStaticPath("/swagger", "swagger")
 	}
 	logs.Informational("App start")
-	beego.Run()
+	beego.Run("101.37.27.155")
 }
