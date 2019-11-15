@@ -38,6 +38,7 @@ type DelCard struct {
 	Remark  string
 	DelTime string `orm:"column(del_time)"`
 }
+
 type ParseStruct struct {
 	EnterpriseMap map[string]string
 	KindMap       map[string]string
