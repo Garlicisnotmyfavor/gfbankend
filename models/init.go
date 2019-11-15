@@ -29,7 +29,7 @@ func init() {
 		beego.AppConfig.String("mysql::addr"),
 		beego.AppConfig.String("mysql::database"))
 
-	if err := orm.RegisterDataBase("GF", "mysql", dsn); err != nil {
+	if err := orm.RegisterDataBase("default", "mysql", dsn); err != nil {
 		Log.Error("fail to register database", err)
 	}
 	orm.RegisterModel(new(Card)) //登记orm

@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -16,6 +17,7 @@ type CardController struct {
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
+	fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	// 查询记录
@@ -62,12 +64,16 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.DelTime = time.Now()
-			_, ERR := o.Insert(&delCard)
-			if ERR != nil {
-				models.Log.Error("Insert error: ", ERR)
+			_, err := o.Insert(&delCard)
+			if err != nil {
+				models.Log.Error("Insert error: ", err)
+				c.Ctx.ResponseWriter.WriteHeader(403)
+				return
 			}
+			c.Ctx.ResponseWriter.WriteHeader(200)
 		}
 	} else {
 		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在
 	}
 }
