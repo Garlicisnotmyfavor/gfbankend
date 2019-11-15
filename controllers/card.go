@@ -20,6 +20,7 @@ func (c *CardController) Get() {
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	c.Data["json"] = card
@@ -32,15 +33,36 @@ func (c *CardController) Post() {
 	if err := json.Unmarshal(body, &card); err != nil {
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
+	}
+	if err := card.CardParse(); err != nil {
+		models.Log.Error("card parse error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(406) //非法的用户ID
+		return
 	}
 	o := orm.NewOrm()
 	if _, err := o.Insert(&card); err != nil {
 		models.Log.Error("insert error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(403) //插入错误
+		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
 func (c *CardController) Delete() {
-	
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	card := models.Card{Id:id}
+	if err := o.Read(&card);err==nil{
+		count,_:=o.Delete(&card)
+		if(count==0){
+			models.Log.Error("delete fail")
+		}else {
+			delCard := models.DelCard{CardId:card.Id,UserId:card.UserId,Remark:card.Remark}
+			delCard.GetTime()
+			o.Insert(&delCard)
+		}
+	}else{
+		models.Log.Error("read error: ",err)
+	}
 }
