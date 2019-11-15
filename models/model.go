@@ -4,7 +4,7 @@ import "time"
 
 type Card struct {
 	Id         string `orm:"pk"`
-	UserId     string `orm:"column(user_id);rel(fk)"`
+	UserId     string `orm:"column(user_id);"` //rel(fk)
 	Kind       string `orm:"column(type)"`
 	Style      string
 	Remark     string

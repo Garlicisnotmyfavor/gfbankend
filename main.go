@@ -7,6 +7,9 @@ import (
 )
 
 func main() {
+	if beego.DEV == "dev" {
+		beego.SetStaticPath("/swagger", "swagger")
+	}
 	logs.Informational("App start")
 	beego.Run()
 }

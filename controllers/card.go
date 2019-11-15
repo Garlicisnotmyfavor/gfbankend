@@ -2,9 +2,9 @@ package controllers
 
 import (
 	"encoding/json"
+	"gfbankend/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"gfbankend/models"
 )
 
 type CardController struct {
