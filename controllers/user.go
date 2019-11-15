@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"fmt"
+	"gfbankend/models"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 )
@@ -10,9 +11,15 @@ type UserController struct {
 	beego.Controller
 }
 
+// @Title showAllCards
+// @Description show all cards
+// @Param    body        body     models.Card    true
+// @Success 200 Read successfully
+// @Failure 404 Fail to read
+// @router / [get]
 func (c *UserController) Get() {
-	var cardList []orm.Params                                                    //存储所有卡片信息
-	sql := fmt.Sprintf(`select * from %s;`, beego.AppConfig.String("tablename")) //需要卡的table名
+	var cardList []orm.Params                                                           //存储所有卡片信息
+	sql := fmt.Sprintf("select * from %s;", beego.AppConfig.String("mysql::tablename")) //需要卡的table名
 	o := orm.NewOrm()
 
 	//根据sql指令将table中所有卡信息读入到carList中
