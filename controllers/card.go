@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -14,6 +15,7 @@ type CardController struct {
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
+	fmt.Println("ID: ", id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	// 查询记录
@@ -60,7 +62,10 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.GetTime()
-			o.Insert(&delCard) // 下次记得进行错误处理！！！
+			_, err = o.Insert(&delCard) // 下次记得进行错误处理！！！
+			if err != nil {
+				models.Log.Error("Insert error: ", err)
+			}
 		}
 	} else {
 		models.Log.Error("read error: ", err)
