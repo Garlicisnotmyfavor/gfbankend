@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -15,7 +14,6 @@ type CardController struct {
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
-	fmt.Println("ID: ", id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	// 查询记录
