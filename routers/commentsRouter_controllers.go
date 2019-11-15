@@ -6,7 +6,6 @@ import (
 )
 
 func init() {
-
     beego.GlobalControllerRouter["gfbankend/controllers:UserController"] = append(beego.GlobalControllerRouter["gfbankend/controllers:UserController"],
         beego.ControllerComments{
             Method: "Get",
