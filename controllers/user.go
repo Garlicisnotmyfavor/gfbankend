@@ -18,8 +18,8 @@ type UserController struct {
 // @Failure 404 Fail to read
 // @router / [get]
 func (c *UserController) Get() {
-	var cardList []orm.Params                                               //存储所有卡片信息
-	sql := fmt.Sprintf(`select * from %s;`, beego.AppConfig.String("card")) //需要卡的table名
+	var cardList []orm.Params                 //存储所有卡片信息
+	sql := fmt.Sprintf(`select * from card;`) //需要卡的table名
 	o := orm.NewOrm()
 	//根据sql指令将table中所有卡信息读入到carList中
 	_, err := o.Raw(sql).Values(&cardList)
