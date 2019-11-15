@@ -3,7 +3,7 @@ package main
 import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	_"gfbankend/routers"
+	_ "github.com/gfbankend/routers"
 )
 
 func main() {

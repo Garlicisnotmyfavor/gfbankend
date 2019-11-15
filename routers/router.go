@@ -9,8 +9,8 @@
 package routers
 
 import (
-	"gfbankend/controllers"
 	"github.com/astaxie/beego"
+	"github.com/gfbankend/controllers"
 )
 
 //func init() {

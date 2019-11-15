@@ -115,5 +115,5 @@ func (card *Card) CardParse() error {
 }
 
 func (delCard *DelCard) GetTime() {
-	delCard.DelTime = time.Now();
+	delCard.DelTime = time.Now()
 }
