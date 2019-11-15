@@ -42,5 +42,5 @@ func (c *CardController) Post() {
 }
 
 func (c *CardController) Delete() {
-
+	
 }

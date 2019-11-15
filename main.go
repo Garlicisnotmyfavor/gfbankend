@@ -11,5 +11,5 @@ func main() {
 		beego.SetStaticPath("/swagger", "swagger")
 	}
 	logs.Informational("App start")
-	beego.Run("101.37.27.155")
+	beego.Run()
 }
