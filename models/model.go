@@ -40,5 +40,4 @@ type DelCard struct {
 func (this *DelCard) setDelTime() {
 	t := time.Now().Format("2006-01-02 15:04:05")
 	this.DelTime = t
-	return;
 }
