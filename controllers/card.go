@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
-	"github.com/gfbankend/models"
+	"gfbankend/models"
 )
 
 type CardController struct {
