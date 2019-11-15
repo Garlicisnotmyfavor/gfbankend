@@ -59,7 +59,7 @@ func (c *CardController) Delete() {
 			models.Log.Error("delete fail")
 		}else {
 			delCard := models.DelCard{CardId:card.Id,UserId:card.UserId,Remark:card.Remark}
-			delCard.GetTime()
+			delCard.DelTime = time.Now()
 			o.Insert(&delCard)
 		}
 	}else{
