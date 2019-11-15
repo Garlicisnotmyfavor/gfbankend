@@ -34,10 +34,5 @@ type DelCard struct {
 	CardId  string `orm:"pk;column(card_id)"`
 	UserId  string `orm:"column(user_id);rel(fk)"`
 	Remark  string
-	DelTime string `orm:"column(del_type)"`
-}
-
-func (this *DelCard) setDelTime() {
-	t := time.Now().Format("2006-01-02 15:04:05")
-	this.DelTime = t
+	DelTime time.Time `orm:"column(del_type)"`
 }
