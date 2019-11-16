@@ -64,7 +64,10 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.GetTime()
-			o.Insert(&delCard) // 下次记得进行错误处理！！！
+			_, err = o.Insert(&delCard) // ↓记得返回错误状态码，200,400等
+			if err != nil {
+				models.Log.Error("Insert error: ", err)
+			}
 		}
 	} else {
 		models.Log.Error("read error: ", err)
