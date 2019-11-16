@@ -13,6 +13,10 @@ type CardController struct {
 	beego.Controller
 }
 
+// swagger注解配置
+// @Title Get
+// @Description get card
+// @router /v1/api/user/card/:id [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -61,8 +65,9 @@ func (c *CardController) Delete() {
 			models.Log.Error("delete fail")
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.DelTime = time.Now()
-			_, err := o.Insert(&delCard)
+
+			delCard.GetTime()
+			_, err = o.Insert(&delCard) // ↓记得返回错误状态码，200,400等
 			if err != nil {
 				models.Log.Error("Insert error: ", err)
 				c.Ctx.ResponseWriter.WriteHeader(403)
