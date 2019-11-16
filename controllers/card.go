@@ -55,12 +55,14 @@ func (c *CardController) Post() {
 
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
+	fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	if err := o.Read(&card); err == nil {
 		count, _ := o.Delete(&card)
 		if count == 0 {
 			models.Log.Error("delete fail")
+			c.Ctx.ResponseWriter.WriteHeader(403)
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.DelTime = time.Now()
