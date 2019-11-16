@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"time"
 
 	"github.com/astaxie/beego"
@@ -17,7 +17,7 @@ type CardController struct {
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
-	fmt.Println(id)
+	//fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	// 查询记录
@@ -55,6 +55,7 @@ func (c *CardController) Post() {
 
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
+	//fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	if err := o.Read(&card); err == nil {
@@ -64,7 +65,7 @@ func (c *CardController) Delete() {
 			c.Ctx.ResponseWriter.WriteHeader(403)
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.DelTime = time.Now()
+			delCard.DelTime = time.Now() //数据库中显示格式 YYYY-MM-DD HH-MM-SS
 			_, err := o.Insert(&delCard)
 			if err != nil {
 				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
