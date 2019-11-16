@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
+	//"fmt"
 	"time"
 
 	"github.com/astaxie/beego"
