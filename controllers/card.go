@@ -66,7 +66,7 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.DelTime = time.Now() //数据库中显示格式 YYYY-MM-DD HH-MM-SS
-			 _, err := o.Insert(&delCard) 
+			_, err := o.Insert(&delCard)
 			if err != nil {
 				models.Log.Error("Insert error: ", err) //删除成功后无法进入垃圾箱
 				c.Ctx.ResponseWriter.WriteHeader(403)
