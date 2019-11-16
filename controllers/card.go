@@ -60,20 +60,21 @@ func (c *CardController) Delete() {
 	if err := o.Read(&card); err == nil {
 		count, _ := o.Delete(&card)
 		if count == 0 {
-			models.Log.Error("delete fail")
+			models.Log.Error("delete fail") //删除0个元素，即删除失败，返回状态码403
+			c.Ctx.ResponseWriter.WriteHeader(403)
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.DelTime = time.Now()
 			_, err := o.Insert(&delCard)
 			if err != nil {
-				models.Log.Error("Insert error: ", err)
+				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
 				c.Ctx.ResponseWriter.WriteHeader(403)
 				return
 			}
-			c.Ctx.ResponseWriter.WriteHeader(200)
+			c.Ctx.ResponseWriter.WriteHeader(200) //删除成功
 		}
 	} else {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在
+		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在，删除不存在的卡当作删除成功
 	}
 }
