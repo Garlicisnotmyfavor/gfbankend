@@ -11,6 +11,10 @@ type CardController struct {
 	beego.Controller
 }
 
+// swagger注解配置
+// @Title Get
+// @Description get card
+// @router /v1/api/user/card/:id [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")

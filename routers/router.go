@@ -13,29 +13,21 @@ import (
 	"github.com/gfbankend/controllers"
 )
 
-func init() {
-	beego.Router("/api/user/card/:id", &controllers.CardController{})
-	beego.Router("/api/user/card/", &controllers.CardController{})
-	beego.Router("/api/user/", &controllers.UserController{})
-}
-
 //func init() {
-//	ns := beego.NewNamespace("/v1",
-//		beego.NSNamespace("/api/user/card/:id",
-//			beego.NSInclude(
-//				&controllers.CardController{},
-//			),
-//		),
-//		beego.NSNamespace("/api/user/card",
-//			beego.NSInclude(
-//				&controllers.CardController{},
-//			),
-//		),
-//		beego.NSNamespace("/api/user",
-//			beego.NSInclude(
-//				&controllers.UserController{},
-//			),
-//		),
-//	)
-//	beego.AddNamespace(ns)
+//	beego.Router("/api/user/card/:id", &controllers.CardController{})
+//	beego.Router("/api/user/card/", &controllers.CardController{})
+//	beego.Router("/api/user/", &controllers.UserController{})
 //}
+
+func init() {
+	ns := beego.NewNamespace("/v1",
+		beego.NSNamespace("/api/user",
+			beego.NSNamespace("/card",
+				beego.NSRouter("/", &controllers.CardController{}),
+				beego.NSRouter("/:id", &controllers.CardController{}),
+			),
+			beego.NSRouter("/", &controllers.UserController{}),
+		),
+	)
+	beego.AddNamespace(ns)
+}
