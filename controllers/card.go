@@ -66,7 +66,7 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 			delCard.DelTime = time.Now()
-			_, err := o.Insert(&delCard)
+			 _, err := o.Insert(&delCard)
 			if err != nil {
 				models.Log.Error("Insert error: ", err)
 				c.Ctx.ResponseWriter.WriteHeader(403)
