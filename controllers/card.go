@@ -74,10 +74,12 @@ func (c *CardController) Delete() {
 	}
 }
 
+//GZH，修改备注
 func (c *CardController) Put() {
 
 }
 
+//GYH,显示卡片帮助信息
 func (c *CardController) Help() {
 
 }
