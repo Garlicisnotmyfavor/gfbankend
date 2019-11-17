@@ -73,3 +73,11 @@ func (c *CardController) Delete() {
 		models.Log.Error("read error: ", err)
 	}
 }
+
+func (c *CardController) Put() {
+
+}
+
+func (c *CardController) Help() {
+
+}

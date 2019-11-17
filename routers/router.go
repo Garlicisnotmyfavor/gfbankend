@@ -31,8 +31,17 @@ func init() {
 			beego.NSNamespace("/card",
 				beego.NSRouter("/", &controllers.CardController{}),
 				beego.NSRouter("/:id", &controllers.CardController{}),
+				beego.NSRouter("/all", &controllers.UserController{}, "get:GetAllCard"),
+				beego.NSRouter("/help/:id", &controllers.CardController{}, "get:Help"),
 			),
-			beego.NSRouter("/", &controllers.UserController{}),
+			beego.NSRouter("/", &controllers.UserController{}),       //get 返回用户资料
+			beego.NSRouter("/join", &controllers.UserController{}),   //post
+			beego.NSRouter("/login", &controllers.UserController{}),  //put
+			beego.NSRouter("/logout", &controllers.UserController{}), //delete
+			beego.NSRouter("/password", &controllers.UserController{}, "put:ChangePW"),
+			beego.NSRouter("/feedback", &controllers.UserController{}, "post:Feedback"),
+			beego.NSRouter("/garbage", &controllers.UserController{}, "get:GetDel"),
+			beego.NSRouter("/garbage/:id", &controllers.UserController{}, "post:RecoverDel"),
 		),
 	)
 	beego.AddNamespace(ns)

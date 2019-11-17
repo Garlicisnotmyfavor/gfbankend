@@ -17,7 +17,7 @@ type UserController struct {
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
 // @router / [get]
-func (c *UserController) Get() {
+func (c *UserController) GetAllCard() {
 	var cardList []orm.Params                 //存储所有卡片信息
 	sql := fmt.Sprintf(`select * from card;`) //需要卡的table名
 	o := orm.NewOrm()
@@ -31,4 +31,31 @@ func (c *UserController) Get() {
 	c.Data["json"] = cardList
 	//发送json
 	c.ServeJSON()
+}
+
+func (c *UserController) Get() {
+
+}
+
+func (c *UserController) Post() {
+
+}
+func (c *UserController) Put() {
+
+}
+
+func (c *UserController) GetDel() {
+
+}
+
+func (c *UserController) RecoverDel() {
+
+}
+
+func (c *UserController) ChangePw() {
+
+}
+
+func (c *UserController) Feedback() {
+
 }
