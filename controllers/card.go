@@ -2,9 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
-	"time"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -14,10 +11,13 @@ type CardController struct {
 	beego.Controller
 }
 
+// swagger注解配置
+// @Title Get
+// @Description get card
+// @router /v1/api/user/card/:id [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
-	fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	// 查询记录
@@ -63,17 +63,21 @@ func (c *CardController) Delete() {
 			models.Log.Error("delete fail")
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.DelTime = time.Now()
-			_, err := o.Insert(&delCard)
+			delCard.GetTime()
+			_, err = o.Insert(&delCard) // ↓记得返回错误状态码，200,400等
 			if err != nil {
 				models.Log.Error("Insert error: ", err)
-				c.Ctx.ResponseWriter.WriteHeader(403)
-				return
 			}
-			c.Ctx.ResponseWriter.WriteHeader(200)
 		}
 	} else {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在
 	}
+}
+
+func (c *CardController) Put() {
+
+}
+
+func (c *CardController) Help() {
+
 }
