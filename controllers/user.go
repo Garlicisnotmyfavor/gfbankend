@@ -59,7 +59,7 @@ func (c *UserController) RecoverDel() {
 }
 
 //YZY，修改密码
-func (c *UserController) ChangePw() {
+func (c *UserController) ChangePW() {
 
 }
 

@@ -2,14 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-<<<<<<< HEAD
-	"time"
-
-=======
->>>>>>> ca0cebb0f062aa8db5da37315826d5405e80fcc8
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	"time"
 )
 
 type CardController struct {
@@ -19,7 +15,7 @@ type CardController struct {
 // swagger注解配置
 // @Title Get
 // @Description get card
-// @router /v1/api/user/card/:id [get]
+// @router /card/:id [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -36,6 +32,10 @@ func (c *CardController) Get() {
 	c.ServeJSON()
 }
 
+// swagger注解配置
+// @Title Post
+// @Description insert card
+// @router /card/ [post]
 func (c *CardController) Post() {
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
@@ -57,6 +57,7 @@ func (c *CardController) Post() {
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
+
 
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
