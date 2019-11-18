@@ -35,7 +35,7 @@ func (c *CardController) Get() {
 // swagger注解配置
 // @Title Post
 // @Description insert card
-// @router /card/ [post]
+// @router /card [post]
 func (c *CardController) Post() {
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
