@@ -1,11 +1,6 @@
 {
     "swagger": "2.0",
     "info": {
-<<<<<<< HEAD
-        "contact": {}
-    },
-    "paths": null
-=======
         "title": "beego Test API",
         "description": "beego has a very cool tools to autogenerate documents for your API",
         "version": "1.0.0",
@@ -18,36 +13,7 @@
             "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
         }
     },
-    "basePath": "/v1",
-    "paths": {
-        "/api/user/": {
-            "get": {
-                "tags": [
-                    "api/user"
-                ],
-                "description": "show all cards(test2)",
-                "operationId": "UserController.showAllCards",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "true",
-                        "schema": {
-                            "$ref": "#/definitions/models.Card"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Read successfully"
-                    },
-                    "404": {
-                        "description": "Fail to read"
-                    }
-                }
-            }
-        }
-    },
+    "paths": null,
     "definitions": {
         "models.Card": {
             "title": "Card",
@@ -89,5 +55,4 @@
             }
         }
     }
->>>>>>> 6bd6c64bc49bd5455df0fcd8be7d8a1716ed6dac
 }
