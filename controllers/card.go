@@ -2,8 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+<<<<<<< HEAD
 	"time"
 
+=======
+>>>>>>> ca0cebb0f062aa8db5da37315826d5405e80fcc8
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -66,8 +69,8 @@ func (c *CardController) Delete() {
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
 
-			delCard.GetTime()
-			_, err = o.Insert(&delCard) // ↓记得返回错误状态码，200,400等
+			delCard.DelTime = time.Now()
+			_, err := o.Insert(&delCard)
 			if err != nil {
 				models.Log.Error("Insert error: ", err)
 				c.Ctx.ResponseWriter.WriteHeader(403)
@@ -79,4 +82,14 @@ func (c *CardController) Delete() {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在
 	}
+}
+
+//GZH，修改备注
+func (c *CardController) Put() {
+
+}
+
+//GYH,显示卡片帮助信息
+func (c *CardController) Help() {
+
 }
