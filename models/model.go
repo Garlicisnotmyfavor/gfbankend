@@ -113,6 +113,11 @@ func (card *Card) CardParse() error {
 	}
 	return nil
 }
+//ML 解析生成用户ID
+func (user *User) UserParse() error{
+
+	return nil
+}
 
 func (delCard *DelCard) GetTime() {
 	delCard.DelTime = time.Now();
