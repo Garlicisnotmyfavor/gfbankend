@@ -15,7 +15,7 @@ type CardController struct {
 // swagger注解配置
 // @Title Get
 // @Description get card
-// @router /v1/api/user/card/:id [get]
+// @router /card/:id [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -32,6 +32,10 @@ func (c *CardController) Get() {
 	c.ServeJSON()
 }
 
+// swagger注解配置
+// @Title Post
+// @Description insert card
+// @router /card [post]
 func (c *CardController) Post() {
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
@@ -54,6 +58,7 @@ func (c *CardController) Post() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
+
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
 	//fmt.Println(id)
@@ -66,7 +71,7 @@ func (c *CardController) Delete() {
 			c.Ctx.ResponseWriter.WriteHeader(403)
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.DelTime = time.Now() //数据库中显示格式 YYYY-MM-DD HH-MM-SS
+			delCard.DelTime = time.Now()
 			_, err := o.Insert(&delCard)
 			if err != nil {
 				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败

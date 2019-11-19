@@ -9,7 +9,37 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-paths: {}
+basePath: /v1
+paths:
+  /api/user/:
+    get:
+      tags:
+      - api/user
+      description: show all cards
+      operationId: UserController.showAllCards
+      parameters:
+      - in: body
+        name: body
+        description: "true"
+        schema:
+          $ref: '#/definitions/models.Card'
+      responses:
+        "200":
+          description: Read successfully
+        "404":
+          description: Fail to read
+  /api/user/card:
+    post:
+      tags:
+      - api/user
+      description: insert card
+      operationId: CardController.Post
+  /api/user/card/{id}:
+    get:
+      tags:
+      - api/user
+      description: get card
+      operationId: CardController.Get
 definitions:
   models.Card:
     title: Card
