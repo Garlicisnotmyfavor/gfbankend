@@ -27,10 +27,13 @@ type User struct {
 }
 
 type Enterprise struct {
-	Id      string `orm:"pk"`
-	Name    string
-	HelpMsg string `orm:"column(help_msg)"`
-	Website string
+	Id          string `orm:"pk"`
+	IsLocal     string `orm:"column(is_local)"`
+	Type        string
+	RegisterNum string `orm:"column(register_num)"`
+	Name        string
+	HelpMsg     string `orm:"column(help_msg)"`
+	Website     string
 }
 
 type DelCard struct {
@@ -40,14 +43,19 @@ type DelCard struct {
 	DelTime time.Time `orm:"column(del_time)"`
 }
 
-type ParseStruct struct {
+type CardParseStruct struct {
 	EnterpriseMap map[string]string
 	KindMap       map[string]string
 	StateMap      map[string]string
 	CityMap       map[string]string
 }
 
-var ParseMaps = ParseStruct{
+type EnterpriseParseStruct struct {
+	IsLocal map[string]string
+	Type    map[string]string
+}
+
+var CardParseMaps = CardParseStruct{
 	map[string]string{
 		"001": "ANZ",
 		"002": "Calvin Klein",
@@ -94,17 +102,29 @@ var ParseMaps = ParseStruct{
 	},
 }
 
+var EnterpriseParseMaps = EnterpriseParseStruct{
+	map[string]string{
+		"1": "True",
+		"2": "False",
+	},
+	map[string]string{
+		"1": "Bank",
+		"2": "Supermarket",
+		"3": "Store",
+	},
+}
+
 //将card结构中的Id解析出对应的含义赋值给card的其他导出属性
 func (card *Card) CardParse() error {
 	if len(card.Id) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
 	}
 	var ok bool
-	card.EName, ok = ParseMaps.EnterpriseMap[card.Id[0:3]]
-	card.Kind, ok = ParseMaps.KindMap[card.Id[3:4]]
+	card.EName, ok = CardParseMaps.EnterpriseMap[card.Id[0:3]]
+	card.Kind, ok = CardParseMaps.KindMap[card.Id[3:4]]
 	card.Style = card.Id[4:6]
-	card.State, ok = ParseMaps.StateMap[card.Id[6:7]]
-	card.City, ok = ParseMaps.CityMap[card.Id[6:10]]
+	card.State, ok = CardParseMaps.StateMap[card.Id[6:7]]
+	card.City, ok = CardParseMaps.CityMap[card.Id[6:10]]
 	card.FactoryNum = card.Id[10:12]
 	card.BatchNum = card.Id[12:13]
 	card.SerialNum = card.Id[13:16]
@@ -114,6 +134,20 @@ func (card *Card) CardParse() error {
 	return nil
 }
 
-func (delCard *DelCard) GetTime() {
-	delCard.DelTime = time.Now();
+func (enterprise *Enterprise) EnterpriseParse() error {
+	if len(enterprise.Id) != 5 {
+		return errors.New("INVALID LENGTH ENTERPRISE ID")
+	}
+	var flag bool
+	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocal[enterprise.Id[0:1]]
+	enterprise.Type, flag = EnterpriseParseMaps.Type[enterprise.Id[1:2]]
+	enterprise.RegisterNum = enterprise.Id[2:]
+	if !flag {
+		return errors.New("INVALID CONTENT ENTERPRISE ID")
+	}
+	return nil
 }
+
+// func (delCard *DelCard) GetTime() {
+// 	delCard.DelTime = time.Now();
+// }
