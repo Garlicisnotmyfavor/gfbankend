@@ -15,7 +15,7 @@ type CardController struct {
 // swagger注解配置
 // @Title Get
 // @Description get card
-// @router /card/:id [get]
+// @router /card/:id([0-9]+) [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -91,7 +91,21 @@ func (c *CardController) Put() {
 
 }
 
-//GYH,显示卡片帮助信息
+// swagger注解配置
+// @Title Get
+// @Description get help message by the given enterprise_name
+// @router /card/help/:Ename([0-9]+) [get]
 func (c *CardController) Help() {
-
+	EName := c.Ctx.Input.Param(":Ename")
+	o := orm.NewOrm()
+	enterprise := models.Enterprise{Name: EName}
+	// 查询记录
+	if err := o.Read(&enterprise); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	c.Data["json"] = enterprise.HelpMsg
+	c.ServeJSON()
 }
