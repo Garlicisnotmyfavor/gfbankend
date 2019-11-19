@@ -58,7 +58,10 @@ func (c *CardController) Post() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
-
+// swagger注解配置
+// @Title Delete
+// @Description delete card
+// @router /card/:id [delete]
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
 	//fmt.Println(id)
