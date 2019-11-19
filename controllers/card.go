@@ -105,7 +105,7 @@ func (c *CardController) Help() {
 	// 查询记录
 	if err := o.Read(&enterprise); err != nil {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到企业名对应的企业
 		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
