@@ -51,8 +51,8 @@ type CardParseStruct struct {
 }
 
 type EnterpriseParseStruct struct {
-	IsLocal map[string]string
-	Type    map[string]string
+	IsLocalMap map[string]string
+	TypeMap    map[string]string
 }
 
 var CardParseMaps = CardParseStruct{
@@ -139,8 +139,8 @@ func (enterprise *Enterprise) EnterpriseParse() error {
 		return errors.New("INVALID LENGTH ENTERPRISE ID")
 	}
 	var flag bool
-	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocal[enterprise.Id[0:1]]
-	enterprise.Type, flag = EnterpriseParseMaps.Type[enterprise.Id[1:2]]
+	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocalMap[enterprise.Id[0:1]]
+	enterprise.Type, flag = EnterpriseParseMaps.TypeMap[enterprise.Id[1:2]]
 	enterprise.RegisterNum = enterprise.Id[2:]
 	if !flag {
 		return errors.New("INVALID CONTENT ENTERPRISE ID")
