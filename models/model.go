@@ -6,17 +6,18 @@ import (
 )
 
 type Card struct {
-	Id         string `orm:"pk"`
-	UserId     string `orm:"column(user_id);"` //rel(fk)
-	Kind       string `orm:"column(type)"`
-	Style      string
-	Remark     string
-	EName      string `orm:"column(e_name)"`
-	State      string
-	City       string
-	FactoryNum string `orm:"column(factory_num)"` //印刷厂编号
-	BatchNum   string `orm:"column(batch_num)"`   //印刷批次
-	SerialNum  string `orm:"column(serial_num)"`  //同批次的卡片编号
+	Id            string `orm:"pk"`
+	UserId        string `orm:"column(user_id);"` //rel(fk)
+	Kind          string `orm:"column(type)"`
+	Style         string
+	Remark        string
+	EName         string `orm:"column(e_name)"`
+	State         string
+	City          string
+	FactoryNum    string `orm:"column(factory_num)"` //印刷厂编号
+	BatchNum      string `orm:"column(batch_num)"`   //印刷批次
+	SerialNum     string `orm:"column(serial_num)"`  //同批次的卡片编号
+	RegisterTime  time.Time `orm:"column(register_time)"` //注册时间
 }
 
 type User struct {
