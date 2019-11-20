@@ -59,8 +59,8 @@ func (c *UserController) RecoverDel() {
 
 }
 
-//YZY，修改密码
-func (c *UserController) ChangePw() {
+//YZY，修改密码，要求传输一个有用户ID，新密码的json
+func (c *UserController) ChangePW() {
 	var user models.User
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &user); err != nil {
