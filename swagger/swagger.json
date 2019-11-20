@@ -59,6 +59,40 @@
                 "description": "get card",
                 "operationId": "CardController.Get"
             }
+        },
+        "/api/user/join": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "user register",
+                "operationId": "UserController.Register",
+                "responses": {
+                    "200": {
+                        "description": "Register successfully"
+                    },
+                    "404": {
+                        "description": "Fail to register"
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "put": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "user login",
+                "operationId": "UserController.Login",
+                "responses": {
+                    "200": {
+                        "description": "Register successfully"
+                    },
+                    "404": {
+                        "description": "Fail to register"
+                    }
+                }
+            }
         }
     },
     "definitions": {
