@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	"time"
+	"fmt"
 )
 
 type CardController struct {
@@ -96,10 +97,14 @@ func (c *CardController) Put() {
 
 // swagger注解配置
 // @Title Get
+// @Param Ename query string true "enterprise_name"
 // @Description get help message by the given enterprise_name
-// @router /card/help/:Ename([0-9]+) [get]
+// @Success 200
+// @Failure 404 read error
+// @router /card/help/:Ename [get]
 func (c *CardController) Help() {
 	EName := c.Ctx.Input.Param(":Ename")
+	fmt.Println(EName)
 	o := orm.NewOrm()
 	enterprise := models.Enterprise{Name: EName}
 	// 查询记录
