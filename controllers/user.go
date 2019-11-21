@@ -70,10 +70,10 @@ func (c *UserController) Post() {
 		return
 	}
 	//正则表达式匹配密码是否合法
-	pattern := "$[0-9a-zA-Z]+^"
+	pattern := "^[0-9a-zA-Z]+$"//匹配密码模式，仅允许字母数字
 	ok, err := regexp.Match(pattern, []byte(user.Password))
 	if !ok {
-		models.Log.Error("wrong Password")
+		models.Log.Error("Wrong Password")
 		c.Ctx.ResponseWriter.WriteHeader(406) //非法用户密码
 		return
 	}
@@ -128,12 +128,12 @@ func SendEmail(target string) ( []byte, error) {
 	content := fmt.Sprintf("[ANZ]尊敬的客户' %s '，您本次登录所需的验证码为:%s,请勿向任何人提供您收到的验证码!", target, vcode)
 	m := gomail.NewMessage()
 	//设置邮件信息
-	m.SetAddressHeader("From", "2273797813@qq.com", "ANZ-WORKSHOP") //设置发件人
+	m.SetAddressHeader("From", "gfbankend@163.com", "ANZ-WORKSHOP") //设置发件人
 	m.SetHeader("Subject", "Verify your device")                    //设置主题
 	m.SetBody("text/html", content)                                 //设置主体内容
 	m.SetHeader("To", m.FormatAddress(target, "收件人"))               //设置收件人
 	//连接邮箱服务器并发送邮件（先用ML的QQ邮箱）
-	d := gomail.NewPlainDialer("smtp.qq.com", 465, "2273797813@qq.com", "sylsvdlbocnaebfj")
+	d := gomail.NewPlainDialer("smtp.163.com", 465, "gfbankend@163.com", "ahz12345")
 
 	if err := d.DialAndSend(m); err != nil {
 		log.Println("Fail to send: ", err)
@@ -157,8 +157,9 @@ func (c *UserController) Put() {
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
-	//查询用户信息是否与数据库匹配
-	if err := o.Read(&user); err != nil {
+	fmt.Println(user)
+	//查询用户信息是否与数据库匹配(现在匹配有bug，必须同时邮件、手机、密码）
+	if err := o.Read(&user,"mail","tel","password"); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //读取用户信息错误
 	}
