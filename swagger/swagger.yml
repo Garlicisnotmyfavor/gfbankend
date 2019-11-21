@@ -46,6 +46,12 @@ paths:
       - api/user
       description: user register
       operationId: UserController.Register
+      parameters:
+      - in: user
+        name: body
+        description: "true"
+        schema:
+          $ref: '#/definitions/models.User'
       responses:
         "200":
           description: Register successfully
@@ -94,4 +100,16 @@ definitions:
       Style:
         type: string
       UserId:
+        type: string
+  models.User:
+    title: User
+    type: object
+    properties:
+      Id:
+        type: string
+      Mail:
+        type: string
+      Password:
+        type: string
+      Tel:
         type: string

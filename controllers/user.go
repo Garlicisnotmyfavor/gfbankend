@@ -50,6 +50,7 @@ func (c *UserController) Get() {
 //ML，用户注册
 // @Title Register
 // @Description user register
+// @Param body 	user 	models.User 	true
 // @Success 200 Register successfully
 // @Failure 400 Fail to unmarshal json
 // @Failure 406 Illegal account form
@@ -163,7 +164,7 @@ func (c *UserController) Put() {
 	fmt.Println(user)
 	//查询用户信息是否与数据库匹配(现在匹配有bug，必须同时邮件、手机、密码）
 	err1 := o.Read(&user, "mail", "password") //判断邮箱加密码
-	err2 := o.Read(&user, "tel", "password") //判断手机加密码
+	err2 := o.Read(&user, "tel", "password")  //判断手机加密码
 	if err1 != nil && err2 != nil {
 		models.Log.Error("read error: ", err2, err1)
 		c.Ctx.ResponseWriter.WriteHeader(404) //读取用户信息错误
