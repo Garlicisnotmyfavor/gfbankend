@@ -154,9 +154,11 @@ func SendEmail(target string) ([]byte, error) {
 func (c *UserController) Put() {
 	o := orm.NewOrm()
 	user := models.User{}
-	//取得用户信息
+
 	body:=c.Ctx.Input.RequestBody
 	var uInfo map[string]string
+
+	//解析前端JSON数据获得账号密码
 	if err:=json.Unmarshal(body,&uInfo);err!=nil{
 		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
