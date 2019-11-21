@@ -40,6 +40,23 @@ paths:
       - api/user
       description: get card
       operationId: CardController.Get
+  /api/user/card/help/{Ename}:
+    get:
+      tags:
+      - api/user
+      description: get help message by the given enterprise_name
+      operationId: CardController.Get
+      parameters:
+      - in: query
+        name: Ename
+        description: enterprise_name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: read error
 definitions:
   models.Card:
     title: Card
@@ -57,6 +74,9 @@ definitions:
         type: string
       Kind:
         type: string
+      RegisterTime:
+        type: string
+        format: datetime
       Remark:
         type: string
       SerialNum:
