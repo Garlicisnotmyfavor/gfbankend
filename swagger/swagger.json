@@ -69,8 +69,8 @@
                 "operationId": "UserController.Register",
                 "parameters": [
                     {
-                        "in": "user",
-                        "name": "body",
+                        "in": "body",
+                        "name": "User",
                         "description": "true",
                         "schema": {
                             "$ref": "#/definitions/models.User"
@@ -102,13 +102,10 @@
                 "operationId": "UserController.Login",
                 "responses": {
                     "200": {
-                        "description": "Register successfully"
+                        "description": "Fail to login"
                     },
                     "400": {
                         "description": "Fail to unmarshal json"
-                    },
-                    "404": {
-                        "description": "Fail to login"
                     }
                 }
             }

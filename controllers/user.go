@@ -50,7 +50,7 @@ func (c *UserController) Get() {
 //ML，用户注册
 // @Title Register
 // @Description user register
-// @Param body 	user 	models.User 	true
+// @Param User body models.User true
 // @Success 200 Register successfully
 // @Failure 400 Fail to unmarshal json
 // @Failure 406 Illegal account form
@@ -148,7 +148,7 @@ func SendEmail(target string) ([]byte, error) {
 // @Title Login
 // @Description user login
 // @Success 200 Register successfully
-// @Failure 404 Fail to login
+// @Failure 200 Fail to login
 // @Failure 400 Fail to unmarshal json
 // @router /login [put]
 func (c *UserController) Put() {
@@ -167,7 +167,7 @@ func (c *UserController) Put() {
 	err2 := o.Read(&user, "tel", "password")  //判断手机加密码
 	if err1 != nil && err2 != nil {
 		models.Log.Error("read error: ", err2, err1)
-		c.Ctx.ResponseWriter.WriteHeader(404) //读取用户信息错误
+		c.Ctx.ResponseWriter.WriteHeader(200) //读取用户信息错误,登录失败
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //信息匹配登录成功
 }
