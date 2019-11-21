@@ -35,11 +35,28 @@ paths:
       description: insert card
       operationId: CardController.Post
   /api/user/card/{id}:
+    delete:
+      tags:
+      - api/user
+      description: delete card
+      operationId: CardController.Delete
+  /api/user/card/help/{Ename}:
     get:
       tags:
       - api/user
-      description: get card
+      description: get help message by the given enterprise_name
       operationId: CardController.Get
+      parameters:
+      - in: query
+        name: Ename
+        description: enterprise_name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: read error
   /api/user/join:
     post:
       tags:
@@ -48,7 +65,8 @@ paths:
       operationId: UserController.Register
       parameters:
       - in: body
-        name: User
+
+        name: user
         description: "true"
         schema:
           $ref: '#/definitions/models.User'
@@ -71,7 +89,10 @@ paths:
         "200":
           description: Fail to login
         "400":
-          description: Fail to unmarshal json
+
+          description: illegal account form
+        "401":
+          description: Fail to login
 definitions:
   models.Card:
     title: Card
@@ -89,6 +110,9 @@ definitions:
         type: string
       Kind:
         type: string
+      RegisterTime:
+        type: string
+        format: datetime
       Remark:
         type: string
       SerialNum:

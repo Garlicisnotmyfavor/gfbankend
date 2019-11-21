@@ -50,7 +50,7 @@ func (c *UserController) Get() {
 //ML，用户注册
 // @Title Register
 // @Description user register
-// @Param User body models.User true
+// @Param user body models.User UserInfo true
 // @Success 200 Register successfully
 // @Failure 400 Fail to unmarshal json
 // @Failure 406 Illegal account form
@@ -148,28 +148,51 @@ func SendEmail(target string) ([]byte, error) {
 // @Title Login
 // @Description user login
 // @Success 200 Register successfully
-// @Failure 200 Fail to login
-// @Failure 400 Fail to unmarshal json
+// @Failure 401 Fail to login
+// @Failure 400 illegal account form
 // @router /login [put]
 func (c *UserController) Put() {
 	o := orm.NewOrm()
-	body := c.Ctx.Input.RequestBody
 	user := models.User{}
 	//取得用户信息
-	if err := json.Unmarshal(body, &user); err != nil {
+	body:=c.Ctx.Input.RequestBody
+	var uInfo map[string]string
+	if err:=json.Unmarshal(body,&uInfo);err!=nil{
 		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
-	fmt.Println(user)
-	//查询用户信息是否与数据库匹配(现在匹配有bug，必须同时邮件、手机、密码）
-	err1 := o.Read(&user, "mail", "password") //判断邮箱加密码
-	err2 := o.Read(&user, "tel", "password")  //判断手机加密码
-	if err1 != nil && err2 != nil {
-		models.Log.Error("read error: ", err2, err1)
-		c.Ctx.ResponseWriter.WriteHeader(200) //读取用户信息错误,登录失败
+
+	account:=[]byte(uInfo["account"])
+	user.Password=uInfo["password"]
+
+	//正则表达式匹配模式
+	pattern1:="^[0-9]+$" //匹配手机号
+	pattern2 := "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?.)+[a-z]{2,}$" //匹配邮箱
+
+	//判断是用户使用的是邮箱还是手机
+	isPhone,_:=regexp.Match(pattern1,account)
+	isMail,_:=regexp.Match(pattern2,account)
+	if isPhone{
+		user.Tel=string(account)
+	}else if isMail{
+		user.Mail=string(account)
+	}else{
+		models.Log.Error("illegal account")
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
 	}
-	c.Ctx.ResponseWriter.WriteHeader(200) //信息匹配登录成功
+
+	err1:=o.Read(&user,"mail","password")
+	err2:=o.Read(&user,"tel","password")
+	//用户信息错误
+	if err1!=nil&&err2!=nil{
+		models.Log.Error("read error",err1)
+		c.Ctx.ResponseWriter.WriteHeader(401)//登录失败
+		return
+	}
+	//信息匹配登录成功
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 //ZJN，显示所有被删卡片

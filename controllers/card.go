@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	"time"
+	"fmt"
 )
 
 type CardController struct {
@@ -15,7 +16,7 @@ type CardController struct {
 // swagger注解配置
 // @Title Get
 // @Description get card
-// @router /card/:id [get]
+// @router /card/:id([0-9]+) [get]
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -58,30 +59,34 @@ func (c *CardController) Post() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
-
+// swagger注解配置
+// @Title Delete
+// @Description delete card
+// @router /card/:id [delete]
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
+	//fmt.Println(id)
 	o := orm.NewOrm()
 	card := models.Card{Id: id}
 	if err := o.Read(&card); err == nil {
 		count, _ := o.Delete(&card)
 		if count == 0 {
-			models.Log.Error("delete fail")
+			models.Log.Error("delete fail") //删除0个元素，即删除失败，返回状态码403
+			c.Ctx.ResponseWriter.WriteHeader(403)
 		} else {
 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-
 			delCard.DelTime = time.Now()
 			_, err := o.Insert(&delCard)
 			if err != nil {
-				models.Log.Error("Insert error: ", err)
+				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
 				c.Ctx.ResponseWriter.WriteHeader(403)
 				return
 			}
-			c.Ctx.ResponseWriter.WriteHeader(200)
+			c.Ctx.ResponseWriter.WriteHeader(200) //删除成功
 		}
 	} else {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在
+		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在，删除不存在的卡当作删除成功
 	}
 }
 
@@ -90,7 +95,25 @@ func (c *CardController) Put() {
 
 }
 
-//GYH,显示卡片帮助信息
+// swagger注解配置
+// @Title Get
+// @Param Ename query string true "enterprise_name"   
+// @Description get help message by the given enterprise_name
+// @Success 200 
+// @Failure 404 read error 
+// @router /card/help/:Ename [get]
 func (c *CardController) Help() {
-
+	EName := c.Ctx.Input.Param(":Ename")
+	fmt.Println(EName)
+	o := orm.NewOrm()
+	enterprise := models.Enterprise{Name: EName}
+	// 查询记录
+	if err := o.Read(&enterprise); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到企业名对应的企业
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	c.Data["json"] = enterprise.HelpMsg
+	c.ServeJSON()
 }

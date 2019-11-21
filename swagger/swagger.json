@@ -51,13 +51,39 @@
                 "operationId": "CardController.Post"
             }
         },
-        "/api/user/card/{id}": {
+        "/api/user/card/help/{Ename}": {
             "get": {
                 "tags": [
                     "api/user"
                 ],
-                "description": "get card",
-                "operationId": "CardController.Get"
+                "description": "get help message by the given enterprise_name",
+                "operationId": "CardController.Get",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "Ename",
+                        "description": "enterprise_name",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "404": {
+                        "description": "read error"
+                    }
+                }
+            }
+        },
+        "/api/user/card/{id}": {
+            "delete": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "delete card",
+                "operationId": "CardController.Delete"
             }
         },
         "/api/user/join": {
@@ -70,7 +96,8 @@
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "User",
+
+                        "name": "user",
                         "description": "true",
                         "schema": {
                             "$ref": "#/definitions/models.User"
@@ -105,7 +132,11 @@
                         "description": "Fail to login"
                     },
                     "400": {
-                        "description": "Fail to unmarshal json"
+
+                        "description": "illegal account form"
+                    },
+                    "401": {
+                        "description": "Fail to login"
                     }
                 }
             }
@@ -133,6 +164,10 @@
                 },
                 "Kind": {
                     "type": "string"
+                },
+                "RegisterTime": {
+                    "type": "string",
+                    "format": "datetime"
                 },
                 "Remark": {
                     "type": "string"
