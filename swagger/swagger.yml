@@ -49,8 +49,12 @@ paths:
       responses:
         "200":
           description: Register successfully
-        "404":
-          description: Fail to register
+        "400":
+          description: Fail to unmarshal json
+        "403":
+          description: Fail to insert
+        "406":
+          description: Illegal account form
   /api/user/login:
     put:
       tags:
@@ -60,8 +64,10 @@ paths:
       responses:
         "200":
           description: Register successfully
+        "400":
+          description: Fail to unmarshal json
         "404":
-          description: Fail to register
+          description: Fail to login
 definitions:
   models.Card:
     title: Card

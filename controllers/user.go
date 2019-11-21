@@ -51,7 +51,9 @@ func (c *UserController) Get() {
 // @Title Register
 // @Description user register
 // @Success 200 Register successfully
-// @Failure 404 Fail to register
+// @Failure 400 Fail to unmarshal json
+// @Failure 406 Illegal account form
+// @Failure 403 Fail to insert
 // @router /join [post]
 func (c *UserController) Post() {
 	o := orm.NewOrm()
@@ -70,7 +72,7 @@ func (c *UserController) Post() {
 		return
 	}
 	//正则表达式匹配密码是否合法
-	pattern := "^[0-9a-zA-Z]+$"//匹配密码模式，仅允许字母数字
+	pattern := "^[0-9a-zA-Z]+$" //匹配密码模式，仅允许字母数字
 	ok, err := regexp.Match(pattern, []byte(user.Password))
 	if !ok {
 		models.Log.Error("Wrong Password")
@@ -96,9 +98,9 @@ func (c *UserController) Post() {
 //ML，登录，修改密码可调用ChangePw
 
 /*
-	*@function:得到6位长的验证码
-	*@return {[]byte} 验证码
-*/
+*@function:得到6位长的验证码
+*@return {[]byte} 验证码
+ */
 func GetRandCode() []byte {
 	var code []byte
 	number := []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
@@ -108,16 +110,16 @@ func GetRandCode() []byte {
 	for i := 0; i < 6; i++ {
 		_, _ = fmt.Fprintf(&sb, "%d", number[rand.Intn(size)])
 	}
-	code=[]byte(sb.String())
+	code = []byte(sb.String())
 	return code
 }
 
 /*
-	*@function:发送验证码给target邮箱
-	*@param {string} 目标邮箱
-	*@return {[]byte}vcode，{error}err
-*/
-func SendEmail(target string) ( []byte, error) {
+*@function:发送验证码给target邮箱
+*@param {string} 目标邮箱
+*@return {[]byte}vcode，{error}err
+ */
+func SendEmail(target string) ([]byte, error) {
 	//产生验证码
 	vcode := GetRandCode()
 	if len(vcode) != 6 {
@@ -132,7 +134,7 @@ func SendEmail(target string) ( []byte, error) {
 	m.SetHeader("Subject", "Verify your device")                    //设置主题
 	m.SetBody("text/html", content)                                 //设置主体内容
 	m.SetHeader("To", m.FormatAddress(target, "收件人"))               //设置收件人
-	//连接邮箱服务器并发送邮件（先用ML的QQ邮箱）
+	//连接邮箱服务器并发送邮件
 	d := gomail.NewPlainDialer("smtp.163.com", 465, "gfbankend@163.com", "ahz12345")
 
 	if err := d.DialAndSend(m); err != nil {
@@ -145,7 +147,8 @@ func SendEmail(target string) ( []byte, error) {
 // @Title Login
 // @Description user login
 // @Success 200 Register successfully
-// @Failure 404 Fail to register
+// @Failure 404 Fail to login
+// @Failure 400 Fail to unmarshal json
 // @router /login [put]
 func (c *UserController) Put() {
 	o := orm.NewOrm()
@@ -159,12 +162,13 @@ func (c *UserController) Put() {
 	}
 	fmt.Println(user)
 	//查询用户信息是否与数据库匹配(现在匹配有bug，必须同时邮件、手机、密码）
-	if err := o.Read(&user,"mail","tel","password"); err != nil {
-		models.Log.Error("read error: ", err)
+	err1 := o.Read(&user, "mail", "password") //判断邮箱加密码
+	err2 := o.Read(&user, "tel", "password") //判断手机加密码
+	if err1 != nil && err2 != nil {
+		models.Log.Error("read error: ", err2, err1)
 		c.Ctx.ResponseWriter.WriteHeader(404) //读取用户信息错误
 	}
-
-	c.Ctx.ResponseWriter.WriteHeader(200)//信息匹配登录成功
+	c.Ctx.ResponseWriter.WriteHeader(200) //信息匹配登录成功
 }
 
 //ZJN，显示所有被删卡片
