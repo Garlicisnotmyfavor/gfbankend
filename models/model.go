@@ -28,11 +28,11 @@ type User struct {
 }
 
 type Enterprise struct {
-	Id          string `orm:"pk"`
+	Id          string `orm:"unique"`
 	IsLocal     string `orm:"column(is_local)"`
-	Type        string
+	Type        string 
 	RegisterNum string `orm:"column(register_num)"`
-	Name        string
+	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
 }
