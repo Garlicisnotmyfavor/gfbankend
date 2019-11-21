@@ -97,10 +97,10 @@ func (c *CardController) Put() {
 
 // swagger注解配置
 // @Title Get
-// @Param Ename query string true "enterprise_name"
+// @Param Ename query string true "enterprise_name"   
 // @Description get help message by the given enterprise_name
-// @Success 200
-// @Failure 404 read error
+// @Success 200 
+// @Failure 404 read error 
 // @router /card/help/:Ename [get]
 func (c *CardController) Help() {
 	EName := c.Ctx.Input.Param(":Ename")
