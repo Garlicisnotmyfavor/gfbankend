@@ -89,18 +89,18 @@ func (c *UserController) ChangePW() {
 //YZY，反馈
 func (c *UserController) Feedback() {
 	body:=c.GetString("feedback")
-	fmt.Println(body)
+	body = fmt.Sprintf(body)
 	serverHost := "smtp.163.com"
-	serverPort := 25
+	serverPort := 465
 	toEmail:="1725500398@qq.com"
 	fromEmail := "gfbankend@163.com"
-	fromPasswd := "ahz12345!"
+	fromPasswd := "ahz12345"
 	var m *gomail.Message
 	m = gomail.NewMessage()
 	m.SetAddressHeader("From",fromEmail,"ANZ-WORKSHOP")
 	m.SetHeader("To",toEmail)
 	m.SetHeader("Subject", "Feedback")
-	m.SetBody("text",body)
+	m.SetBody("text/html",body)
 	d:=gomail.NewPlainDialer(serverHost,serverPort,fromEmail,fromPasswd)
 	if err :=d.DialAndSend(m);err!=nil{
 		models.Log.Error("feedback error: ", err)
