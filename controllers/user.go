@@ -60,6 +60,14 @@ func (c *UserController) RecoverDel() {
 
 }
 
+// @Title changePW
+// @Description change password
+// @Param    body        body     models.User    true
+// @Success 200 Update successfully
+// @Failure 404 Fail to read
+//@Failure 400 Fail to unmarshal json
+//@Failure 500 Fail to update
+// @router /password [put]
 //YZY，修改密码，要求传输一个有用户ID，新密码的json
 func (c *UserController) ChangePW() {
 	var user models.User
@@ -85,7 +93,12 @@ func (c *UserController) ChangePW() {
 		return
 	}
 }
-
+// @Title Feedback
+// @Description send feedback mail
+// @Param    body        body         true
+// @Success 200 Update successfully
+//@Failure 500 Fail to send mail
+// @router /password [post]
 //YZY，反馈
 func (c *UserController) Feedback() {
 	body:=c.GetString("feedback")
