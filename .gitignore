@@ -1,3 +1,4 @@
 *.exe
 routers/commentsRouter_controllers.go
-lastupdate.tmp
+.idea/
+*.tmp
