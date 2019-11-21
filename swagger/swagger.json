@@ -78,12 +78,12 @@
             }
         },
         "/api/user/card/{id}": {
-            "get": {
+            "delete": {
                 "tags": [
                     "api/user"
                 ],
-                "description": "get card",
-                "operationId": "CardController.Get"
+                "description": "delete card",
+                "operationId": "CardController.Delete"
             }
         },
         "/api/user/join": {
@@ -95,9 +95,9 @@
                 "operationId": "UserController.Register",
                 "parameters": [
                     {
-                        "in": "user",
-                        "name": "body",
-                        "description": "true",
+                        "in": "body",
+                        "name": "user",
+                        "description": "need",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }

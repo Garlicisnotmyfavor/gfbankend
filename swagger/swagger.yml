@@ -35,11 +35,11 @@ paths:
       description: insert card
       operationId: CardController.Post
   /api/user/card/{id}:
-    get:
+    delete:
       tags:
       - api/user
-      description: get card
-      operationId: CardController.Get
+      description: delete card
+      operationId: CardController.Delete
   /api/user/card/help/{Ename}:
     get:
       tags:
@@ -64,9 +64,9 @@ paths:
       description: user register
       operationId: UserController.Register
       parameters:
-      - in: user
-        name: body
-        description: "true"
+      - in: body
+        name: user
+        description: need
         schema:
           $ref: '#/definitions/models.User'
       responses:
