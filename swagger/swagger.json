@@ -97,7 +97,7 @@
                     {
                         "in": "body",
                         "name": "user",
-                        "description": "need",
+                        "description": "true",
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
@@ -131,9 +131,9 @@
                         "description": "Register successfully"
                     },
                     "400": {
-                        "description": "Fail to unmarshal json"
+                        "description": "illegal account form"
                     },
-                    "404": {
+                    "401": {
                         "description": "Fail to login"
                     }
                 }
