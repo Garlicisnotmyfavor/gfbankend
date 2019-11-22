@@ -57,7 +57,7 @@ func (c *UserController) Get() {
 	c.Ctx.Output.Header("Content-Disposition",fmt.Sprintf("inline; filename=\"%s\"",img))
 	file, err := ioutil.ReadFile(img)
 	if err != nil {
-		models.Log.Error("read error", err) //读取用户卡片信息失败
+		models.Log.Error("read error", err) //未找到对应图片
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
@@ -66,18 +66,23 @@ func (c *UserController) Get() {
 }
 
 
-func (c *UserController) UpALL() {
+func (c *UserController) UpAvatar() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
-	tmpfile, fheader, err  := c.Ctx.Request.FormFile("avatar")   // u.GetFile("123") 效果相同  “123”是二进制流的键名.获取上传的文件
+	userId:=c.GetString("id")
+	tmpFile, fHeader, err  := c.Ctx.Request.FormFile("avatar")
 	if err != nil{
-		panic(err)
+		models.Log.Error("read error", err) //读取用户卡片信息失败
+		c.Ctx.ResponseWriter.WriteHeader(400)
 	}
-	defer tmpfile.Close()  //关闭上传的文件，不然的话会出现临时文件不能清除的情况
-	path := "/GF/User/avatars" +".jpg"  //设置保存路径
-	beego.Info("Header:", fheader.Header) //map[Content-Disposition:[form-data; name="123"; filename="upimage.jpg"] Content-Type:[image/jpeg]]
-	beego.Info("Size:", fheader.Size)    //114353
-	beego.Info("Filename:", fheader.Filename)  //upimage.jpg
-	c.SaveToFile("123", path)
+	defer tmpFile.Close()                     //关闭上传的文件，不然的话会出现临时文件不能清除的情况
+	savePath := "/GF/User/avatars" +userId+".jpg"        //设置保存路径
+	beego.Info("Header:", fHeader.Header)     //map[Content-Disposition:[form-data; name="123"; filename="upimage.jpg"] Content-Type:[image/jpeg]]
+	beego.Info("Size:", fHeader.Size)         //114353
+	beego.Info("Filename:", fHeader.Filename) //upimage.jpg
+	if err=c.SaveToFile("avatar", savePath);err !=nil{
+		models.Log.Error("read error", err) //存储图片失败
+		c.Ctx.ResponseWriter.WriteHeader(500)
+	}
 }
 //ML，用户注册
 func (c *UserController) Post() {
