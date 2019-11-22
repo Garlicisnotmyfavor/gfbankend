@@ -74,16 +74,20 @@ func (c *UserController) UpAvatar() {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(400)
 	}
-	defer tmpFile.Close()                     //关闭上传的文件，不然的话会出现临时文件不能清除的情况
 	savePath := "/GF/User/avatars" +userId+".jpg"        //设置保存路径
 	beego.Info("Header:", fHeader.Header)     //map[Content-Disposition:[form-data; name="123"; filename="upimage.jpg"] Content-Type:[image/jpeg]]
 	beego.Info("Size:", fHeader.Size)         //114353
 	beego.Info("Filename:", fHeader.Filename) //upimage.jpg
 	if err=c.SaveToFile("avatar", savePath);err !=nil{
-		models.Log.Error("read error", err) //存储图片失败
+		models.Log.Error("save error", err) //存储图片失败
 		c.Ctx.ResponseWriter.WriteHeader(500)
 	}
+	if err:=tmpFile.Close();err!=nil {
+		models.Log.Error("close error", err) //存储图片失败
+		c.Ctx.ResponseWriter.WriteHeader(502)
+	}                   //关闭上传的文件，不然的话会出现临时文件不能清除的情况
 }
+
 //ML，用户注册
 func (c *UserController) Post() {
 
