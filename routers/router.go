@@ -35,7 +35,7 @@ func init() {
 				beego.NSRouter("/all", &controllers.UserController{}, "get:GetAllCard"), //显示所有卡片
 				beego.NSRouter("/help/:id", &controllers.CardController{}, "get:Help"),  //单张卡片帮助信息
 			),
-			beego.NSRouter("/", &controllers.UserController{}),                               //get 返回用户资料
+			beego.NSRouter("/:id", &controllers.UserController{}),                               //get 返回用户资料
 			beego.NSRouter("/join", &controllers.UserController{}),                           //post 用户注册
 			beego.NSRouter("/login", &controllers.UserController{}),                          //put 用户登录
 			beego.NSRouter("/logout", &controllers.UserController{}),                         //delete 用户退出登录
@@ -43,6 +43,7 @@ func init() {
 			beego.NSRouter("/feedback", &controllers.UserController{}, "post:Feedback"),      //反馈
 			beego.NSRouter("/garbage", &controllers.UserController{}, "get:GetDel"),          //显示所有被删除卡片
 			beego.NSRouter("/garbage/:id", &controllers.UserController{}, "post:RecoverDel"), //恢复被选中卡片
+			beego.NSRouter("/avatar", &controllers.UserController{}),
 		),
 	)
 	beego.AddNamespace(ns)
