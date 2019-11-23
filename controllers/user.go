@@ -67,8 +67,8 @@ func (c *UserController) UpAvatar() {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(400)
 	}
-	savePath := "D:/" +userId+".jpg"
-	//savePath := "/root/gfbankend/User/avatar/" +userId+".jpg"        //设置保存路径
+	//savePath := "D:/" +userId+".jpg"
+	savePath := "/root/gfbankend/User/avatar/" +userId+".jpg"        //设置保存路径
 	beego.Info("Header:", fHeader.Header)     //map[Content-Disposition:[form-data; name="123"; filename="upimage.jpg"] Content-Type:[image/jpeg]]
 	beego.Info("Size:", fHeader.Size)         //114353
 	beego.Info("Filename:", fHeader.Filename) //upimage.jpg
