@@ -43,7 +43,7 @@ func init() {
 			beego.NSRouter("/feedback", &controllers.UserController{}, "post:Feedback"),      //反馈
 			beego.NSRouter("/garbage", &controllers.UserController{}, "get:GetDel"),          //显示所有被删除卡片
 			beego.NSRouter("/garbage/:id", &controllers.UserController{}, "post:RecoverDel"), //恢复被选中卡片
-			beego.NSRouter("/avatar", &controllers.UserController{}),
+			beego.NSRouter("/avatar", &controllers.UserController{},"post:UpAvatar"),
 		),
 	)
 	beego.AddNamespace(ns)

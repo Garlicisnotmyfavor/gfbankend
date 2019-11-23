@@ -40,18 +40,11 @@ func (c *UserController) GetAllCard() {
 //YZY，返回用户资料
 func (c *UserController) Get() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
-	userId := c.GetString("id") //获取需要上传的文件文件名
+	userId := c.Ctx.Input.Param(":id") //获取需要上传的文件文件名
 	filename:=userId+".jpg"
-	//查看文件名类型是否正确
-//	picture := strings.Split(userId,".") //读取到字符串，并以.符号分隔开
-//	layout := strings.ToLower(picture[len(picture)-1]) //把字母字符转换成小写，非字母字符不做出处理,返回此字符串转换为小写形式的副本。
-//	if layout != "jpg" {  //1533398400000
-//		models.Log.Error("format error", layout) //读取用户卡片信息失败
-//		c.Ctx.ResponseWriter.WriteHeader(406)
-//		return
-//	}
-	//查看本及其上面是否存在需要的图片
-	readPath := "/GF/User/avatars/"
+	//查看是否存在需要的图片
+ //   readPath :="D:/"
+    readPath := "/root/gfbankend/User/avatar/"
 	img:= path.Join(readPath,filename)
 	c.Ctx.Output.Header("Content-Type", "image/jpg")
 	c.Ctx.Output.Header("Content-Disposition",fmt.Sprintf("inline; filename=\"%s\"",img))
@@ -61,20 +54,21 @@ func (c *UserController) Get() {
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
-	c.Ctx.WriteString(string(file))
-	//c.Data["avatar"]=string(file)
+	//c.Ctx.WriteString(string(file))
+	c.Data["avatar"]=string(file)
 }
 
 
 func (c *UserController) UpAvatar() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
-	userId:=c.GetString("id")
+    userId:=c.GetString("id")
 	tmpFile, fHeader, err  := c.Ctx.Request.FormFile("avatar")
 	if err != nil{
 		models.Log.Error("read error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(400)
 	}
-	savePath := "/GF/User/avatars" +userId+".jpg"        //设置保存路径
+	savePath := "D:/" +userId+".jpg"
+	//savePath := "/root/gfbankend/User/avatar/" +userId+".jpg"        //设置保存路径
 	beego.Info("Header:", fHeader.Header)     //map[Content-Disposition:[form-data; name="123"; filename="upimage.jpg"] Content-Type:[image/jpeg]]
 	beego.Info("Size:", fHeader.Size)         //114353
 	beego.Info("Filename:", fHeader.Filename) //upimage.jpg
