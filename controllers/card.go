@@ -92,15 +92,39 @@ func (c *CardController) Delete() {
 
 //GZH，修改备注
 func (c *CardController) Put() {
-
+	// 接收数据
+	id := c.Ctx.Input.Param(":id")
+	remark := c.GetString("remark")
+	if remark == "" {
+		// remark参数为空，设置400状态码
+		c.Ctx.Output.SetStatus(400)
+	} else {
+		o := orm.NewOrm()
+		card := models.Card{Id: id}
+		err := o.Read(&card);
+		if err == orm.ErrNoRows {
+			c.Ctx.Output.SetStatus(404)
+		} else if err == orm.ErrMissPK {
+			c.Ctx.Output.SetStatus(404)
+		} else {
+			// 查到了该记录，进行赋值
+			card.Remark = remark
+			// 更新记录
+			_, _ = o.Update(&card)
+			// 设置成功响应
+			c.Ctx.Output.SetStatus(200)
+			c.Data["json"] = card
+		}
+	}
+	c.ServeJSON()
 }
 
 // swagger注解配置
 // @Title Get
-// @Param Ename query string true "enterprise_name"   
+// @Param Ename query string true "enterprise_name"
 // @Description get help message by the given enterprise_name
-// @Success 200 
-// @Failure 404 read error 
+// @Success 200
+// @Failure 404 read error
 // @router /card/help/:Ename [get]
 func (c *CardController) Help() {
 	EName := c.Ctx.Input.Param(":Ename")
