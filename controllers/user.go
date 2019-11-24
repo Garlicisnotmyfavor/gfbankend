@@ -13,7 +13,6 @@ import (
 	"regexp"
 	"strings"
 	"time"
-	"github.com/go-gomail/gomail"
 	"io/ioutil"
 	"path"
 )
@@ -45,7 +44,12 @@ func (c *UserController) GetAllCard() {
 	c.ServeJSON()
 }
 
-//YZY，返回用户资料
+// @Title Get
+// @Description get current user's profile
+// @Param id models.User.id  true
+// @Success 200 get successfully
+// @Failure 404 Fail to find picture
+// @router / [get]
 func (c *UserController) Get() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
 	userId := c.Ctx.Input.Param(":id") //获取需要上传的文件文件名
@@ -66,7 +70,13 @@ func (c *UserController) Get() {
 	c.Data["avatar"]=string(file)
 }
 
-
+// @Title UpAvatar
+// @Description upload avatar
+// @Param id  models.User.Id avatar file
+// @Success 200 upload successfully
+// @Failure 500 Fail to save picture
+// @Failure 502 Fail to close uploading file
+// @router /avatar UpAvatar[post]
 func (c *UserController) UpAvatar() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
     userId:=c.GetString("id")
