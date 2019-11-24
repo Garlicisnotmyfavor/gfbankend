@@ -49,7 +49,7 @@ func (c *UserController) GetAllCard() {
 // @Param id models.User.id  true
 // @Success 200 get successfully
 // @Failure 404 Fail to find picture
-// @router / [get]
+// @router /:id  [get]
 func (c *UserController) Get() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
 	userId := c.Ctx.Input.Param(":id") //获取需要上传的文件文件名
