@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	"time"
-	"fmt"
 )
 
 type CardController struct {
@@ -91,31 +91,45 @@ func (c *CardController) Delete() {
 }
 
 //GZH，修改备注
+//@swagger注解配置
+//@Title Put
+//@Description edit cards' remark
+//@Success 200
+//@remark parameter is empty 400
+//@Failure 403
+//@router  /card/:id/remark  [put]
 func (c *CardController) Put() {
 	// 接收数据
 	id := c.Ctx.Input.Param(":id")
 	remark := c.GetString("remark")
+
 	if remark == "" {
 		// remark参数为空，设置400状态码
-		c.Ctx.Output.SetStatus(400)
-	} else {
-		o := orm.NewOrm()
-		card := models.Card{Id: id}
-		err := o.Read(&card);
-		if err == orm.ErrNoRows {
-			c.Ctx.Output.SetStatus(404)
-		} else if err == orm.ErrMissPK {
-			c.Ctx.Output.SetStatus(404)
-		} else {
-			// 查到了该记录，进行赋值
-			card.Remark = remark
-			// 更新记录
-			_, _ = o.Update(&card)
-			// 设置成功响应
-			c.Ctx.Output.SetStatus(200)
-			c.Data["json"] = card
-		}
+		models.Log.Error("param error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
 	}
+
+	o := orm.NewOrm()
+	card := models.Card{CardId: id}
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	// 查到了该记录，进行赋值
+	card.Remark = remark
+	// 更新记录
+	if _, err := o.Update(&card); err != nil {
+		// 更新失败
+		models.Log.Error("update error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
+	// 成功,设置成功响应
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	c.Data["json"] = card
+
 	c.ServeJSON()
 }
 
