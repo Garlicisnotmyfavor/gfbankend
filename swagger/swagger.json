@@ -62,7 +62,7 @@
               ],
               "responses": {
                 "200": {
-                  "description": "插入卡片成功"
+                  "description": "json{\"Id\":string,\"UserId\":string,\"Remark\":string} 插入卡片成功"
                 },
                 "400": {
                   "description": "解析json错误"
@@ -82,7 +82,15 @@
                     "api/user"
                 ],
                 "description": "get card",
-                "operationId": "CardController.Get"
+              "operationId": "CardController.Get",
+              "responses": {
+                "200": {
+                  "description": "",
+                  "schema": {
+                    "$ref": "#/definitions/models.Card"
+                  }
+                }
+              }
             }
         },
         "/api/user/join": {

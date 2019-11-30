@@ -16,6 +16,7 @@ type CardController struct {
 // @Title Get
 // @Description get card
 // @router /card/:id [get]
+// @Success 200 {object} models.Card
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
