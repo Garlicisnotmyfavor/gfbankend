@@ -32,9 +32,13 @@ func (c *CardController) Get() {
 	c.ServeJSON()
 }
 
-// swagger注解配置
-// @Title Post
-// @Description insert card
+// @Title write by gu yu hao
+// @Description 插入一张卡片
+// @Param card body  json{"Id":string,"UserId":string,"Remark":string} true "只需要给出卡Id以及用户Id和备注，即可解析出额外信息"
+// @Success 200 插入卡片成功
+// @Failure 400 解析json错误
+// @Failure 403 插入失败
+// @Failure 406 非法的用户ID
 // @router /card [post]
 func (c *CardController) Post() {
 	var card models.Card
@@ -57,7 +61,6 @@ func (c *CardController) Post() {
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
-
 
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")

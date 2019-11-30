@@ -47,8 +47,33 @@
                 "tags": [
                     "api/user"
                 ],
-                "description": "insert card",
-                "operationId": "CardController.Post"
+              "description": "插入一张卡片",
+              "operationId": "CardController.write by gu yu hao",
+              "parameters": [
+                {
+                  "in": "body",
+                  "name": "card",
+                  "description": "只需要给出卡Id以及用户Id和备注，即可解析出额外信息",
+                  "required": true,
+                  "schema": {
+                    "$ref": "#/definitions/json{Id:string,UserId:string,Remark:string}"
+                  }
+                }
+              ],
+              "responses": {
+                "200": {
+                  "description": "插入卡片成功"
+                },
+                "400": {
+                  "description": "解析json错误"
+                },
+                "403": {
+                  "description": "插入失败"
+                },
+                "406": {
+                  "description": "非法的用户ID"
+                }
+              }
             }
         },
         "/api/user/card/{id}": {
@@ -115,6 +140,10 @@
         }
     },
     "definitions": {
+      "json{Id:string,UserId:string,Remark:string}": {
+        "title": "json{Id:string,UserId:string,Remark:string}",
+        "type": "object"
+      },
         "models.Card": {
             "title": "Card",
             "type": "object",
