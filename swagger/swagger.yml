@@ -1,8 +1,4 @@
 swagger: "2.0"
-<<<<<<< HEAD
-info: {}
-paths: {}
-=======
 info:
   title: beego Test API
   description: beego has a very cool tools to autogenerate documents for your API
@@ -19,7 +15,7 @@ paths:
     get:
       tags:
       - api/user
-      description: show all cards(test2)
+      description: show all cards
       operationId: UserController.showAllCards
       parameters:
       - in: body
@@ -32,6 +28,69 @@ paths:
           description: Read successfully
         "404":
           description: Fail to read
+  /api/user/card:
+    post:
+      tags:
+      - api/user
+      description: insert card
+      operationId: CardController.Post
+  /api/user/card/{id}:
+    delete:
+      tags:
+      - api/user
+      description: delete card
+      operationId: CardController.Delete
+  /api/user/card/help/{Ename}:
+    get:
+      tags:
+      - api/user
+      description: get help message by the given enterprise_name
+      operationId: CardController.Get
+      parameters:
+      - in: query
+        name: Ename
+        description: enterprise_name
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: read error
+  /api/user/join:
+    post:
+      tags:
+      - api/user
+      description: user register
+      operationId: UserController.Register
+      parameters:
+      - in: body
+        name: user
+        description: "true"
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: Register successfully
+        "400":
+          description: Fail to unmarshal json
+        "403":
+          description: Fail to insert
+        "406":
+          description: Illegal account form
+  /api/user/login:
+    put:
+      tags:
+      - api/user
+      description: user login
+      operationId: UserController.Login
+      responses:
+        "200":
+          description: Register successfully
+        "400":
+          description: illegal account form
+        "401":
+          description: Fail to login
 definitions:
   models.Card:
     title: Card
@@ -49,6 +108,9 @@ definitions:
         type: string
       Kind:
         type: string
+      RegisterTime:
+        type: string
+        format: datetime
       Remark:
         type: string
       SerialNum:
@@ -59,4 +121,15 @@ definitions:
         type: string
       UserId:
         type: string
->>>>>>> 6bd6c64bc49bd5455df0fcd8be7d8a1716ed6dac
+  models.User:
+    title: User
+    type: object
+    properties:
+      Id:
+        type: string
+      Mail:
+        type: string
+      Password:
+        type: string
+      Tel:
+        type: string

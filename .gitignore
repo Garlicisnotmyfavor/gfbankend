@@ -1,0 +1,4 @@
+*.exe
+routers/commentsRouter_controllers.go
+.idea/
+*.tmp
