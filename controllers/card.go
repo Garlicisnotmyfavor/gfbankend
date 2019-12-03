@@ -105,7 +105,7 @@ func (c *CardController) Put() {
 	remark := c.GetString("remark")
 	if remark == "" {
 		// remark参数为空，设置400状态码
-		models.Log.Error("param error: ", err)
+		models.Log.Error("param error: ", err) //err定义？
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
