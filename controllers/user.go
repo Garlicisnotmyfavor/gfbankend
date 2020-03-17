@@ -11,6 +11,7 @@ type UserController struct {
 	beego.Controller
 }
 
+//显示所有卡片，修改输出的信息
 // @Title showAllCards
 // @Description show all cards
 // @Param    body        body     models.Card    true

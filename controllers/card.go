@@ -14,6 +14,7 @@ type CardController struct {
 	beego.Controller
 }
 
+//查询指定id对应的卡片——卡片的类型信息，所有信息
 func (c *CardController) Get() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -31,6 +32,7 @@ func (c *CardController) Get() {
 	c.ServeJSON()
 }
 
+//添加卡片 在user表里添加此user和card的关联
 func (c *CardController) Post() {
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
@@ -53,6 +55,15 @@ func (c *CardController) Post() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
+//修改卡片的id和公司名——我们认为不需要这个
+
+//nfc扫码操作积分
+func (c *CardController) Get1(){}
+
+//对优惠券的操作
+func (c *CardController) Get2(){}
+
+//删除卡片 ——超过时限的一些卡
 func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
