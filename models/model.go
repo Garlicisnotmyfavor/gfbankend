@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+//zyj
 type Card struct {
 	Id         string `orm:"pk"`
 	UserId     string `orm:"column(user_id);"` //rel(fk)

@@ -33,6 +33,7 @@ func init() {
 		Log.Error("fail to register database", err)
 	}
 	//下面要修改，根据数据库设计
+	//zjn
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(User))
 	orm.RegisterModel(new(Enterprise))

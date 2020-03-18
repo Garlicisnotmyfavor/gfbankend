@@ -11,13 +11,14 @@ type UserController struct {
 	beego.Controller
 }
 
-//显示所有卡片，修改输出的信息
+//显示所有卡片，修改输出的信息，不需要详细到卷
 // @Title showAllCards
 // @Description show all cards
 // @Param    body        body     models.Card    true
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
 // @router / [get]
+// zyc
 func (c *UserController) Get() {
 	var cardList []orm.Params                 //存储所有卡片信息
 	sql := fmt.Sprintf(`select * from card;`) //需要卡的table名

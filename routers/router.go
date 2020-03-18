@@ -19,6 +19,7 @@ func init() {
 	beego.Router("/api/user/", &controllers.UserController{})
 }
 
+//zjn ml zyj
 //func init() {
 //	ns := beego.NewNamespace("/v1",
 //		beego.NSNamespace("/api/user/card/:id",
