@@ -1,4 +1,4 @@
 *.exe
 routers/commentsRouter*.go
 .idea/
-*.tmp
+**/*.tmp
