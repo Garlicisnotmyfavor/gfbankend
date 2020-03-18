@@ -144,24 +144,24 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 }
 
 //将card结构中的Id解析出对应的含义赋值给card的其他导出属性
-func (card *Card) CardParse() error {
-	if len(card.Id) != 16 {
-		return errors.New("INVALID LENGTH CARD ID")
-	}
-	var ok bool
-	card.EName, ok = CardParseMaps.EnterpriseMap[card.Id[0:3]]
-	card.Kind, ok = CardParseMaps.KindMap[card.Id[3:4]]
-	card.Style = card.Id[4:6]
-	card.State, ok = CardParseMaps.StateMap[card.Id[6:7]]
-	card.City, ok = CardParseMaps.CityMap[card.Id[6:10]]
-	card.FactoryNum = card.Id[10:12]
-	card.BatchNum = card.Id[12:13]
-	card.SerialNum = card.Id[13:16]
-	if !ok {
-		return errors.New("INVALID CONTENT CARD ID")
-	}
-	return nil
-}
+// func (card *Card) CardParse() error {
+// 	if len(card.Id) != 16 {
+// 		return errors.New("INVALID LENGTH CARD ID")
+// 	}
+// 	var ok bool
+// 	card.EName, ok = CardParseMaps.EnterpriseMap[card.Id[0:3]]
+// 	card.Kind, ok = CardParseMaps.KindMap[card.Id[3:4]]
+// 	card.Style = card.Id[4:6]
+// 	card.State, ok = CardParseMaps.StateMap[card.Id[6:7]]
+// 	card.City, ok = CardParseMaps.CityMap[card.Id[6:10]]
+// 	card.FactoryNum = card.Id[10:12]
+// 	card.BatchNum = card.Id[12:13]
+// 	card.SerialNum = card.Id[13:16]
+// 	if !ok {
+// 		return errors.New("INVALID CONTENT CARD ID")
+// 	}
+// 	return nil
+// }
 
 //ML 解析生成用户ID
 func (user *User) UserParse() error {
