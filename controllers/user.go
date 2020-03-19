@@ -35,8 +35,7 @@ func (c *UserController) GetAllCard() {
 	//使用orm接口查询相关信息
 	o := orm.NewOrm()
 	qt := o.QueryTable("card")
-	//取出card表中所有信息，放入cardList中，如果只用给一部分信息，用
-	//qs.Filter("User__Name", "slene").All(&posts)
+	//取出card表中所有信息，放入cardList中
 	_, err := qt.All(&cardList)
 	if err != nil {
 		models.Log.Error("read error", err) //读取用户卡片信息失败

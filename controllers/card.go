@@ -20,7 +20,8 @@ func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	card := models.Card{Id: id}
+	//设置一个和cardid对应的数据类型
+	card := models.Card{CardId: id}
 	// 查询记录
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
