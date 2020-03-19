@@ -15,12 +15,12 @@ type CardController struct {
 }
 
 //查询指定card_id对应的卡片的所有信息
-//zyc
+//zjn
 func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	//设置一个和cardid对应的数据类型
+	//设置一个填充了cardid的card结构
 	card := models.Card{CardId: id}
 	// 查询记录
 	if err := o.Read(&card); err != nil {
@@ -28,9 +28,17 @@ func (c *CardController) Get_cardidinfo() {
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
 		return
 	}
+	//若查到card这一列后，需要找到它的卡的积分或卷的规则
+	stra := models.StrategyTable{Strategy: card.Strategy}
+	if err := o.Read(&stra); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
+		return
+	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
-	//一张卡的信息可能不是card表就可以表出来的
-	c.Data["json"] = card
+	
+	//怎么传两个字段
+	c.Data["json"] = card, stra
 	c.ServeJSON()
 }
 
