@@ -8,6 +8,8 @@ import (
 	"github.com/gfbankend/models"
 	"github.com/pkg/errors"
 	"time"
+	"strings"
+	"strconv"
 )
 
 type CardController struct {
@@ -68,11 +70,58 @@ func (c *CardController) use_score(){}
 
 //对优惠券的操作
 //使用优惠卷
-//前端返回给我优惠券对象的信息
+//前端返回给我优惠券对象的信息以及优惠券的信息
 //zyj
-func (c *CardController) coupons(){
-	
+
+// if err := o.Read(&card); err != nil {
+// 	models.Log.Error("read error: ", err)
+// 	c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+// 	return
+// }
+func (c *CardController) coupons() {
+	var info struct{CardID string;CouponsID string;Increment int}
+	var card models.Card
+	body := c.Ctx.Input.RequestBody
+	if err:= json.Unmarshal(body,&body); err != nil{
+		models.Log.Error("unmarshal error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return 
+	}
+	card.CardId = info.CardID
+	o := orm.NewOrm()
+	if err:= o.Read(&card); err != nil{
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
+	}
+	couponsList := strings.Split(card.CouponsList," ")
+	couponsNumList := strings.Split(card.CouponsNum," ")
+	for i ,value  := range couponsList{
+		if value==info.CouponsID{
+			var temp int
+			if temp,err := strconv.Atoi(couponsNumList[i]);err!=nil{
+				models.Log.Error("invalid data: ",err)
+				c.Ctx.ResponseWriter.WriteHeader(406) //非法数据
+				return 
+			}
+			temp += info.Increment
+			couponsNumList[i] = strconv.Itoa(temp)
+		}
+	}
+	newCouponsNum := strings.Join(couponsNumList," ")
+	card.CouponsNum = newCouponsNum
+	if _ , err := o.Update(&card);err!=nil{
+		models.Log.Error("invalid data: ",err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		return 
+	}
 }
+
+//生成新的代表优惠券数量的字符串
+func makeCouponsNum(card *models.Card,couponsID string,increment int) {
+
+}
+
 
 //删除卡片 手动删除选项
 func (c *CardController) Delete() {

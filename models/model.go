@@ -14,14 +14,14 @@ import (
 type Card struct {
 	CardId        string `orm:"pk;type(char(16))" valid:"Required;Length(16)"`  //CardId 编码暂时按照上学期的编码
 	UserId        string `orm:"type(char(13))" valid:"Required;Length(13)"`  //UserId 必须是由用户给出的，因为CardId中不包含UserId
-	CouponsList  string `orm:"null"`  //优惠券的种类的列表,种类与种类之间用逗号隔开，种类极其数量CouponsNum的下标相同
+	CouponsList  string `orm:"null"`  //优惠券的种类的列表,种类与种类之间用空格隔开，种类极其数量CouponsNum的下标相同
 	CardType      string `valid:"Required"`  //卡的类型
 	Enterprise    string `valid:"Required"`  
 	State         string `valid:"Required"`
 	City          string `valid:"Required"`
 	Money         int    `orm:"default(0)"`
 	ScoreNum      int    `orm:"default(0)"`
-	CouponsNum    string    `orm:"null"`   //每一种种类的数量，数量与数量之间用逗号隔开
+	CouponsNum    string    `orm:"null"`   //每一种种类的数量，数量与数量之间用空格隔开
 	ExpireTime    time.Time `valid:"Required"`
 	DelTime       time.Time `orm:"null"`
 	CardOrder     int    `valid:"Required"`  //该商家合作以来发布的第N条卡片
