@@ -35,7 +35,7 @@ func init() {
 	//下面要修改，根据数据库设计
 	//zjn
 	orm.RegisterModel(new(Card)) //登记orm
-	orm.RegisterModel(new(User))
+	orm.RegisterModel(new(StrategyTable))
 	orm.RegisterModel(new(Enterprise))
-	orm.RegisterModel(new(DelCard))
+	orm.RegisterModel(new(CardParseStruct))
 }
