@@ -59,18 +59,71 @@ func (c *CardController) Post() {
 
 //修改卡片的id和公司名——我们认为不需要这个
 //ml
-func (c *CardController) modify_card(){}
+//@Title ModifyCardInfo
+//@Description 修改卡片的卡号，公司
+//@Param	id	query	string	true	原本的卡号
+//@Success 200	{object} models.Card 	修改成功，返回新卡片对象
+//@Failure 400	body解析错误
+//@Failure 404	卡片信息读取错误
+//@Failure 500	数据库更新操作错误
+//@router  /card/:id/info	[put]
+func (c *CardController) ModifyCardInfo() {
+	oldCardId := c.Ctx.Input.Param(":id")
+	body := c.Ctx.Input.RequestBody
+	var newCard, oldCard models.Card
+	oldCard.CardId = oldCardId
+	//解析body
+	if err := json.Unmarshal(body, &newCard); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	o := orm.NewOrm()
+	//读取原卡片
+	if err := o.Read(oldCard); err != nil {
+		models.Log.Error("sql read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	//读取新卡片
+	if err := o.Read(newCard); err != nil {
+		models.Log.Error("sql read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	//增加新卡片中UserId关联,并取消原卡片的关联
+	newCard.UserId = oldCard.UserId
+	oldCard.UserId = ""
+
+	_, err1 := o.Update(oldCard)
+	if err1 != nil {
+		models.Log.Error("update error: ", err1)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+	_, err2 := o.Update(newCard)
+	if err2 != nil {
+		models.Log.Error("update error: ", err2)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+
+	//修改成功，返回成功后的卡片对象
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	c.Data["json"] = newCard
+	c.ServeJSON()
+}
 
 //nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
 //给前端说一下
 //zjn
-func (c *CardController) use_score(){}
+func (c *CardController) use_score() {}
 
 //对优惠券的操作
 //使用优惠卷
 //前端返回给我优惠券对象的信息
 //zyj
-func (c *CardController) coupons(){}
+func (c *CardController) coupons() {}
 
 //删除卡片 手动删除选项
 func (c *CardController) Delete() {
