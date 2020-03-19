@@ -11,6 +11,8 @@ import (
 //mysql
 //结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
 
+//"001 002 003"
+//"1 2 3"
 type Card struct {
 	CardId        string `orm:"pk;type(char(16))" valid:"Required;Length(16)"`  //CardId 编码暂时按照上学期的编码
 	UserId        string `orm:"type(char(13))" valid:"Required;Length(13)"`  //UserId 必须是由用户给出的，因为CardId中不包含UserId
@@ -20,8 +22,9 @@ type Card struct {
 	State         string `valid:"Required"`
 	City          string `valid:"Required"`
 	Money         int    `orm:"default(0)"`
-	ScoreNum      int    `orm:"default(0)"`
-	CouponsNum    string    `orm:"null"`   //每一种种类的数量，数量与数量之间用空格隔开
+	ScoreNum      string  `orm:"null"`
+	ScoreList     string  `orm:"null"`
+	CouponsNum    string  `orm:"null"`   //每一种种类的数量，数量与数量之间用空格隔开
 	ExpireTime    time.Time `valid:"Required"`
 	DelTime       time.Time `orm:"null"`
 	CardOrder     int    `valid:"Required"`  //该商家合作以来发布的第N条卡片
@@ -33,8 +36,35 @@ type Card struct {
 type Coupons struct {
 	CouponsID      string `orm:"pk" valid:"Required"`
 	CouponDiscribe string `orm:"null"`
-	PointDiscribe  string `orm:"null"`  
 	Time            time.Time `valid:"Required"`
+}
+
+type Score struct {
+	ScoreID       string `orm:"pk" valid:"Required"`
+	ScoreDiscribe  string `orm:"null"`  
+	Time           time.Time `valid:"Required"`
+}
+
+type CardInfo struct {
+	CardId        string 
+	UserId        string 
+	CouponsList   []string 
+	CardType      string 
+	Enterprise    string 
+	State         string 
+	City          string 
+	Money         int    
+	ScoreNum      []string  
+	ScoreList     []string 
+	CouponsNum    []string  
+	ExpireTime    time.Time 
+	DelTime       time.Time 
+	CardOrder     int  
+	FactoryNum    int    
+	BatchNum      int    
+	SerialNum     int    
+	CouponsDetails []Coupons
+	ScoreDetails   []Score
 }
 
 type CardParseStruct struct {

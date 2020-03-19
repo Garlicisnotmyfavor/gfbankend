@@ -6,8 +6,8 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-	"github.com/pkg/errors"
-	"time"
+	_"github.com/pkg/errors"
+	_"time"
 	"strings"
 	"strconv"
 )
@@ -15,6 +15,20 @@ import (
 type CardController struct {
 	beego.Controller
 }
+
+/*
+func (c *CardController) Get_cardidinfo() {
+	//声明一个结构体
+	var jsonValue models.CardInfo
+	//取得卡的id
+	//根据卡的id从数据库中读取信息存储进一个临时结构体temp中
+	//从card结构体中的ScoreList，ScoreNum，CouponsList，CouponsNum 用strings.Split()进行分割
+	  生成四个数组scoreList，scoreNum，couponsList，couponsNum，把四个数组传进jsonValue
+	//for index,value := range scoreList{ //从数据库中寻找value对应的方法 //把那一列的数据添加到jsonValue的ScoreDetails中 } 
+	//for index,value := range CouponsList {//从数据库中寻找value对应的方法 //数据添加到jsonValue的CouponsDetails中}
+	//可以直接append
+}
+*/
 
 //查询指定card_id对应的卡片的所有信息
 //zjn
@@ -39,7 +53,7 @@ func (c *CardController) Get_cardidinfo() {
 	}
 	//若查到card这一列后，需要找到它的卡的积分或卷的规则
 	//后面需要用匹配的方式，解析出多个策略
-	
+	stra := models.Coupons{Coupons: card.Strategy}
 	if err := o.Read(&stra); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
