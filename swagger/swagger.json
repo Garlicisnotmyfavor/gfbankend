@@ -42,6 +42,37 @@
                 }
             }
         },
+        "/api/user/avatar": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "upload avatar",
+                "operationId": "UserController.UpAvatar",
+                "parameters": [
+                    {
+                        "in": "header",
+                        "name": "id",
+                        "description": "file",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "upload successfully"
+                    },
+                    "500": {
+                        "description": "Fail to save picture"
+                    },
+                    "502": {
+                        "description": "Fail to close uploading file"
+                    }
+                }
+            }
+        },
         "/api/user/card": {
             "post": {
                 "tags": [
@@ -61,7 +92,7 @@
                 "parameters": [
                     {
                         "in": "query",
-                        "name": "Ename",
+                        "name": "body",
                         "description": "enterprise_name",
                         "required": true,
                         "type": "string"
@@ -78,14 +109,15 @@
             }
         },
         "/api/user/card/{id}": {
-            "delete": {
+            "get": {
                 "tags": [
                     "api/user"
                 ],
-                "description": "delete card",
-                "operationId": "CardController.Delete"
+                "description": "get card",
+                "operationId": "CardController.Get"
             }
         },
+        "/api/user/card/{id}/remark": {},
         "/api/user/join": {
             "post": {
                 "tags": [
@@ -96,9 +128,9 @@
                 "parameters": [
                     {
                         "in": "body",
-
                         "name": "user",
-                        "description": "true",
+                        "description": "UserInfo",
+                        "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.User"
                         }
@@ -106,7 +138,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Register successfully"
+                        "description": "\"OK\"",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
                     },
                     "400": {
                         "description": "Fail to unmarshal json"
@@ -127,12 +162,22 @@
                 ],
                 "description": "user login",
                 "operationId": "UserController.Login",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "userInfo",
+                        "description": "给出账号，密码即可登录",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/UserJson"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
-                        "description": "Fail to login"
+                        "description": "Register successfully"
                     },
                     "400": {
-
                         "description": "illegal account form"
                     },
                     "401": {
@@ -140,9 +185,62 @@
                     }
                 }
             }
-        }
+        },
+        "/api/user/password": {
+            "put": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "change password",
+                "operationId": "UserController.changePW",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "true",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update successfully"
+                    },
+                    "400": {
+                        "description": "Fail to unmarshal json"
+                    },
+                    "404": {
+                        "description": "Fail to read"
+                    },
+                    "500": {
+                        "description": "Fail to update"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "send feedback mail",
+                "operationId": "UserController.Feedback",
+                "responses": {
+                    "200": {
+                        "description": "Update successfully"
+                    },
+                    "500": {
+                        "description": "Fail to send mail"
+                    }
+                }
+            }
+        },
+        "/api/user/{id}": {}
     },
     "definitions": {
+        "UserJson": {
+            "title": "UserJson",
+            "type": "object"
+        },
         "models.Card": {
             "title": "Card",
             "type": "object",

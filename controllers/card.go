@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	"github.com/pkg/errors"
 	"time"
 )
 
@@ -114,13 +115,13 @@ func (c *CardController) Put() {
 
 	if remark == "" {
 		// remark参数为空，设置400状态码
-		models.Log.Error("param error: ", err)
+		models.Log.Error("param error: ", errors.New("illegal remark"))
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
 
 	o := orm.NewOrm()
-	card := models.Card{CardId: id}
+	card := models.Card{Id: id}
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400)
@@ -144,7 +145,7 @@ func (c *CardController) Put() {
 
 // swagger注解配置
 // @Title Get
-// @Param Ename query string true "enterprise_name"
+// @Param body query string true "enterprise_name"
 // @Description get help message by the given enterprise_name
 // @Success 200
 // @Failure 404 read error

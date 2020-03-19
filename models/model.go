@@ -166,10 +166,10 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 // }
 
 //ML 解析生成用户ID
-func (user *User) UserParse() error {
-
-	return nil
-}
+//func (user *User) UserParse() error {
+//
+//	return nil
+//}
 
 func (enterprise *Enterprise) EnterpriseParse() error {
 	if len(enterprise.Id) != 5 {

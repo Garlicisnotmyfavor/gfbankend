@@ -30,11 +30,16 @@ type UserController struct {
 // @router / [get]
 //zyj
 func (c *UserController) GetAllCard() {
-	var cardList []orm.Params                 //存储所有卡片信息
-	sql := fmt.Sprintf(`select * from card;`) //需要卡的table名
+	// var cardList []orm.Params                 //存储所有卡片信息
+	var cardList []models.Card
+	// sql := fmt.Sprintf(`select * from card;`) //需要卡的table名
 	o := orm.NewOrm()
+	qt := o.QueryTable("card")
 	//根据sql指令将table中所有卡信息读入到carList中
-	_, err := o.Raw(sql).Values(&cardList)
+	// _, err := o.Raw(sql).Values(&cardList)
+
+	// get all cards info from MySql
+	_, err := qt.All(&cardList)
 	if err != nil {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(404)
@@ -48,7 +53,7 @@ func (c *UserController) GetAllCard() {
 
 // @Title Get
 // @Description get current user's profile
-// @Param id models.User.id  true
+// @Param id query models.User  true
 // @Success 200 get successfully
 // @Failure 404 Fail to find picture
 // @router /:id  [get]
@@ -74,11 +79,11 @@ func (c *UserController) Get() {
 
 // @Title UpAvatar
 // @Description upload avatar
-// @Param id  models.User.Id avatar file
+// @Param id  header models.User  true file
 // @Success 200 upload successfully
 // @Failure 500 Fail to save picture
 // @Failure 502 Fail to close uploading file
-// @router /avatar UpAvatar[post]
+// @router /avatar [post]
 func (c *UserController) UpAvatar() {
 	c.Ctx.ResponseWriter.Header().Set("Access-Control-Allow-Origin", c.Ctx.Request.Header.Get("Origin"))
     userId:=c.GetString("id")
@@ -105,8 +110,8 @@ func (c *UserController) UpAvatar() {
 //ML，用户注册
 // @Title Register
 // @Description user register
-// @Param user body models.User UserInfo true
-// @Success 200 Register successfully
+// @Param user body models.User  true UserInfo
+// @Success 200 {object} models.User "OK"
 // @Failure 400 Fail to unmarshal json
 // @Failure 406 Illegal account form
 // @Failure 403 Fail to insert
@@ -202,6 +207,7 @@ func SendEmail(target string) ([]byte, error) {
 
 // @Title Login
 // @Description user login
+// @Param userInfo body UserJson true "给出账号，密码即可登录"
 // @Success 200 Register successfully
 // @Failure 401 Fail to login
 // @Failure 400 illegal account form
@@ -214,27 +220,27 @@ func (c *UserController) Put() {
 	var uInfo map[string]string
 
 	//解析前端JSON数据获得账号密码
-	if err:=json.Unmarshal(body,&uInfo);err!=nil{
+	if err:=json.Unmarshal(body,&uInfo);err!=nil {
 		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
 
-	account:=[]byte(uInfo["account"])
-	user.Password=uInfo["password"]
+	account := []byte(uInfo["account"])
+	user.Password = uInfo["password"]
 
 	//正则表达式匹配模式
-	pattern1:="^[0-9]+$" //匹配手机号
+	pattern1 := "^[0-9]+$" //匹配手机号
 	pattern2 := "^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?.)+[a-z]{2,}$" //匹配邮箱
 
 	//判断是用户使用的是邮箱还是手机
-	isPhone,_:=regexp.Match(pattern1,account)
-	isMail,_:=regexp.Match(pattern2,account)
-	if isPhone{
+	isPhone,_ := regexp.Match(pattern1,account)
+	isMail,_ := regexp.Match(pattern2,account)
+	if isPhone {
 		user.Tel=string(account)
-	}else if isMail{
+	} else if isMail {
 		user.Mail=string(account)
-	}else{
+	} else {
 		models.Log.Error("illegal account")
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
@@ -243,7 +249,7 @@ func (c *UserController) Put() {
 	err1:=o.Read(&user,"mail","password")
 	err2:=o.Read(&user,"tel","password")
 	//用户信息错误
-	if err1!=nil&&err2!=nil{
+	if err1!=nil && err2!=nil{
 		models.Log.Error("read error",err1)
 		c.Ctx.ResponseWriter.WriteHeader(401)//登录失败
 		return
@@ -296,7 +302,6 @@ func (c *UserController) ChangePW() {
 }
 // @Title Feedback
 // @Description send feedback mail
-// @Param    body        body         true
 // @Success 200 Update successfully
 //@Failure 500 Fail to send mail
 // @router /password [post]
