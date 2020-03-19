@@ -35,9 +35,9 @@ func (c *CardController) Get_cardidinfo() {
 		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
 		return
 	}
-	//若查到card这一列后，需要找到它的卡的积分或卷的规则，但目前只针对一个策略
+	//若查到card这一列后，需要找到它的卡的积分或卷的规则
 	//后面需要用匹配的方式，解析出多个策略
-	stra := models.StrategyTable{Strategy: card.Strategy}
+	
 	if err := o.Read(&stra); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
