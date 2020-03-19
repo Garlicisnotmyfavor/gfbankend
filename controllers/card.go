@@ -16,6 +16,13 @@ type CardController struct {
 
 //查询指定card_id对应的卡片的所有信息
 //zjn
+//@Title give_card_all_info
+//@Description 将这张卡片的所有信息传出去
+//@Param	id	query	string	true	原本的卡号  我还不清楚这里的修改
+//@Success 200	{object} models.Card {object} model.Strategy	修改成功，返回新卡片对象和策略对象
+//@Failure 400	查询不到对应的卡
+//@Failure 404	查询不到对应的优惠策略
+//@router  /card/:id	[get]
 func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -25,10 +32,11 @@ func (c *CardController) Get_cardidinfo() {
 	// 查询记录
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
 		return
 	}
-	//若查到card这一列后，需要找到它的卡的积分或卷的规则
+	//若查到card这一列后，需要找到它的卡的积分或卷的规则，但目前只针对一个策略
+	//后面需要用匹配的方式，解析出多个策略
 	stra := models.StrategyTable{Strategy: card.Strategy}
 	if err := o.Read(&stra); err != nil {
 		models.Log.Error("read error: ", err)
@@ -37,33 +45,43 @@ func (c *CardController) Get_cardidinfo() {
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	
-	//怎么传两个字段
-	c.Data["json"] = card, stra
+	//怎么传两个字段？ stra
+	c.Data["json"] = card
 	c.ServeJSON()
 }
 
 //添加卡片 在user表里添加此user和card的关联
 //zjn
-func (c *CardController) Post() {
+//@Title addCard
+//@Description 将这个user的id和卡绑定
+//@Param	id	query	string	true	原本的卡号
+//@Success 200	{object} models.Card 	返回绑定的卡的大致信息
+//@Failure 403	绑定的卡片不存在
+//@router  /card/:id/add [get]
+func (c *CardController) addCard() {
+	//这里没有对比enterprise和cardid
+	id := c.Ctx.Input.Param(":id")
 	var card models.Card
-	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body, &card); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
-		return
-	}
-	if err := card.CardParse(); err != nil {
-		models.Log.Error("card parse error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(406) //非法的用户ID
-		return
-	}
+	card.CardId = id
+	//目前的逻辑不需要解析函数
+	//if err := card.CardParse(); err != nil {
+	//	models.Log.Error("card parse error: ", err)
+	//	c.Ctx.ResponseWriter.WriteHeader(406) //非法的用户ID
+	//	return
+	//}
 	o := orm.NewOrm()
-	if _, err := o.Insert(&card); err != nil {
-		models.Log.Error("insert error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(403) //插入错误
+	//用创建的新卡号查询是否在数据库中存在
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(403) //卡片不存在
 		return
 	}
+	//这里还没有具体设置user的id
+	card.UserId = "01"
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	//传回这个卡片的具体信息
+	c.Data["json"] = card
+	c.ServeJSON()
 }
 
 //修改卡片的id和公司名——我们认为不需要这个
