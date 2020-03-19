@@ -20,7 +20,7 @@ func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	card := models.Card{Id: id}
+	card := models.Card{CardId: id}
 	// 查询记录
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
@@ -57,7 +57,7 @@ func (c *CardController) Post() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
-//修改卡片的id和公司名——我们认为不需要这个
+//修改卡片的id和公司名--我们认为不需要这个
 //ml
 func (c *CardController) modify_card(){}
 
@@ -70,7 +70,9 @@ func (c *CardController) use_score(){}
 //使用优惠卷
 //前端返回给我优惠券对象的信息
 //zyj
-func (c *CardController) coupons(){}
+func (c *CardController) coupons(){
+	
+}
 
 //删除卡片 手动删除选项
 func (c *CardController) Delete() {

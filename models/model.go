@@ -4,6 +4,7 @@ package models
 import (
 	"errors"
 	 "time"
+	 "strconv"
 	 _"github.com/astaxie/beego/validation"
 )
 
@@ -12,22 +13,26 @@ import (
 type Card struct {
 	CardId        string `orm:"pk;type(char(16))" valid:"Required;Length(16)"`
 	UserId        string `orm:"type(char(13))" valid:"Required;Length(13)"`
-	Strategy      string `orm:"null"`
+	StrategyList  string `orm:"null"`
+	CardType      string `valid:"Required"`
 	Enterprise    string `valid:"Required"`
 	State         string `valid:"Required"`
 	City          string `valid:"Required"`
-	Money         int    `valid:"Required"`
-	ScoreNum      int    `valid:"Required"`
-	CouponsNum    int    `valid:"Required"`
+	Money         int    `orm:"default(0)"`
+	ScoreNum      int    `orm:"default(0)"`
+	CouponsNum    int    `orm:"default(0)"`
 	ExpireTime    time.Time `valid:"Required"`
 	DelTime       time.Time `orm:"null"`
+	CardOrder     int    `valid:"Required"`  //该商家合作以来发布的第N条卡片
+	FactoryNum    int    `valid:"Required"`
+	BatchNum      int    `valid:"Required"`
+	SerialNum     int    `valid:"Required"`
 }
 
 type StrategyTable struct {
 	Strategy      string `orm:"pk" valid:"Required"`
-	Type          string `valid:"Required"`
-	Coupon_discribe string `orm:"null"`
-	Point_discribe  string `orm:"null"`  
+	CouponDiscribe string `orm:"null"`
+	PointDiscribe  string `orm:"null"`  
 	Time            time.Time `valid:"Required"`
 }
 
@@ -53,29 +58,12 @@ type EnterpriseParseStruct struct {
 	TypeMap    map[string]string
 }
 
-// type Card struct {
-// 	Id            string `orm:"pk"`
-// 	UserId        string `orm:"column(user_id);"` //rel(fk)
-// 	Kind          string `orm:"column(type)"`
-// 	Style         string
-// 	Remark        string
-// 	EName         string `orm:"column(e_name)"`
-// 	State         string
-// 	City          string
-// 	FactoryNum    string `orm:"column(factory_num)"` //印刷厂编号
-// 	BatchNum      string `orm:"column(batch_num)"`   //印刷批次
-// 	SerialNum     string `orm:"column(serial_num)"`  //同批次的卡片编号
-// 	RegisterTime  time.Time `orm:"column(register_time)"` //注册时间
-// }
-
 // type User struct {
 // 	Id       string `orm:"pk"`
 // 	Tel      string
 // 	Mail     string
 // 	Password string
 // }
-
-
 
 // type DelCard struct {
 // 	CardId  string `orm:"pk;column(card_id)"`
@@ -146,24 +134,25 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 }
 
 //将card结构中的Id解析出对应的含义赋值给card的其他导出属性
-// func (card *Card) CardParse() error {
-// 	if len(card.Id) != 16 {
-// 		return errors.New("INVALID LENGTH CARD ID")
-// 	}
-// 	var ok bool
-// 	card.EName, ok = CardParseMaps.EnterpriseMap[card.Id[0:3]]
-// 	card.Kind, ok = CardParseMaps.KindMap[card.Id[3:4]]
-// 	card.Style = card.Id[4:6]
-// 	card.State, ok = CardParseMaps.StateMap[card.Id[6:7]]
-// 	card.City, ok = CardParseMaps.CityMap[card.Id[6:10]]
-// 	card.FactoryNum = card.Id[10:12]
-// 	card.BatchNum = card.Id[12:13]
-// 	card.SerialNum = card.Id[13:16]
-// 	if !ok {
-// 		return errors.New("INVALID CONTENT CARD ID")
-// 	}
-// 	return nil
-// }
+func (card *Card) CardParse() error {
+	if len(card.CardId) != 16 {
+		return errors.New("INVALID LENGTH CARD ID")
+	}
+	var ok bool
+	var err error
+	card.Enterprise, ok = CardParseMaps.EnterpriseMap[card.CardId[0:3]]
+	card.CardType, ok = CardParseMaps.KindMap[card.CardId[3:4]]
+	card.CardOrder,err = strconv.Atoi(card.CardId[4:6])
+	card.State,ok = CardParseMaps.StateMap[card.CardId[6:7]]
+	card.City,ok = CardParseMaps.CityMap[card.CardId[6:10]]
+	card.FactoryNum, err = strconv.Atoi(card.CardId[10:12])
+	card.BatchNum, err = strconv.Atoi(card.CardId[12:13])
+	card.SerialNum, err = strconv.Atoi(card.CardId[13:])
+	if !ok&&err!=nil {
+		return errors.New("INVALID CONTENT CARD ID")
+	}
+	return nil
+}
 
 //ML 解析生成用户ID
 //func (user *User) UserParse() error {
@@ -176,7 +165,7 @@ func (enterprise *Enterprise) EnterpriseParse() error {
 		return errors.New("INVALID LENGTH ENTERPRISE ID")
 	}
 	var flag bool
-	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocalMap[enterprise.Id[0:1]]
+	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocalMap[enterpriseParseMaps.IsLocalMap[enterprise.Id[0:1]]]
 	enterprise.Type, flag = EnterpriseParseMaps.TypeMap[enterprise.Id[1:2]]
 	enterprise.RegisterNum = enterprise.Id[2:]
 	if !flag {
