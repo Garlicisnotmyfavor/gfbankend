@@ -144,39 +144,34 @@ func (c *CardController) coupons() {
 	}
 }
 
-//生成新的代表优惠券数量的字符串
-func makeCouponsNum(card *models.Card,couponsID string,increment int) {
 
-}
-
-
-//删除卡片 手动删除选项
-func (c *CardController) Delete() {
-	id := c.Ctx.Input.Param(":id")
-	//fmt.Println(id)
-	o := orm.NewOrm()
-	card := models.Card{Id: id}
-	if err := o.Read(&card); err == nil {
-		count, _ := o.Delete(&card)
-		if count == 0 {
-			models.Log.Error("delete fail") //删除0个元素，即删除失败，返回状态码403
-			c.Ctx.ResponseWriter.WriteHeader(403)
-		} else {
-			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-			delCard.DelTime = time.Now()
-			_, err := o.Insert(&delCard)
-			if err != nil {
-				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
-				c.Ctx.ResponseWriter.WriteHeader(403)
-				return
-			}
-			c.Ctx.ResponseWriter.WriteHeader(200) //删除成功
-		}
-	} else {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在，删除不存在的卡当作删除成功
-	}
-}
+// //删除卡片 手动删除选项
+// func (c *CardController) Delete() {
+// 	id := c.Ctx.Input.Param(":id")
+// 	//fmt.Println(id)
+// 	o := orm.NewOrm()
+// 	card := models.Card{Id: id}
+// 	if err := o.Read(&card); err == nil {
+// 		count, _ := o.Delete(&card)
+// 		if count == 0 {
+// 			models.Log.Error("delete fail") //删除0个元素，即删除失败，返回状态码403
+// 			c.Ctx.ResponseWriter.WriteHeader(403)
+// 		} else {
+// 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
+// 			delCard.DelTime = time.Now()
+// 			_, err := o.Insert(&delCard)
+// 			if err != nil {
+// 				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
+// 				c.Ctx.ResponseWriter.WriteHeader(403)
+// 				return
+// 			}
+// 			c.Ctx.ResponseWriter.WriteHeader(200) //删除成功
+// 		}
+// 	} else {
+// 		models.Log.Error("read error: ", err)
+// 		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在，删除不存在的卡当作删除成功
+// 	}
+// }
 
 //GZH，修改备注
 //@swagger注解配置
