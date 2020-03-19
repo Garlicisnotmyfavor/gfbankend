@@ -3,3 +3,4 @@
 routers/commentsRouter*.go
 .idea/
 **/*.tmp
+test.go
