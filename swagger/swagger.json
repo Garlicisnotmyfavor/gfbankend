@@ -88,8 +88,8 @@
                 }
             }
         },
-        "/api/user/card/{id}/info\t[put]": {
-            "get": {
+        "/api/user/card/{id}/info": {
+            "put": {
                 "tags": [
                     "api/user"
                 ],
@@ -102,6 +102,15 @@
                         "description": "原本的卡号",
                         "required": true,
                         "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "cardInfo",
+                        "description": "新卡信息(卡号+公司)",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/json"
+                        }
                     }
                 ],
                 "responses": {
@@ -125,6 +134,10 @@
         }
     },
     "definitions": {
+        "json": {
+            "title": "json",
+            "type": "object"
+        },
         "models.Card": {
             "title": "Card",
             "type": "object",

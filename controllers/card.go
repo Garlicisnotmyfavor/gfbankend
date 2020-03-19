@@ -24,7 +24,7 @@ func (c *CardController) Get_cardidinfo() {
 	//根据卡的id从数据库中读取信息存储进一个临时结构体temp中
 	//从card结构体中的ScoreList，ScoreNum，CouponsList，CouponsNum 用strings.Split()进行分割
 	  生成四个数组scoreList，scoreNum，couponsList，couponsNum，把四个数组传进jsonValue
-	//for index,value := range scoreList{ //从数据库中寻找value对应的方法 //把那一列的数据添加到jsonValue的ScoreDetails中 } 
+	//for index,value := range scoreList{ //从数据库中寻找value对应的方法 //把那一列的数据添加到jsonValue的ScoreDetails中 }
 	//for index,value := range CouponsList {//从数据库中寻找value对应的方法 //数据添加到jsonValue的CouponsDetails中}
 	//可以直接append
 }
@@ -105,11 +105,12 @@ func (c *CardController) AddCard() {
 //@Title ModifyCardInfo
 //@Description 修改卡片的卡号，公司
 //@Param	id	query	string	true	原本的卡号
+//@Param	cardInfo	body	json	true	新卡信息(卡号+公司)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
 //@Failure 404	卡片信息读取错误
 //@Failure 500	数据库更新操作错误
-//@router  /card/:id/info	[put]
+//@router  /card/:id/info [put]
 func (c *CardController) ModifyCardInfo() {
 	oldCardId := c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
@@ -144,12 +145,12 @@ func (c *CardController) ModifyCardInfo() {
 	newCard.UserId = oldCard.UserId
 	oldCard.UserId = ""
 
-	if 	_, err := o.Update(&oldCard); err != nil {
+	if _, err := o.Update(&oldCard); err != nil {
 		models.Log.Error("sql update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	if 	_, err := o.Update(&newCard); err != nil {
+	if _, err := o.Update(&newCard); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
@@ -160,10 +161,11 @@ func (c *CardController) ModifyCardInfo() {
 	c.Data["json"] = newCard
 	c.ServeJSON()
 }
-//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
+
+//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分
 //给前端说一下
 //zjn
-func (c *CardController) use_score(){}
+func (c *CardController) use_score() {}
 
 //对优惠券的操作
 //使用优惠卷
@@ -176,46 +178,49 @@ func (c *CardController) use_score(){}
 //@Failure 400/404/406	json解析错误/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
-	var info struct{CardID string;CouponsID string;Increment int}
+	var info struct {
+		CardID    string
+		CouponsID string
+		Increment int
+	}
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
-	if err:= json.Unmarshal(body,&body); err != nil{
+	if err := json.Unmarshal(body, &body); err != nil {
 		models.Log.Error("unmarshal error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
-		return 
+		return
 	}
 	card.CardId = info.CardID
 	o := orm.NewOrm()
-	if err:= o.Read(&card); err != nil{
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
 		return
 	}
-	couponsList := strings.Split(card.CouponsList," ")
-	couponsNumList := strings.Split(card.CouponsNum," ")
-	for i ,value  := range couponsList{
-		if value==info.CouponsID{
+	couponsList := strings.Split(card.CouponsList, " ")
+	couponsNumList := strings.Split(card.CouponsNum, " ")
+	for i, value := range couponsList {
+		if value == info.CouponsID {
 			var temp int
-			temp,err := strconv.Atoi(couponsNumList[i])
-			if err!=nil{
-				models.Log.Error("invalid data: ",err)
+			temp, err := strconv.Atoi(couponsNumList[i])
+			if err != nil {
+				models.Log.Error("invalid data: ", err)
 				c.Ctx.ResponseWriter.WriteHeader(406) //非法数据
-				return 
+				return
 			}
 			temp += info.Increment
 			couponsNumList[i] = strconv.Itoa(temp)
 		}
 	}
-	newCouponsNum := strings.Join(couponsNumList," ")
+	newCouponsNum := strings.Join(couponsNumList, " ")
 	card.CouponsNum = newCouponsNum
-	if _ , err := o.Update(&card);err!=nil{
-		models.Log.Error("invalid data: ",err)
+	if _, err := o.Update(&card); err != nil {
+		models.Log.Error("invalid data: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
-		return 
+		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
-
 
 // //删除卡片 手动删除选项
 // func (c *CardController) Delete() {
@@ -305,7 +310,6 @@ func (c *CardController) Coupons() {
 //zjn
 
 //func (c *CardController) use_score() {}
-
 
 //删除卡片 手动删除选项
 //func (c *CardController) Delete() {
