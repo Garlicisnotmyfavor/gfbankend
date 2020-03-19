@@ -28,174 +28,102 @@ paths:
           description: Read successfully
         "404":
           description: Fail to read
-  /api/user/{id}: {}
-  /api/user/avatar:
-    post:
-      tags:
-      - api/user
-      description: upload avatar
-      operationId: UserController.UpAvatar
-      parameters:
-      - in: header
-        name: id
-        description: file
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: upload successfully
-        "500":
-          description: Fail to save picture
-        "502":
-          description: Fail to close uploading file
-  /api/user/card:
-    post:
-      tags:
-      - api/user
-      description: insert card
-      operationId: CardController.Post
-  /api/user/card/{id}:
+  /api/user/card/{id}/add:
     get:
       tags:
       - api/user
-      description: get card
-      operationId: CardController.Get
-  /api/user/card/{id}/remark: {}
-  /api/user/card/help/{Ename}:
-    get:
-      tags:
-      - api/user
-      description: get help message by the given enterprise_name
-      operationId: CardController.Get
+      description: 将这个user的id和卡绑定
+      operationId: CardController.AddCard
       parameters:
       - in: query
-        name: body
-        description: enterprise_name
+        name: id
+        description: 原本的卡号
         required: true
         type: string
       responses:
         "200":
-          description: ""
-        "404":
-          description: read error
-  /api/user/join:
-    post:
-      tags:
-      - api/user
-      description: user register
-      operationId: UserController.Register
-      parameters:
-      - in: body
-        name: user
-        description: UserInfo
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: '"OK"'
+          description: 返回绑定的卡的大致信息
           schema:
-            $ref: '#/definitions/models.User'
-        "400":
-          description: Fail to unmarshal json
+            $ref: '#/definitions/models.Card'
         "403":
-          description: Fail to insert
-        "406":
-          description: Illegal account form
-  /api/user/login:
-    put:
-      tags:
-      - api/user
-      description: user login
-      operationId: UserController.Login
-      parameters:
-      - in: body
-        name: userInfo
-        description: 给出账号，密码即可登录
-        required: true
-        schema:
-          $ref: '#/definitions/UserJson'
-      responses:
-        "200":
-          description: Register successfully
-        "400":
-          description: illegal account form
-        "401":
-          description: Fail to login
-  /api/user/password:
-    put:
-      tags:
-      - api/user
-      description: change password
-      operationId: UserController.changePW
-      parameters:
-      - in: body
-        name: body
-        description: "true"
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: Fail to unmarshal json
-        "404":
-          description: Fail to read
-        "500":
-          description: Fail to update
+          description: 绑定的卡片不存在
+  /api/user/card/{id}/coupons:
     post:
       tags:
       - api/user
-      description: send feedback mail
-      operationId: UserController.Feedback
+      description: 增加或减少某张卡的某种优惠券
+      operationId: CardController.coupons
       responses:
         "200":
-          description: Update successfully
+          description: ""
+        400/404/406:
+          description: json解析错误/卡不存在/非法数据
+  "/api/user/card/{id}/info\t[put]":
+    get:
+      tags:
+      - api/user
+      description: 修改卡片的卡号，公司
+      operationId: CardController.ModifyCardInfo
+      parameters:
+      - in: query
+        name: id
+        description: 原本的卡号
+        required: true
+        type: string
+      responses:
+        "200":
+          description: 修改成功，返回新卡片对象
+          schema:
+            $ref: '#/definitions/models.Card'
+        "400":
+          description: body解析错误
+        "404":
+          description: 卡片信息读取错误
         "500":
-          description: Fail to send mail
+          description: 数据库更新操作错误
 definitions:
-  UserJson:
-    title: UserJson
-    type: object
   models.Card:
     title: Card
     type: object
     properties:
       BatchNum:
+        type: integer
+        format: int64
+      CardId:
+        type: string
+      CardOrder:
+        type: integer
+        format: int64
+      CardType:
         type: string
       City:
         type: string
-      EName:
+      CouponsList:
         type: string
-      FactoryNum:
+      CouponsNum:
         type: string
-      Id:
-        type: string
-      Kind:
-        type: string
-      RegisterTime:
+      DelTime:
         type: string
         format: datetime
-      Remark:
+      Enterprise:
+        type: string
+      ExpireTime:
+        type: string
+        format: datetime
+      FactoryNum:
+        type: integer
+        format: int64
+      Money:
+        type: integer
+        format: int64
+      ScoreList:
+        type: string
+      ScoreNum:
         type: string
       SerialNum:
-        type: string
+        type: integer
+        format: int64
       State:
         type: string
-      Style:
-        type: string
       UserId:
-        type: string
-  models.User:
-    title: User
-    type: object
-    properties:
-      Id:
-        type: string
-      Mail:
-        type: string
-      Password:
-        type: string
-      Tel:
         type: string

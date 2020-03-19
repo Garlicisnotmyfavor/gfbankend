@@ -3,9 +3,9 @@ package models
 //改改改！！！
 import (
 	"errors"
-	 "time"
-	 "strconv"
-	 _"github.com/astaxie/beego/validation"
+	_ "github.com/astaxie/beego/validation"
+	"strconv"
+	"time"
 )
 
 //mysql
@@ -14,64 +14,64 @@ import (
 //"001 002 003"
 //"1 2 3"
 type Card struct {
-	CardId        string `orm:"pk;type(char(16))" valid:"Required;Length(16)"`  //CardId 编码暂时按照上学期的编码
-	UserId        string `orm:"type(char(13))" valid:"Required;Length(13)"`  //UserId 必须是由用户给出的，因为CardId中不包含UserId
-	CouponsList  string `orm:"null"`  //优惠券的种类的列表,种类与种类之间用空格隔开，种类极其数量CouponsNum的下标相同
-	CardType      string `valid:"Required"`  //卡的类型
-	Enterprise    string `valid:"Required"`  
-	State         string `valid:"Required"`
-	City          string `valid:"Required"`
-	Money         int    `orm:"default(0)"`
-	ScoreNum      string  `orm:"null"`
-	ScoreList     string  `orm:"null"`
-	CouponsNum    string  `orm:"null"`   //每一种种类的数量，数量与数量之间用空格隔开
-	ExpireTime    time.Time `valid:"Required"`
-	DelTime       time.Time `orm:"null"`
-	CardOrder     int    `valid:"Required"`  //该商家合作以来发布的第N条卡片
-	FactoryNum    int    `valid:"Required"`
-	BatchNum      int    `valid:"Required"`  
-	SerialNum     int    `valid:"Required"`
+	CardId      string    `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
+	UserId      string    `orm:"size(13)" valid:"Required;Length(13)"`    //UserId 必须是由用户给出的，因为CardId中不包含UserId
+	CouponsList string    `orm:"null"`                                    //优惠券的种类的列表,种类与种类之间用空格隔开，种类极其数量CouponsNum的下标相同
+	CardType    string    `valid:"Required"`                              //卡的类型
+	Enterprise  string    `valid:"Required"`
+	State       string    `valid:"Required"`
+	City        string    `valid:"Required"`
+	Money       int       `orm:"default(0)"`
+	ScoreNum    string    `orm:"null"`
+	ScoreList   string    `orm:"null"`
+	CouponsNum  string    `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
+	ExpireTime  time.Time `valid:"Required"`
+	DelTime     time.Time `orm:"null"`
+	CardOrder   int       `valid:"Required"` //该商家合作以来发布的第N条卡片
+	FactoryNum  int       `valid:"Required"`
+	BatchNum    int       `valid:"Required"`
+	SerialNum   int       `valid:"Required"`
 }
 
 type Coupons struct {
-	CouponsID      string `orm:"pk" valid:"Required"`
-	CouponDiscribe string `orm:"null"`
-	Time            time.Time `valid:"Required"`
-}
-
-type Score struct {
-	ScoreID       string `orm:"pk" valid:"Required"`
-	ScoreDiscribe  string `orm:"null"`  
+	CouponsID      string    `orm:"pk" valid:"Required"`
+	CouponDiscribe string    `orm:"null"`
 	Time           time.Time `valid:"Required"`
 }
 
+type Score struct {
+	ScoreID       string    `orm:"pk" valid:"Required"`
+	ScoreDiscribe string    `orm:"null"`
+	Time          time.Time `valid:"Required"`
+}
+
 type CardInfo struct {
-	CardId        string 
-	UserId        string 
-	CouponsList   []string 
-	CardType      string 
-	Enterprise    string 
-	State         string 
-	City          string 
-	Money         int    
-	ScoreNum      []string  
-	ScoreList     []string 
-	CouponsNum    []string  
-	ExpireTime    time.Time 
-	DelTime       time.Time 
-	CardOrder     int  
-	FactoryNum    int    
-	BatchNum      int    
-	SerialNum     int    
+	CardId         string
+	UserId         string
+	CouponsList    []string
+	CardType       string
+	Enterprise     string
+	State          string
+	City           string
+	Money          int
+	ScoreNum       []string
+	ScoreList      []string
+	CouponsNum     []string
+	ExpireTime     time.Time
+	DelTime        time.Time
+	CardOrder      int
+	FactoryNum     int
+	BatchNum       int
+	SerialNum      int
 	CouponsDetails []Coupons
 	ScoreDetails   []Score
 }
 
 type CardParseStruct struct {
-	EnterpriseMap map[string]string
-	KindMap       map[string]string
-	StateMap      map[string]string
-	CityMap       map[string]string
+	EnterpriseMap map[string]string `orm:"-"`
+	KindMap       map[string]string `orm:"-"`
+	StateMap      map[string]string `orm:"-"`
+	CityMap       map[string]string `orm:"-"`
 }
 
 type Enterprise struct {
@@ -102,8 +102,6 @@ type EnterpriseParseStruct struct {
 // 	Remark  string
 // 	DelTime time.Time `orm:"column(del_time)"`
 // }
-
-
 
 var CardParseMaps = CardParseStruct{
 	map[string]string{
@@ -173,13 +171,13 @@ func (card *Card) CardParse() error {
 	var err error
 	card.Enterprise, ok = CardParseMaps.EnterpriseMap[card.CardId[0:3]]
 	card.CardType, ok = CardParseMaps.KindMap[card.CardId[3:4]]
-	card.CardOrder,err = strconv.Atoi(card.CardId[4:6])
-	card.State,ok = CardParseMaps.StateMap[card.CardId[6:7]]
-	card.City,ok = CardParseMaps.CityMap[card.CardId[6:10]]
+	card.CardOrder, err = strconv.Atoi(card.CardId[4:6])
+	card.State, ok = CardParseMaps.StateMap[card.CardId[6:7]]
+	card.City, ok = CardParseMaps.CityMap[card.CardId[6:10]]
 	card.FactoryNum, err = strconv.Atoi(card.CardId[10:12])
 	card.BatchNum, err = strconv.Atoi(card.CardId[12:13])
 	card.SerialNum, err = strconv.Atoi(card.CardId[13:])
-	if !ok&&err!=nil {
+	if !ok && err != nil {
 		return errors.New("INVALID CONTENT CARD ID")
 	}
 	return nil

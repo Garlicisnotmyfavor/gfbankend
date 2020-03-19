@@ -37,5 +37,5 @@ func init() {
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(Coupons))
 	orm.RegisterModel(new(Enterprise))
-	orm.RegisterModel(new(CardParseStruct))
+	//orm.RegisterModel(new(CardParseStruct))
 }
