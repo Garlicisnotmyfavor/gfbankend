@@ -80,30 +80,34 @@ func (c *CardController) ModifyCardInfo() {
 	}
 	o := orm.NewOrm()
 	//读取原卡片
-	if err := o.Read(oldCard); err != nil {
+	if err := o.Read(&oldCard); err != nil {
 		models.Log.Error("sql read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
 	//读取新卡片
-	if err := o.Read(newCard); err != nil {
+	if err := o.Read(&newCard); err != nil {
 		models.Log.Error("sql read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	//新卡片另有主人
+	if newCard.UserId != "" && newCard.UserId != oldCard.UserId {
+		models.Log.Error("sql update error: card already have owner")
+		c.Ctx.ResponseWriter.WriteHeader(409)
 		return
 	}
 	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
 	oldCard.UserId = ""
 
-	_, err1 := o.Update(oldCard)
-	if err1 != nil {
-		models.Log.Error("update error: ", err1)
+	if 	_, err := o.Update(&oldCard); err != nil {
+		models.Log.Error("sql update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	_, err2 := o.Update(newCard)
-	if err2 != nil {
-		models.Log.Error("update error: ", err2)
+	if 	_, err := o.Update(&newCard); err != nil {
+		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
@@ -117,7 +121,9 @@ func (c *CardController) ModifyCardInfo() {
 //nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
 //给前端说一下
 //zjn
-func (c *CardController) use_score() {}
+func (c *CardController) use_score() {
+
+}
 
 //对优惠券的操作
 //使用优惠卷
