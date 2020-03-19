@@ -60,9 +60,14 @@ func (c *CardController) Get_cardidinfo() {
 //@router  /card/:id/add [get]
 func (c *CardController) addCard() {
 	//这里没有对比enterprise和cardid
-	id := c.Ctx.Input.Param(":id")
 	var card models.Card
-	card.CardId = id
+	body := c.Ctx.Input.RequestBody
+	//解析body
+	if err := json.Unmarshal(body, &card); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
 	//目前的逻辑不需要解析函数
 	//if err := card.CardParse(); err != nil {
 	//	models.Log.Error("card parse error: ", err)
