@@ -98,13 +98,14 @@ func (c *CardController) use_score(){}
 //对优惠券的操作
 //使用优惠卷
 //前端返回给我优惠券对象的信息以及优惠券的信息
+//增加或减少某张卡的某种优惠券 
 //zyj
-
-// if err := o.Read(&card); err != nil {
-// 	models.Log.Error("read error: ", err)
-// 	c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
-// 	return
-// }
+//@Title coupons
+//@Description 增加或减少某张卡的某种优惠券 
+//@Param	cardID&CouponsID&Increment 	update	string&string&int	true	
+//@Success 200		
+//@Failure 400/404/406	json解析错误/卡不存在/非法数据
+//@router  /card/:id/coupons [post]
 func (c *CardController) coupons() {
 	var info struct{CardID string;CouponsID string;Increment int}
 	var card models.Card
@@ -126,7 +127,8 @@ func (c *CardController) coupons() {
 	for i ,value  := range couponsList{
 		if value==info.CouponsID{
 			var temp int
-			if temp,err := strconv.Atoi(couponsNumList[i]);err!=nil{
+			temp,err := strconv.Atoi(couponsNumList[i])
+			if err!=nil{
 				models.Log.Error("invalid data: ",err)
 				c.Ctx.ResponseWriter.WriteHeader(406) //非法数据
 				return 
@@ -142,6 +144,7 @@ func (c *CardController) coupons() {
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return 
 	}
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 }
 
 
@@ -181,69 +184,59 @@ func (c *CardController) coupons() {
 //@remark parameter is empty 400
 //@Failure 403
 //@router  /card/:id/remark  [put]
-func (c *CardController) Put() {
-	// 接收数据
-	id := c.Ctx.Input.Param(":id")
-	remark := c.GetString("remark")
+// func (c *CardController) Put() {
+// 	// 接收数据
+// 	id := c.Ctx.Input.Param(":id")
+// 	remark := c.GetString("remark")
 
-	if remark == "" {
-		// remark参数为空，设置400状态码
-		models.Log.Error("param error: ", errors.New("illegal remark"))
-		c.Ctx.ResponseWriter.WriteHeader(400)
-		return
-	}
-	o := orm.NewOrm()
-	//读取原卡片
-	if err := o.Read(&oldCard); err != nil {
-		models.Log.Error("sql read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404)
-		return
-	}
-	//读取新卡片
-	if err := o.Read(&newCard); err != nil {
-		models.Log.Error("sql read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404)
-		return
-	}
-	//新卡片另有主人
-	if newCard.UserId != "" && newCard.UserId != oldCard.UserId {
-		models.Log.Error("sql update error: card already have owner")
-		c.Ctx.ResponseWriter.WriteHeader(409)
-		return
-	}
-	//增加新卡片中UserId关联,并取消原卡片的关联
-	newCard.UserId = oldCard.UserId
-	oldCard.UserId = ""
+// 	if remark == "" {
+// 		// remark参数为空，设置400状态码
+// 		models.Log.Error("param error: ", errors.New("illegal remark"))
+// 		c.Ctx.ResponseWriter.WriteHeader(400)
+// 		return
+// 	}
+// 	o := orm.NewOrm()
+// 	//读取原卡片
+// 	if err := o.Read(oldCard); err != nil {
+// 		models.Log.Error("sql read error: ", err)
+// 		c.Ctx.ResponseWriter.WriteHeader(404)
+// 		return
+// 	}
+// 	//读取新卡片
+// 	if err := o.Read(newCard); err != nil {
+// 		models.Log.Error("sql read error: ", err)
+// 		c.Ctx.ResponseWriter.WriteHeader(404)
+// 		return
+// 	}
+// 	//增加新卡片中UserId关联,并取消原卡片的关联
+// 	newCard.UserId = oldCard.UserId
+// 	oldCard.UserId = ""
 
-	if 	_, err := o.Update(&oldCard); err != nil {
-		models.Log.Error("sql update error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
-		return
-	}
-	if 	_, err := o.Update(&newCard); err != nil {
-		models.Log.Error("update error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
-		return
-	}
+// 	_, err1 := o.Update(oldCard)
+// 	if err1 != nil {
+// 		models.Log.Error("update error: ", err1)
+// 		c.Ctx.ResponseWriter.WriteHeader(500)
+// 		return
+// 	}
+// 	_, err2 := o.Update(newCard)
+// 	if err2 != nil {
+// 		models.Log.Error("update error: ", err2)
+// 		c.Ctx.ResponseWriter.WriteHeader(500)
+// 		return
+// 	}
 
-	//修改成功，返回成功后的卡片对象
-	c.Ctx.ResponseWriter.WriteHeader(200)
-	c.Data["json"] = newCard
-	c.ServeJSON()
-}
+// 	//修改成功，返回成功后的卡片对象
+// 	c.Ctx.ResponseWriter.WriteHeader(200)
+// 	c.Data["json"] = newCard
+// 	c.ServeJSON()
+// }
 
 //nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
 //给前端说一下
 //zjn
-func (c *CardController) use_score() {
 
-}
+//func (c *CardController) use_score() {}
 
-//对优惠券的操作
-//使用优惠卷
-//前端返回给我优惠券对象的信息
-//zyj
-func (c *CardController) coupons() {}
 
 //删除卡片 手动删除选项
 //func (c *CardController) Delete() {
