@@ -7,9 +7,10 @@ import (
 	 _"github.com/astaxie/beego/validation"
 )
 
+//mysql
 //结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
 type Card struct {
-	CardId        string `orm:"pk;unique;type(char(16))" valid:"Required;Length(16)"`
+	CardId        string `orm:"pk;type(char(16))" valid:"Required;Length(16)"`
 	UserId        string `orm:"type(char(13))" valid:"Required;Length(13)"`
 	Strategy      string `orm:"null"`
 	Enterprise    string `valid:"Required"`
@@ -25,9 +26,9 @@ type Card struct {
 type StrategyTable struct {
 	Strategy      string `orm:"pk" valid:"Required"`
 	Type          string `valid:"Required"`
-	coupon_discripe string `orm:"null"`
-	point_discripe  string `orm:"null"`  
-	time            time.Time `valid:"Required"`
+	CouponDescribe string `orm:"null"`
+	PointDescribe  string `orm:"null"`
+	Time            time.Time `valid:"Required"`
 }
 
 type CardParseStruct struct {
