@@ -25,9 +25,9 @@ type Card struct {
 type StrategyTable struct {
 	Strategy      string `orm:"pk" valid:"Required"`
 	Type          string `valid:"Required"`
-	coupon_discripe string `orm:"null"`
-	point_discripe  string `orm:"null"`  
-	time            time.Time `valid:"Required"`
+	CouponDescribe string `orm:"null"`
+	PointDescribe  string `orm:"null"`
+	Time            time.Time `valid:"Required"`
 }
 
 type CardParseStruct struct {
