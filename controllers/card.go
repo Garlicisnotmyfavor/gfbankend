@@ -6,10 +6,10 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-	_"github.com/pkg/errors"
-	_"time"
-	"strings"
+	_ "github.com/pkg/errors"
 	"strconv"
+	"strings"
+	_ "time"
 )
 
 type CardController struct {
@@ -39,42 +39,42 @@ func (c *CardController) Get_cardidinfo() {
 //@Failure 400	查询不到对应的卡
 //@Failure 404	查询不到对应的优惠策略
 //@router  /card/:id	[get]
-func (c *CardController) Get_cardidinfo() {
-	// 获取路由参数
-	id := c.Ctx.Input.Param(":id")
-	o := orm.NewOrm()
-	//设置一个填充了cardid的card结构
-	card := models.Card{CardId: id}
-	// 查询记录
-	if err := o.Read(&card); err != nil {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
-		return
-	}
-	//若查到card这一列后，需要找到它的卡的积分或卷的规则，但目前只针对一个策略
-	//后面需要用匹配的方式，解析出多个策略
-	stra := models.Coupons{Coupons: card.Strategy}
-	if err := o.Read(&stra); err != nil {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
-		return
-	}
-	c.Ctx.ResponseWriter.WriteHeader(200) //成功
-	
-	//怎么传两个字段？ stra
-	c.Data["json"] = card
-	c.ServeJSON()
-}
+//func (c *CardController) Get_cardidinfo() {
+//	// 获取路由参数
+//	id := c.Ctx.Input.Param(":id")
+//	o := orm.NewOrm()
+//	//设置一个填充了cardid的card结构
+//	card := models.Card{CardId: id}
+//	// 查询记录
+//	if err := o.Read(&card); err != nil {
+//		models.Log.Error("read error: ", err)
+//		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
+//		return
+//	}
+//	//若查到card这一列后，需要找到它的卡的积分或卷的规则，但目前只针对一个策略
+//	//后面需要用匹配的方式，解析出多个策略
+//	stra := models.Coupons{Coupons: card.Strategy}
+//	if err := o.Read(&stra); err != nil {
+//		models.Log.Error("read error: ", err)
+//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
+//		return
+//	}
+//	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+//
+//	//怎么传两个字段？ stra
+//	c.Data["json"] = card
+//	c.ServeJSON()
+//}
 
 //添加卡片 在user表里添加此user和card的关联
 //zjn
-//@Title addCard
+//@Title AddCard
 //@Description 将这个user的id和卡绑定
 //@Param	id	query	string	true	原本的卡号
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@router  /card/:id/add [get]
-func (c *CardController) addCard() {
+func (c *CardController) AddCard() {
 	//这里没有对比enterprise和cardid
 	id := c.Ctx.Input.Param(":id")
 	var card models.Card
@@ -172,11 +172,10 @@ func (c *CardController) use_score(){}
 //zyj
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
-//@Param	cardID&CouponsID&Increment 	update	string&string&int	true	
-//@Success 200		
+//@Success 200
 //@Failure 400/404/406	json解析错误/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
-func (c *CardController) coupons() {
+func (c *CardController) Coupons() {
 	var info struct{CardID string;CouponsID string;Increment int}
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
