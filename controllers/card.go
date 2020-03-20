@@ -2,14 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	//"fmt"
+	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
 	"strconv"
 	"strings"
-	_ "time"
+	"time"
 )
 
 type CardController struct {
@@ -297,17 +297,15 @@ func (c *CardController) UseScore() {
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
 //@Success 200
-//@Failure 400/404/406	json解析错误/卡不存在/非法数据
+//@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
-	var info struct {
-		CardID    string
-		CouponsID string
-		Increment int
-	}
+	CardId := c.Ctx.Input.Param(":id")
+	var info struct{CardID string `json:"-"`;CouponsID string;Increment int}
+	info.CardID = CardId
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body, &info); err != nil {
+	if err:= json.Unmarshal(body,&info); err != nil{
 		models.Log.Error("unmarshal error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
@@ -331,46 +329,53 @@ func (c *CardController) Coupons() {
 				return
 			}
 			temp += info.Increment
+			if temp<0 {
+				models.Log.Error("not enough coupons")
+				c.Ctx.ResponseWriter.WriteHeader(403) //优惠券不足
+				return
+			}
 			couponsNumList[i] = strconv.Itoa(temp)
 		}
 	}
 	newCouponsNum := strings.Join(couponsNumList, " ")
 	card.CouponsNum = newCouponsNum
 	if _, err := o.Update(&card); err != nil {
-		models.Log.Error("invalid data: ", err)
+		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	// fmt.Println(card)  //用于postman测试，上线工作后记得注释掉
+	c.Data["json"] = card
+	c.ServeJSON()
 }
 
-// //删除卡片 手动删除选项
-// func (c *CardController) Delete() {
-// 	id := c.Ctx.Input.Param(":id")
-// 	//fmt.Println(id)
-// 	o := orm.NewOrm()
-// 	card := models.Card{Id: id}
-// 	if err := o.Read(&card); err == nil {
-// 		count, _ := o.Delete(&card)
-// 		if count == 0 {
-// 			models.Log.Error("delete fail") //删除0个元素，即删除失败，返回状态码403
-// 			c.Ctx.ResponseWriter.WriteHeader(403)
-// 		} else {
-// 			delCard := models.DelCard{CardId: card.Id, UserId: card.UserId, Remark: card.Remark}
-// 			delCard.DelTime = time.Now()
-// 			_, err := o.Insert(&delCard)
-// 			if err != nil {
-// 				models.Log.Error("Insert error: ", err) //被删卡插入垃圾箱失败
-// 				c.Ctx.ResponseWriter.WriteHeader(403)
-// 				return
-// 			}
-// 			c.Ctx.ResponseWriter.WriteHeader(200) //删除成功
-// 		}
-// 	} else {
-// 		models.Log.Error("read error: ", err)
-// 		c.Ctx.ResponseWriter.WriteHeader(200) //card本就不存在，删除不存在的卡当作删除成功
-// 	}
-// }
+//zyj
+//@Title coupons
+//@Description 删除卡片
+//@Success 200
+//@Failure 400/404	json解析错误/卡不存在
+//@router  /card/:id/delete [post]
+func (c *CardController) Delete() {
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	card := models.Card{CardId: id}
+	if err := o.Read(&card); err != nil {	
+		models.Log.Error("can't find card: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		return
+	} 
+	card.DelTime = time.Now()
+	if _,err := o.Update(&card); err != nil{
+		models.Log.Error("can't update card: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	c.Data["json"] = card
+	c.ServeJSON()
+	return
+}
 
 //GZH，修改备注
 //@swagger注解配置
