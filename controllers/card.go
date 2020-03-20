@@ -2,14 +2,14 @@ package controllers
 
 import (
 	"encoding/json"
-	//"fmt"
+	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
 	"strconv"
 	"strings"
-	_ "time"
+	_"time"
 )
 
 type CardController struct {
@@ -85,8 +85,8 @@ func (c *CardController) AddCard() {
 	//	c.Ctx.ResponseWriter.WriteHeader(406) //非法的用户ID
 	//	return
 	//}
-	o := orm.NewOrm()
 	//用创建的新卡号查询是否在数据库中存在
+	o := orm.NewOrm()
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(403) //卡片不存在
@@ -176,10 +176,12 @@ func (c *CardController) use_score(){}
 //@Failure 400/404/406	json解析错误/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
-	var info struct{CardID string;CouponsID string;Increment int}
+	CardId := c.Ctx.Input.Param(":id")
+	var info struct{CardID string `json:"-"`;CouponsID string;Increment int}
+	info.CardID = CardId
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
-	if err:= json.Unmarshal(body,&body); err != nil{
+	if err:= json.Unmarshal(body,&info); err != nil{
 		models.Log.Error("unmarshal error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return 
@@ -214,6 +216,9 @@ func (c *CardController) Coupons() {
 		return 
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	// fmt.Println(card)  //用于postman测试，上线工作后记得注释掉
+	c.Data["json"] = card
+	c.ServeJSON()
 }
 
 
