@@ -39,7 +39,7 @@ func (c *UserController) GetAllCard() {
 	_, err := qt.All(&cardList)
 	if err != nil {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
-		c.Ctx.ResponseWriter.WriteHeader(404)
+		c.Ctx.ResponseWriter.WriteHeader(403)
 		return
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功读取所有卡片

@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
 	"os"
+	//"github.com/gfbankend/models"
 )
 
 var Log *logs.BeeLogger = logs.NewLogger(10000) //定义日志Log，因为需要在整个project用到，所以需要定义为全局
@@ -38,4 +39,6 @@ func init() {
 	orm.RegisterModel(new(Coupons))
 	orm.RegisterModel(new(Enterprise))
 	//orm.RegisterModel(new(CardParseStruct))
+	orm.RunSyncdb("default", false, true)
+
 }

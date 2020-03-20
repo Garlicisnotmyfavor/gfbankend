@@ -33,6 +33,7 @@ type Card struct {
 	SerialNum   int       `valid:"Required"`
 }
 
+//最好都改成Id，方便
 type Coupons struct {
 	CouponsID      string    `orm:"pk" valid:"Required"`
 	CouponDescribe string    `orm:"null"`
@@ -48,15 +49,15 @@ type Score struct {
 type CardInfo struct {
 	CardId         string
 	UserId         string
-	CouponsList    []string
+	CouponsList    string
 	CardType       string
 	Enterprise     string
 	State          string
 	City           string
 	Money          int
-	ScoreNum       []string
-	ScoreList      []string
-	CouponsNum     []string
+	ScoreNum       string
+	ScoreList      string
+	CouponsNum     string
 	ExpireTime     time.Time
 	DelTime        time.Time
 	CardOrder      int

@@ -39,32 +39,74 @@ func (c *CardController) Get_cardidinfo() {
 //@Failure 400	查询不到对应的卡
 //@Failure 404	查询不到对应的优惠策略
 //@router  /card/:id	[get]
-//func (c *CardController) Get_cardidinfo() {
-//	// 获取路由参数
-//	id := c.Ctx.Input.Param(":id")
-//	o := orm.NewOrm()
-//	//设置一个填充了cardid的card结构
-//	card := models.Card{CardId: id}
-//	// 查询记录
-//	if err := o.Read(&card); err != nil {
-//		models.Log.Error("read error: ", err)
-//		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
-//		return
-//	}
-//	//若查到card这一列后，需要找到它的卡的积分或卷的规则，但目前只针对一个策略
-//	//后面需要用匹配的方式，解析出多个策略
-//	stra := models.Coupons{Coupons: card.Strategy}
-//	if err := o.Read(&stra); err != nil {
-//		models.Log.Error("read error: ", err)
-//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到卡对应的优惠策略
-//		return
-//	}
-//	c.Ctx.ResponseWriter.WriteHeader(200) //成功
-//
-//	//怎么传两个字段？ stra
-//	c.Data["json"] = card
-//	c.ServeJSON()
-//}
+func (c *CardController) Get_cardidinfo() {
+	// 获取路由参数
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	//设置一个填充了cardid的card结构
+	var card models.Card
+	var cardinfo models.CardInfo
+	card.CardId = id
+	// 查询记录
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
+		return
+	}
+	//若查到card这一列后，需要找到它的卡的积分或卷的规则
+	var CouponsDetails models.Coupons
+	var ScoreDetails   models.Score
+	ScoreList := strings.Split(card.ScoreList, " ")
+	CouponsList := strings.Split(card.CouponsList, " ")
+	for i, value := range ScoreList {
+		ScoreDetails.ScoreID = value
+		if err := o.Read(&ScoreDetails); err != nil {
+			models.Log.Error("not exist error: ", err)
+			c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
+			i = i+1 //尽量修改不用这种方式
+			i = i-1
+			return
+		}
+		cardinfo.ScoreDetails = append(cardinfo.ScoreDetails, ScoreDetails)
+	}
+	for i, value := range CouponsList {
+		CouponsDetails.CouponsID = value
+		if err := o.Read(&CouponsDetails); err != nil {
+			models.Log.Error("not exist error: ", err)
+			c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
+			i = i+1 //尽量修改不用这种方式
+			i = i-1
+			return
+		}
+		cardinfo.CouponsDetails = append(cardinfo.CouponsDetails, CouponsDetails)
+	}
+
+	//整合到一个struct里
+	cardinfo.CardId = card.CardId      
+	cardinfo.UserId = card.UserId      
+	cardinfo.CouponsList = card.CouponsList
+	cardinfo.CardType = card.CardType     
+	cardinfo.Enterprise = card.Enterprise   
+	cardinfo.State = card.State       
+	cardinfo.City = card.City         
+	cardinfo.Money = card.Money        
+	cardinfo.ScoreNum = card.ScoreNum     
+	cardinfo.ScoreList = card.ScoreList    
+	cardinfo.CouponsNum = card.CouponsNum   
+	cardinfo.ExpireTime =  card.ExpireTime
+	cardinfo.DelTime = card.DelTime     
+	cardinfo.CardOrder = card.CardOrder   
+	cardinfo.FactoryNum = card.FactoryNum   
+	cardinfo.BatchNum = card.BatchNum    
+	cardinfo.SerialNum = card.SerialNum    
+	//cardinfo.CouponsDetails = CouponsDetails
+	//cardinfo.ScoreDetails = ScoreDetails
+
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	c.Data["json"] = cardinfo
+	c.ServeJSON()
+	
+}
 
 //添加卡片 在user表里添加此user和card的关联
 //zjn
@@ -73,13 +115,18 @@ func (c *CardController) Get_cardidinfo() {
 //@Param	id	query	string	true	原本的卡号
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
-//@router  /card/:id/add [get]
+//@Failure 400	解析错误
+//@Failure 402	数据不匹配
+//@router  /card/add [post]
 func (c *CardController) AddCard() {
 	//这里没有对比enterprise和cardid
-	var card models.Card
+	var addinfo struct {
+		CardId    string
+		Enterprise	string
+	}
 	body := c.Ctx.Input.RequestBody
 	//解析body
-	if err := json.Unmarshal(body, &card); err != nil {
+	if err := json.Unmarshal(body, &addinfo); err != nil {
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
@@ -91,14 +138,22 @@ func (c *CardController) AddCard() {
 	//	return
 	//}
 	o := orm.NewOrm()
+	card := models.Card{}
+	card.CardId = addinfo.CardId
 	//用创建的新卡号查询是否在数据库中存在
 	if err := o.Read(&card); err != nil {
-		models.Log.Error("read error: ", err)
+		models.Log.Error("not exist error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(403) //卡片不存在
 		return
 	}
+	if card.Enterprise != addinfo.Enterprise {
+		c.Ctx.ResponseWriter.WriteHeader(402) //输入id和公司名不匹配
+		return
+	}
+	//匹配后建立关联
 	//这里还没有具体设置user的id
-	card.UserId = "01"
+	card.UserId = "0000000000000"
+	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	//传回这个卡片的具体信息
 	c.Data["json"] = card
@@ -168,7 +223,7 @@ func (c *CardController) ModifyCardInfo() {
 
 //nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分
 //给前端说一下
-//zjn
+//ml
 //@Title UseScore
 //@Description 操作卡片的积分
 //@Param id body / true CardId(string)+ScoreId(string)+increment(int)
