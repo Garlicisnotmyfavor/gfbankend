@@ -1,4 +1,5 @@
 *.exe
+*.exe~
 *.out
 routers/commentsRouter*.go
 .idea/

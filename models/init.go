@@ -39,5 +39,5 @@ func init() {
 	orm.RegisterModel(new(Coupons))
 	orm.RegisterModel(new(Enterprise))
 	orm.Debug = true
-	orm.RunSyncdb("default", false, true)
+	_ = orm.RunSyncdb("default", false, true)
 }
