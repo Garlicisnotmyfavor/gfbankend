@@ -105,7 +105,7 @@ func (c *CardController) AddCard() {
 //@Title ModifyCardInfo
 //@Description 修改卡片的卡号，公司
 //@Param	id	query	string	true	原本的卡号
-//@Param	cardInfo	body	json	true	新卡信息(卡号+公司)
+//@Param	cardInfo	body	/	true	新卡信息(卡号CardId+公司Enterprise)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
 //@Failure 404	卡片信息读取错误
@@ -164,7 +164,70 @@ func (c *CardController) ModifyCardInfo() {
 //nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分
 //给前端说一下
 //zjn
-func (c *CardController) use_score() {}
+//@Title UseScore
+//@Description 操作卡片的积分
+//@Param id body / true CardId(string)+ScoreId(string)+increment(int)
+//@Success 200	{object} models.Card 	修改成功，返回新卡片对象
+//@Failure 400	body解析错误
+//@Failure 406	积分信息有误
+//@Failure 500	数据库更新操作错误
+//@router /card/:id/score [put]
+func (c *CardController) UseScore() {
+	var ScoreInfo struct {
+		CardId    string
+		ScoreId   string
+		increment int
+	}
+	body := c.Ctx.Input.RequestBody
+	//解析请求体
+	if err := json.Unmarshal(body, &ScoreInfo); err != nil {
+		models.Log.Error("unmarshal error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	Card := models.Card{CardId: ScoreInfo.CardId}
+	o := orm.NewOrm()
+	//根据CardId读取完整的卡片信息
+	if err := o.Read(&Card); err != nil {
+		models.Log.Error("sql read error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	hasIncrease := false
+	ScoreList := strings.Split(Card.ScoreList, " ")
+	ScoreNumList := strings.Split(Card.ScoreNum, " ")
+	for i, v := range ScoreList {
+		if v == ScoreInfo.ScoreId {
+			tmp, err := strconv.Atoi(ScoreNumList[i])
+			if err != nil {
+				models.Log.Error("invalid data：", err)
+				c.Ctx.ResponseWriter.WriteHeader(406)
+				return
+			}
+			tmp += ScoreInfo.increment
+			ScoreNumList[i] = strconv.Itoa(tmp)
+			Card.ScoreNum = strings.Join(ScoreNumList, " ")
+			hasIncrease = true
+		}
+	}
+	// 积分类型有误导致积分并没有更新
+	if hasIncrease == false {
+		models.Log.Error("score update error: invalid score")
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	//	卡片更新错误，可能是数据库出错
+	if _, err := o.Update(&Card); err != nil {
+		models.Log.Error("sql update error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+	//	成功更新对应的卡片积分数量
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	//	返回更新积分后的卡片
+	c.Data["json"] = Card
+	c.ServeJSON()
+}
 
 //对优惠券的操作
 //使用优惠卷
