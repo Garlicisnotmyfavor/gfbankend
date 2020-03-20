@@ -155,7 +155,6 @@ func (c *CardController) ModifyCardInfo() {
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-
 	//修改成功，返回成功后的卡片对象
 	c.Ctx.ResponseWriter.WriteHeader(200)
 	c.Data["json"] = newCard
@@ -185,7 +184,7 @@ func (c *CardController) Coupons() {
 	}
 	var card models.Card
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body, &body); err != nil {
+	if err := json.Unmarshal(body, &info); err != nil {
 		models.Log.Error("unmarshal error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
