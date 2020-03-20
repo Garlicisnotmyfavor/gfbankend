@@ -352,7 +352,7 @@ func (c *CardController) Coupons() {
 }
 
 //zyj
-//@Title coupons
+//@Title delete
 //@Description 删除卡片
 //@Param id query string true 卡号
 //@Success 200

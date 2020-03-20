@@ -42,8 +42,8 @@
                 }
             }
         },
-        "/api/user/card/{id}/add": {
-            "get": {
+        "/api/user/card/add": {
+            "post": {
                 "tags": [
                     "api/user"
                 ],
@@ -65,8 +65,46 @@
                             "$ref": "#/definitions/models.Card"
                         }
                     },
+                    "400": {
+                        "description": "解析错误"
+                    },
+                    "402": {
+                        "description": "数据不匹配"
+                    },
                     "403": {
                         "description": "绑定的卡片不存在"
+                    }
+                }
+            }
+        },
+        "/api/user/card/{id\t[get]}": {
+            "get": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "将这张卡片的所有信息传出去",
+                "operationId": "CardController.give_card_all_info",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "我还不清楚这里的修改",
+                        "type": "string",
+                        "default": "true"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "{object} model.Strategy\t修改成功，返回新卡片对象和策略对象",
+                        "schema": {
+                            "$ref": "#/definitions/models.Card"
+                        }
+                    },
+                    "400": {
+                        "description": "查询不到对应的卡"
+                    },
+                    "404": {
+                        "description": "查询不到对应的优惠策略"
                     }
                 }
             }
@@ -78,12 +116,48 @@
                 ],
                 "description": "增加或减少某张卡的某种优惠券",
                 "operationId": "CardController.coupons",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "Body",
+                        "schema": {
+                            "$ref": "#/definitions/CouponsID,Increment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400/403/404/406": {
+                        "description": "json解析错误/优惠券不足/卡不存在/非法数据"
+                    }
+                }
+            }
+        },
+        "/api/user/card/{id}/delete": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "删除卡片",
+                "operationId": "CardController.delete",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "卡号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
                     },
-                    "400/404/406": {
-                        "description": "json解析错误/卡不存在/非法数据"
+                    "400/404": {
+                        "description": "json解析错误/卡不存在"
                     }
                 }
             }
@@ -106,7 +180,7 @@
                     {
                         "in": "body",
                         "name": "cardInfo",
-                        "description": "新卡信息(卡号+公司)",
+                        "description": "新卡信息(卡号CardId+公司Enterprise)",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions//"
@@ -173,6 +247,10 @@
     "definitions": {
         "/": {
             "title": "/",
+            "type": "object"
+        },
+        "CouponsID,Increment": {
+            "title": "CouponsID,Increment",
             "type": "object"
         },
         "models.Card": {
