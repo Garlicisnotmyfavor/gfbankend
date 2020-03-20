@@ -6,6 +6,7 @@ import (
 	"github.com/astaxie/beego/logs"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/go-sql-driver/mysql"
+	_"time"
 	"os"
 )
 
@@ -23,7 +24,7 @@ func init() {
 		Log.Error("fail to register driver", err)
 	}
 
-	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8",
+	dsn := fmt.Sprintf("%s:%s@tcp(%s)/%s?charset=utf8&loc=Asia%%2FShanghai",
 		beego.AppConfig.String("mysql::user"),
 		beego.AppConfig.String("mysql::password"),
 		beego.AppConfig.String("mysql::addr"),
@@ -37,5 +38,6 @@ func init() {
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(Coupons))
 	orm.RegisterModel(new(Enterprise))
-	//orm.RegisterModel(new(CardParseStruct))
+	orm.Debug = true
+	orm.RunSyncdb("default", false, true)
 }
