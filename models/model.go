@@ -35,13 +35,13 @@ type Card struct {
 
 type Coupons struct {
 	CouponsID      string    `orm:"pk" valid:"Required"`
-	CouponDiscribe string    `orm:"null"`
+	CouponDescribe string    `orm:"null"`
 	Time           time.Time `valid:"Required"`
 }
 
 type Score struct {
 	ScoreID       string    `orm:"pk" valid:"Required"`
-	ScoreDiscribe string    `orm:"null"`
+	ScoreDescribe string    `orm:"null"`
 	Time          time.Time `valid:"Required"`
 }
 
