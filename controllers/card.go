@@ -237,7 +237,7 @@ func (c *CardController) UseScore() {
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
 //@Success 200
-//@Failure 400/404/406	json解析错误/卡不存在/非法数据
+//@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
@@ -269,6 +269,11 @@ func (c *CardController) Coupons() {
 				return
 			}
 			temp += info.Increment
+			if temp<0 {
+				models.Log.Error("not enough coupons")
+				c.Ctx.ResponseWriter.WriteHeader(403) //优惠券不足
+				return
+			}
 			couponsNumList[i] = strconv.Itoa(temp)
 		}
 	}
