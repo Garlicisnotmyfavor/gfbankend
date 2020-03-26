@@ -296,58 +296,36 @@ func (c *CardController) UseScore() {
 //zyj
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
-//@Param id query
-//@Param CouponsID,Increment Body / true id(string)+CouponsID(string)+increment(int)  卡号，优惠券号，增量(zeng'l增量可以为负数)
+//@Param id query string true 卡号
+//@Param Increment Body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
 //@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
-	var info struct{CardID string `json:"-"`;CouponsID string;Increment int}
-	info.CardID = CardId
-	var card models.Card
-	body := c.Ctx.Input.RequestBody
-	if err:= json.Unmarshal(body,&info); err != nil{
-		models.Log.Error("unmarshal error：", err)
-		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
-		return
-	}
-	card.CardId = info.CardID
 	o := orm.NewOrm()
-	if err := o.Read(&card); err != nil {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+	var increment int
+	card := models.Card{CardId: CardId}
+	body := c.Ctx.Input.RequestBody
+	//解析请求体
+	if err := json.Unmarshal(body, &increment); err != nil {
+		models.Log.Error("unmarshal error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	couponsList := strings.Split(card.CouponsList, " ")
-	couponsNumList := strings.Split(card.CouponsNum, " ")
-	for i, value := range couponsList {
-		if value == info.CouponsID {
-			var temp int
-			temp, err := strconv.Atoi(couponsNumList[i])
-			if err != nil {
-				models.Log.Error("invalid data: ", err)
-				c.Ctx.ResponseWriter.WriteHeader(406) //非法数据
-				return
-			}
-			temp += info.Increment
-			if temp<0 {
-				models.Log.Error("not enough coupons")
-				c.Ctx.ResponseWriter.WriteHeader(403) //优惠券不足
-				return
-			}
-			couponsNumList[i] = strconv.Itoa(temp)
-		}
-	}
-	newCouponsNum := strings.Join(couponsNumList, " ")
-	card.CouponsNum = newCouponsNum
-	if _, err := o.Update(&card); err != nil {
+	if err := o.Read(&card); err != nil {	
+		models.Log.Error("can't find card: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		return
+	} 
+	card.CouponsNum += increment
+	if _,err := o.Update(&card); err != nil{
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
 	}
-	c.Ctx.ResponseWriter.WriteHeader(200) //成功
-	// fmt.Println(card)  //用于postman测试，上线工作后记得注释掉
+	//返回成功的信息
+	c.Ctx.ResponseWriter.WriteHeader(200)
 	c.Data["json"] = card
 	c.ServeJSON()
 }
