@@ -156,6 +156,23 @@
                     "200": {
                         "description": ""
                     },
+                    "400/403/404/406": {
+                        "description": "json解析错误/优惠券不足/卡不存在/非法数据"
+                    }
+                }
+            }
+        },
+        "/api/user/card/{id}/delete": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "删除卡片",
+                "operationId": "CardController.coupons",
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
                     "400/404": {
                         "description": "json解析错误/卡不存在"
                     }
