@@ -166,8 +166,8 @@ func (c *CardController) AddCard() {
 func (c *CardController) ModifyCardInfo() {
 	oldCardId := c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
-	var newCard, oldCard models.Card
-	oldCard.CardId = oldCardId
+	var newCard models.Card
+	oldCard := models.Card{CardId: oldCardId}
 	//解析body
 	if err := json.Unmarshal(body, &newCard); err != nil {
 		models.Log.Error("unmarshal error: ", err)
@@ -181,32 +181,37 @@ func (c *CardController) ModifyCardInfo() {
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
-	//读取新卡片
-	if err := o.Read(&newCard); err != nil {
-		models.Log.Error("sql read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404)
-		return
-	}
-	//新卡片另有主人
-	if newCard.UserId != "" && newCard.UserId != oldCard.UserId {
-		models.Log.Error("sql update error: card already have owner")
-		c.Ctx.ResponseWriter.WriteHeader(409)
-		return
-	}
+	////读取新卡片
+	//if err := o.Read(&newCard); err != nil {
+	//	models.Log.Error("sql read error: ", err)
+	//	c.Ctx.ResponseWriter.WriteHeader(404)
+	//	return
+	//}
+	////新卡片另有主人
+	//if newCard.UserId != "" && newCard.UserId != oldCard.UserId {
+	//	models.Log.Error("sql update error: card already have owner")
+	//	c.Ctx.ResponseWriter.WriteHeader(409)
+	//	return
+	//}
+	_ := newCard.CardParse()
 	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
-	oldCard.UserId = ""
-
-	if _, err := o.Update(&oldCard); err != nil {
-		models.Log.Error("sql update error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
+	if _, err := o.Insert(&newCard); err != nil {
+		models.Log.Error("insert error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	if _, err := o.Update(&newCard); err != nil {
+	oldCard.UserId = ""
+	if _, err := o.Update(&oldCard); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
+	//if _, err := o.Update(&newCard); err != nil {
+	//	models.Log.Error("update error: ", err)
+	//	c.Ctx.ResponseWriter.WriteHeader(500)
+	//	return
+	//}
 	//修改成功，返回成功后的卡片对象
 	c.Ctx.ResponseWriter.WriteHeader(200)
 	c.Data["json"] = newCard
@@ -218,7 +223,7 @@ func (c *CardController) ModifyCardInfo() {
 //ml
 //@Title UseScore
 //@Description 操作卡片的积分
-//@Param id body / true CardId(string)+ScoreId(string)+increment(int)
+//@Param id body / true CardId(string)+increment(int)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
 //@Failure 406	积分信息有误
@@ -227,8 +232,7 @@ func (c *CardController) ModifyCardInfo() {
 func (c *CardController) UseScore() {
 	var ScoreInfo struct {
 		CardId    string
-		ScoreId   string
-		increment int
+		Increment int
 	}
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
@@ -237,39 +241,39 @@ func (c *CardController) UseScore() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	Card := models.Card{CardId: ScoreInfo.CardId}
+	card := models.Card{CardId: ScoreInfo.CardId}
 	o := orm.NewOrm()
 	//根据CardId读取完整的卡片信息
-	if err := o.Read(&Card); err != nil {
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("sql read error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
-	hasIncrease := false
-	ScoreList := strings.Split(Card.ScoreList, " ")
-	ScoreNumList := strings.Split(Card.ScoreNum, " ")
-	for i, v := range ScoreList {
-		if v == ScoreInfo.ScoreId {
-			tmp, err := strconv.Atoi(ScoreNumList[i])
-			if err != nil {
-				models.Log.Error("invalid data：", err)
-				c.Ctx.ResponseWriter.WriteHeader(406)
-				return
-			}
-			tmp += ScoreInfo.increment
-			ScoreNumList[i] = strconv.Itoa(tmp)
-			Card.ScoreNum = strings.Join(ScoreNumList, " ")
-			hasIncrease = true
-		}
-	}
-	// 积分类型有误导致积分并没有更新
-	if hasIncrease == false {
-		models.Log.Error("score update error: invalid score")
+	//ScoreList := strings.Split(Card.ScoreList, " ")
+	//ScoreNumList := strings.Split(Card.ScoreNum, " ")
+	//for i, v := range ScoreList {
+	//	if v == ScoreInfo.ScoreId {
+	//		tmp, err := strconv.Atoi(ScoreNumList[i])
+	//		if err != nil {
+	//			models.Log.Error("invalid data：", err)
+	//			c.Ctx.ResponseWriter.WriteHeader(406)
+	//			return
+	//		}
+	//		tmp += ScoreInfo.increment
+	//		ScoreNumList[i] = strconv.Itoa(tmp)
+	//		Card.ScoreNum = strings.Join(ScoreNumList, " ")
+	//		hasIncrease = true
+	//	}
+	//}
+	oldScore, ok := strconv.Atoi(card.Score)
+	if ok != nil {
+		models.Log.Error("score update error ")
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
+	card.Score  = strconv.Itoa(oldScore + ScoreInfo.Increment)
 	//	卡片更新错误，可能是数据库出错
-	if _, err := o.Update(&Card); err != nil {
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("sql update error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
@@ -277,7 +281,7 @@ func (c *CardController) UseScore() {
 	//	成功更新对应的卡片积分数量
 	c.Ctx.ResponseWriter.WriteHeader(200)
 	//	返回更新积分后的卡片
-	c.Data["json"] = Card
+	c.Data["json"] = card
 	c.ServeJSON()
 }
 
