@@ -30,15 +30,15 @@ func (c *CardController) Get_cardidinfo() {
 }
 */
 
-//查询指定card_id对应的卡片的所有信息
-//zjn
-//@Title give_card_all_info
-//@Description 将这张卡片的所有信息传出去
-//@Param	id	query	string	true	查询的卡号
-//@Success 200	查询成功
-//@Failure 400	查询不到对应的卡
-//@Failure 401	查询不到对应的公司
-//@router  /card/:id	[get]
+// 查询指定card_id对应的卡片的所有信息
+// zjn
+// @Title give_card_all_info
+// @Description 将这张卡片的所有信息传出去
+// @Param	id	query	string	true	查询的卡号
+// @Success 200	查询成功
+// @Failure 400	查询不到对应的卡
+// @Failure 401	查询不到对应的公司
+// @router  /card/:id	[get]
 func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
