@@ -7,8 +7,8 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
-	"strconv"
-	"strings"
+	//"strconv"
+	//"strings"
 	"time"
 )
 
@@ -193,7 +193,7 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
-	_ := newCard.CardParse()
+	_ = newCard.CardParse()
 	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
 	if _, err := o.Insert(&newCard); err != nil {
@@ -265,14 +265,7 @@ func (c *CardController) UseScore() {
 	//		hasIncrease = true
 	//	}
 	//}
-	oldScore, ok := strconv.Atoi(card.Score)
-	if ok != nil {
-		models.Log.Error("score update error ")
-		c.Ctx.ResponseWriter.WriteHeader(406)
-		return
-	}
-	card.Score  = strconv.Itoa(oldScore + ScoreInfo.Increment)
-	//	卡片更新错误，可能是数据库出错
+	card.Score += ScoreInfo.Increment
 	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("sql update error：", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)

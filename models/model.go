@@ -19,8 +19,8 @@ type Card struct {
 	State       string    `valid:"Required"`
 	City        string    `valid:"Required"`
 	Money       int       `orm:"default(0)"`
-	Score       string    `orm:"null"`
-	CouponsNum  string    `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
+	Score       int    `orm:"null"`
+	CouponsNum  int    `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
 	Coupons     string    `orm:"null"` //描述优惠的方法
 	ExpireTime  time.Time `valid:"Required"`
 	DelTime     time.Time `orm:"null"`
