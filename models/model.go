@@ -11,61 +11,23 @@ import (
 //mysql
 //结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
 
-//"001 002 003"
-//"1 2 3"
 type Card struct {
 	CardId      string    `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
 	UserId      string    `orm:"size(13)" valid:"Required;Length(13)"`    //UserId 必须是由用户给出的，因为CardId中不包含UserId
-	CouponsList string    `orm:"null"`                                    //优惠券的种类的列表,种类与种类之间用空格隔开，种类极其数量CouponsNum的下标相同
 	CardType    string    `valid:"Required"`                              //卡的类型
 	Enterprise  string    `valid:"Required"`
 	State       string    `valid:"Required"`
 	City        string    `valid:"Required"`
 	Money       int       `orm:"default(0)"`
-	ScoreNum    string    `orm:"null"`
-	ScoreList   string    `orm:"null"`
+	Score       string    `orm:"null"`
 	CouponsNum  string    `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
+	Coupons     string    `orm:"null"` //描述优惠的方法
 	ExpireTime  time.Time `valid:"Required"`
 	DelTime     time.Time `orm:"null"`
 	CardOrder   int       `valid:"Required"` //该商家合作以来发布的第N条卡片
 	FactoryNum  int       `valid:"Required"`
 	BatchNum    int       `valid:"Required"`
 	SerialNum   int       `valid:"Required"`
-}
-
-//最好都改成Id，方便
-type Coupons struct {
-	CouponsID      string    `orm:"pk" valid:"Required"`
-	CouponDescribe string    `orm:"null"`
-	Time           time.Time `valid:"Required"`
-}
-
-type Score struct {
-	ScoreID       string    `orm:"pk" valid:"Required"`
-	ScoreDescribe string    `orm:"null"`
-	Time          time.Time `valid:"Required"`
-}
-
-type CardInfo struct {
-	CardId         string
-	UserId         string
-	CouponsList    string
-	CardType       string
-	Enterprise     string
-	State          string
-	City           string
-	Money          int
-	ScoreNum       string
-	ScoreList      string
-	CouponsNum     string
-	ExpireTime     time.Time
-	DelTime        time.Time
-	CardOrder      int
-	FactoryNum     int
-	BatchNum       int
-	SerialNum      int
-	CouponsDetails []Coupons
-	ScoreDetails   []Score
 }
 
 type CardParseStruct struct {
