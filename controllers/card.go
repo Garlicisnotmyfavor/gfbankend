@@ -34,10 +34,10 @@ func (c *CardController) Get_cardidinfo() {
 //zjn
 //@Title give_card_all_info
 //@Description 将这张卡片的所有信息传出去
-//@Param	id	query	string	true	原本的卡号  我还不清楚这里的修改
-//@Success 200	{object} models.Card {object} model.Strategy	修改成功，返回新卡片对象和策略对象
+//@Param	id	query	string	true	查询的卡号
+//@Success 200	查询成功
 //@Failure 400	查询不到对应的卡
-//@Failure 404	查询不到对应的优惠策略
+//@Failure 401	查询不到对应的公司
 //@router  /card/:id	[get]
 func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
@@ -45,7 +45,7 @@ func (c *CardController) Get_cardidinfo() {
 	o := orm.NewOrm()
 	//设置一个填充了cardid的card结构
 	var card models.Card
-	var cardinfo models.CardInfo
+	var ep models.Enterprise
 	card.CardId = id
 	// 查询记录
 	if err := o.Read(&card); err != nil {
@@ -53,57 +53,49 @@ func (c *CardController) Get_cardidinfo() {
 		c.Ctx.ResponseWriter.WriteHeader(400) // 查不到id对应的卡
 		return
 	}
-	//若查到card这一列后，需要找到它的卡的积分或卷的规则
-	var CouponsDetails models.Coupons
-	var ScoreDetails   models.Score
-	ScoreList := strings.Split(card.ScoreList, " ")
-	CouponsList := strings.Split(card.CouponsList, " ")
-	for i, value := range ScoreList {
-		ScoreDetails.ScoreID = value
-		if err := o.Read(&ScoreDetails); err != nil {
-			models.Log.Error("not exist error: ", err)
-			c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
-			i = i+1 //尽量修改不用这种方式
-			i = i-1
-			return
-		}
-		cardinfo.ScoreDetails = append(cardinfo.ScoreDetails, ScoreDetails)
+	//找到卡后要去找对应的公司的信息
+	ep.Enterprise = card.Enterprise
+	if err := o.Read(&ep); err != nil{
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(401) // 查不到公司的信息
+		return
 	}
-	for i, value := range CouponsList {
-		CouponsDetails.CouponsID = value
-		if err := o.Read(&CouponsDetails); err != nil {
-			models.Log.Error("not exist error: ", err)
-			c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
-			i = i+1 //尽量修改不用这种方式
-			i = i-1
-			return
-		}
-		cardinfo.CouponsDetails = append(cardinfo.CouponsDetails, CouponsDetails)
+	var cardenter struct {
+		card	models.Card
+		enterprise	models.Enterprise
 	}
-
-	//整合到一个struct里
-	cardinfo.CardId = card.CardId      
-	cardinfo.UserId = card.UserId      
-	cardinfo.CouponsList = card.CouponsList
-	cardinfo.CardType = card.CardType     
-	cardinfo.Enterprise = card.Enterprise   
-	cardinfo.State = card.State       
-	cardinfo.City = card.City         
-	cardinfo.Money = card.Money        
-	cardinfo.ScoreNum = card.ScoreNum     
-	cardinfo.ScoreList = card.ScoreList    
-	cardinfo.CouponsNum = card.CouponsNum   
-	cardinfo.ExpireTime =  card.ExpireTime
-	cardinfo.DelTime = card.DelTime     
-	cardinfo.CardOrder = card.CardOrder   
-	cardinfo.FactoryNum = card.FactoryNum   
-	cardinfo.BatchNum = card.BatchNum    
-	cardinfo.SerialNum = card.SerialNum    
-	//cardinfo.CouponsDetails = CouponsDetails
-	//cardinfo.ScoreDetails = ScoreDetails
+	cardenter.card = card
+	cardenter.enterprise = Enterprise
+	////若查到card这一列后，需要找到它的卡的积分或卷的规则
+	//var CouponsDetails models.Coupons
+	//var ScoreDetails   models.Score
+	//ScoreList := strings.Split(card.ScoreList, " ")
+	//CouponsList := strings.Split(card.CouponsList, " ")
+	//for i, value := range ScoreList {
+	//	ScoreDetails.ScoreID = value
+	//	if err := o.Read(&ScoreDetails); err != nil {
+	//		models.Log.Error("not exist error: ", err)
+	//		c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
+	//		i = i+1 //尽量修改不用这种方式
+	//		i = i-1
+	//		return
+	//	}
+	//	cardinfo.ScoreDetails = append(cardinfo.ScoreDetails, ScoreDetails)
+	//}
+	//for i, value := range CouponsList {
+	//	CouponsDetails.CouponsID = value
+	//	if err := o.Read(&CouponsDetails); err != nil {
+	//		models.Log.Error("not exist error: ", err)
+	//		c.Ctx.ResponseWriter.WriteHeader(403) //找不到这个类型
+	//		i = i+1 //尽量修改不用这种方式
+	//		i = i-1
+	//		return
+	//	}
+	//	cardinfo.CouponsDetails = append(cardinfo.CouponsDetails, CouponsDetails)
+	//}
 
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
-	c.Data["json"] = cardinfo
+	c.Data["json"] = cardenter
 	c.ServeJSON()
 	
 }
