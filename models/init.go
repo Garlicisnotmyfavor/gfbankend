@@ -37,7 +37,6 @@ func init() {
 	//下面要修改，根据数据库设计
 	//zjn
 	orm.RegisterModel(new(Card)) //登记orm
-	orm.RegisterModel(new(Coupons))
 	orm.RegisterModel(new(Enterprise))
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
