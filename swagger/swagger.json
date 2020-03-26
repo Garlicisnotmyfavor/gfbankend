@@ -88,23 +88,20 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "我还不清楚这里的修改",
-                        "type": "string",
-                        "default": "true"
+                        "description": "查询的卡号",
+                        "required": true,
+                        "type": "string"
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "{object} model.Strategy\t修改成功，返回新卡片对象和策略对象",
-                        "schema": {
-                            "$ref": "#/definitions/models.Card"
-                        }
+                        "description": "查询成功"
                     },
                     "400": {
                         "description": "查询不到对应的卡"
                     },
-                    "404": {
-                        "description": "查询不到对应的优惠策略"
+                    "401": {
+                        "description": "查询不到对应的公司"
                     }
                 }
             }
@@ -120,10 +117,21 @@
                     {
                         "in": "query",
                         "name": "id",
-                        "description": "Body",
+                        "description": "卡号",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "in": "body",
+                        "name": "Increment",
+                        "description": "优惠券改变的数量，可以为负数",
+                        "required": true,
                         "schema": {
-                            "$ref": "#/definitions/CouponsID,Increment"
-                        }
+                            "format": "int64",
+                            "type": "integer"
+                        },
+                        "type": "integer",
+                        "format": "int64"
                     }
                 ],
                 "responses": {
@@ -152,23 +160,6 @@
                         "type": "string"
                     }
                 ],
-                "responses": {
-                    "200": {
-                        "description": ""
-                    },
-                    "400/403/404/406": {
-                        "description": "json解析错误/优惠券不足/卡不存在/非法数据"
-                    }
-                }
-            }
-        },
-        "/api/user/card/{id}/delete": {
-            "post": {
-                "tags": [
-                    "api/user"
-                ],
-                "description": "删除卡片",
-                "operationId": "CardController.coupons",
                 "responses": {
                     "200": {
                         "description": ""
@@ -234,7 +225,7 @@
                     {
                         "in": "body",
                         "name": "id",
-                        "description": "CardId(string)+ScoreId(string)+increment(int)",
+                        "description": "CardId(string)+increment(int)",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions//"
@@ -266,10 +257,6 @@
             "title": "/",
             "type": "object"
         },
-        "CouponsID,Increment": {
-            "title": "CouponsID,Increment",
-            "type": "object"
-        },
         "models.Card": {
             "title": "Card",
             "type": "object",
@@ -291,11 +278,12 @@
                 "City": {
                     "type": "string"
                 },
-                "CouponsList": {
+                "Coupons": {
                     "type": "string"
                 },
                 "CouponsNum": {
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "DelTime": {
                     "type": "string",
@@ -316,11 +304,9 @@
                     "type": "integer",
                     "format": "int64"
                 },
-                "ScoreList": {
-                    "type": "string"
-                },
-                "ScoreNum": {
-                    "type": "string"
+                "Score": {
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "SerialNum": {
                     "type": "integer",

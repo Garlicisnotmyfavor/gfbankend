@@ -286,7 +286,7 @@ func (c *CardController) UseScore() {
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
 //@Param id query string true 卡号
-//@Param Increment Body int true  优惠券改变的数量，可以为负数
+//@Param Increment body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
 //@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
