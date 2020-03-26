@@ -293,7 +293,8 @@ func (c *CardController) UseScore() {
 func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	var increment int
+	o.Insert(&models.Card{CardId:"1234567890123456",UserId:"1234567890124",CardType:"MembershipCard",Enterprise:"StarBuck",State:"Sichuan",City:"Chengdu",Money:100,ExpireTime:time.Now()})
+	var increment struct{value int}
 	card := models.Card{CardId: CardId}
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
@@ -307,7 +308,7 @@ func (c *CardController) Coupons() {
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
 	} 
-	card.CouponsNum += increment
+	card.CouponsNum += increment.value
 	if _,err := o.Update(&card); err != nil{
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
