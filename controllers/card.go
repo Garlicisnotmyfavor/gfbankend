@@ -54,7 +54,7 @@ func (c *CardController) Get_cardidinfo() {
 		return
 	}
 	//找到卡后要去找对应的公司的信息
-	ep.Enterprise = card.Enterprise
+	ep.Id = card.Enterprise
 	if err := o.Read(&ep); err != nil{
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(401) // 查不到公司的信息
@@ -65,7 +65,7 @@ func (c *CardController) Get_cardidinfo() {
 		enterprise	models.Enterprise
 	}
 	cardenter.card = card
-	cardenter.enterprise = Enterprise
+	cardenter.enterprise = ep
 	////若查到card这一列后，需要找到它的卡的积分或卷的规则
 	//var CouponsDetails models.Coupons
 	//var ScoreDetails   models.Score
