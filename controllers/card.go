@@ -201,6 +201,7 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
+	_ := newCard.CardParse()
 	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
 	if _, err := o.Insert(&newCard); err != nil {
