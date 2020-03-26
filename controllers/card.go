@@ -296,7 +296,8 @@ func (c *CardController) UseScore() {
 //zyj
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券 
-//@Success 200
+//@Param id query CouponsID,Increment Body / true id(string)+CouponsID(string)+increment(int)  卡号，优惠券号，增量(zeng'l增量可以为负数)
+//@Success 200  成功
 //@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
@@ -351,8 +352,9 @@ func (c *CardController) Coupons() {
 }
 
 //zyj
-//@Title coupons
+//@Title delete
 //@Description 删除卡片
+//@Param id query string true 卡号
 //@Success 200
 //@Failure 400/404	json解析错误/卡不存在
 //@router  /card/:id/delete [post]

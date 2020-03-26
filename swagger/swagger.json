@@ -116,6 +116,42 @@
                 ],
                 "description": "增加或减少某张卡的某种优惠券",
                 "operationId": "CardController.coupons",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "Body",
+                        "schema": {
+                            "$ref": "#/definitions/CouponsID,Increment"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "成功"
+                    },
+                    "400/403/404/406": {
+                        "description": "json解析错误/优惠券不足/卡不存在/非法数据"
+                    }
+                }
+            }
+        },
+        "/api/user/card/{id}/delete": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "删除卡片",
+                "operationId": "CardController.delete",
+                "parameters": [
+                    {
+                        "in": "query",
+                        "name": "id",
+                        "description": "卡号",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": ""
@@ -228,6 +264,10 @@
     "definitions": {
         "/": {
             "title": "/",
+            "type": "object"
+        },
+        "CouponsID,Increment": {
+            "title": "CouponsID,Increment",
             "type": "object"
         },
         "models.Card": {
