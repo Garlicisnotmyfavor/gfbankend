@@ -166,7 +166,27 @@ paths:
           description: 数据不匹配
         "403":
           description: 绑定的卡片不存在
-  /api/user/join:
+  /api/user/enroll:
+    get:
+      tags:
+      - api/user
+      description: send random code when user enroll
+      operationId: UserController.getRanCodeInRegister
+      parameters:
+      - in: body
+        name: email
+        description: 用户的邮箱
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: "string\t\"生成的验证码\""
+        "400":
+          description: 解析body失败
+        "500":
+          description: 发送邮件失败
     post:
       tags:
       - api/user
@@ -174,8 +194,8 @@ paths:
       operationId: UserController.Register
       parameters:
       - in: body
-        name: user
-        description: UserInfo
+        name: userInfo
+        description: 用户所填信息
         required: true
         schema:
           $ref: '#/definitions/models.User'
@@ -185,11 +205,11 @@ paths:
           schema:
             $ref: '#/definitions/models.User'
         "400":
-          description: Fail to unmarshal json
+          description: 解析body错误
         "403":
-          description: Fail to insert
+          description: 数据库插入错误
         "406":
-          description: Illegal account form
+          description: 账号信息格式有误
   /api/user/login:
     put:
       tags:
@@ -199,20 +219,18 @@ paths:
       parameters:
       - in: body
         name: userInfo
-        description: "true"
+        description: account(string)+password(string)+accountType(string)为mail或者phone
         schema:
-          $ref: '#/definitions//'
+          $ref: '#/definitions/true'
       responses:
         "200":
           description: Register successfully
           schema:
             $ref: '#/definitions/models.User'
         "400":
-          description: Fail to unmarshal body
-        "403":
-          description: Fail to login
+          description: 信息内容或格式有误
         "406":
-          description: Illegal accountType
+          description: 数据库查询报错，可能用户所填账号或密码错误
   /api/user/password:
     put:
       tags:
@@ -221,19 +239,20 @@ paths:
       operationId: UserController.changePW
       parameters:
       - in: body
-        name: body
-        description: "true"
+        name: userInfo
+        description: 用户信息
+        required: true
         schema:
           $ref: '#/definitions/models.User'
       responses:
         "200":
           description: Update successfully
         "400":
-          description: Fail to unmarshal json
+          description: 解析body失败
         "404":
-          description: Fail to read
-        "500":
-          description: Fail to update
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
 definitions:
   /:
     title: /
@@ -295,3 +314,6 @@ definitions:
         type: string
       Tel:
         type: string
+  "true":
+    title: "true"
+    type: object
