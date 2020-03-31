@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -142,8 +143,8 @@ func (c *UserController) Post() {
 
 // @Title Login
 // @Description user login
-// @Param userInfo body / true "account(string) + password(string) + accountType（string)为mail或者phone"
-// @Success 200 Register successfully
+// @Param userInfo body / true account(string) + password(string) + accountType（string)为mail或者phone
+// @Success 200 {object} models.User Register successfully
 // @Failure 403 Fail to login
 // @Failure 400 Fail to unmarshal body
 // @Failure 406 Illegal accountType
@@ -152,14 +153,14 @@ func (c *UserController) Put() {
 	o := orm.NewOrm()
 	user := models.User{}
 
-	body:=c.Ctx.Input.RequestBody
-	var uInfo struct{
-		account string
-		password string
+	body := c.Ctx.Input.RequestBody
+	var uInfo struct {
+		account     string
+		password    string
 		accountType string
 	}
 	//解析前端JSON数据获得账号密码
-	if err:=json.Unmarshal(body, &uInfo);err!=nil {
+	if err := json.Unmarshal(body, &uInfo); err != nil {
 		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
@@ -185,6 +186,8 @@ func (c *UserController) Put() {
 		return
 	}
 	//信息匹配登录成功
+	c.Data["json"] = user
+	c.ServeJSON() // 传用户对象给前端
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
@@ -205,7 +208,7 @@ func (c *UserController) ChangePW() {
 		return
 	}
 	o := orm.NewOrm()
-	usr:= models.User{Id: user.Id}
+	usr := models.User{Id: user.Id}
 	// 查询记录
 	if err := o.Read(&usr); err != nil {
 		models.Log.Error("read error: ", err)
@@ -213,12 +216,13 @@ func (c *UserController) ChangePW() {
 		return
 	}
 	//查询成功，更新密码
-	usr.Password=user.Password
-	if _,err:=o.Update(&usr);err!=nil{
+	usr.Password = user.Password
+	if _, err := o.Update(&usr); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
 	}
+	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
 }
 
 //忘记密码:用邮件找回，需要正确输入邮件验证码，验证通过后重新设置密码

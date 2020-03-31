@@ -250,6 +250,112 @@
                     }
                 }
             }
+        },
+        "/api/user/join": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "user register",
+                "operationId": "UserController.Register",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "user",
+                        "description": "UserInfo",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "\"OK\"",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Fail to unmarshal json"
+                    },
+                    "403": {
+                        "description": "Fail to insert"
+                    },
+                    "406": {
+                        "description": "Illegal account form"
+                    }
+                }
+            }
+        },
+        "/api/user/login": {
+            "put": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "user login",
+                "operationId": "UserController.Login",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "userInfo",
+                        "description": "true",
+                        "schema": {
+                            "$ref": "#/definitions//"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Register successfully",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Fail to unmarshal body"
+                    },
+                    "403": {
+                        "description": "Fail to login"
+                    },
+                    "406": {
+                        "description": "Illegal accountType"
+                    }
+                }
+            }
+        },
+        "/api/user/password": {
+            "put": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "change password",
+                "operationId": "UserController.changePW",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "true",
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update successfully"
+                    },
+                    "400": {
+                        "description": "Fail to unmarshal json"
+                    },
+                    "404": {
+                        "description": "Fail to read"
+                    },
+                    "500": {
+                        "description": "Fail to update"
+                    }
+                }
+            }
         }
     },
     "definitions": {
@@ -316,6 +422,24 @@
                     "type": "string"
                 },
                 "UserId": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "title": "User",
+            "type": "object",
+            "properties": {
+                "Id": {
+                    "type": "string"
+                },
+                "Mail": {
+                    "type": "string"
+                },
+                "Password": {
+                    "type": "string"
+                },
+                "Tel": {
                     "type": "string"
                 }
             }
