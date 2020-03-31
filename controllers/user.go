@@ -100,7 +100,7 @@ func (c *UserController) GetAllCard() {
 //	}                   //关闭上传的文件，不然的话会出现临时文件不能清除的情况
 //}
 
-//ML，用户注册 修改
+//ML，用户注册
 // @Title Register
 // @Description user register
 // @Param user body models.User  true UserInfo
