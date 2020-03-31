@@ -38,6 +38,7 @@ func init() {
 	//zjn
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(Enterprise))
+	orm.RegisterModel(new(User))
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
 }
