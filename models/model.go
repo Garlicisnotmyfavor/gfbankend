@@ -53,10 +53,13 @@ type EnterpriseParseStruct struct {
 }
 
 type User struct {
-	Id       string `orm:"pk"`
-	Tel      string
-	Mail     string
-	Password string
+	Id       string `orm:"pk;size(13)" valid:"Required"` 
+	Tel      string `orm:"null"` 
+	Mail     string `orm:"null"`
+	Password string `valid:"Required"`
+	LoginMonth string `valid:"max(2)"`  //注册月份
+	LoginYear  string `valid:"max(4)"`  //注册年份
+	LoginNum int `valid:"MaxSize(6)"`   //该月份所注册的第几个用户
 }
 
 //type DelCard struct {
@@ -145,16 +148,25 @@ func (card *Card) CardParse() error {
 	card.BatchNum, err = strconv.Atoi(card.CardId[12:13])
 	card.SerialNum, err = strconv.Atoi(card.CardId[13:])
 	if !ok && err != nil {
-		return errors.New("INVALID CONTENT CARD ID")
+		return errors.New("INVALID CARD ID")
 	}
 	return nil
 }
 
-//ML 解析生成用户ID
-//func (user *User) UserParse() error {
-//
-//	return nil
-//}
+//ZYJ 解析生成用户ID
+func (user *User) UserParse() error {
+	if len(user.Id) != 16 {
+		return errors.New("INVALID LENGTH USER ID")
+	}
+	var err error
+	user.LoginYear = user.Id[0:4]
+	user.LoginMonth = user.Id[4:6]
+	user.LoginNum,err = strconv.Atoi(user.Id[6:])
+	if err!=nil{
+		return errors.New("INVALID USER")
+	}
+	return nil
+}
 
 func (enterprise *Enterprise) EnterpriseParse() error {
 	if len(enterprise.Id) != 5 {

@@ -154,7 +154,7 @@ func (c *UserController) Enroll() {
 		return
 	}
 	//解析得到用户ID
-	if err := user.UserParse(&user); err != nil {
+	if err := user.UserParse(); err != nil {
 		models.Log.Error("error in parsing user id: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(406) //用户ID解析出错
 		return
