@@ -62,12 +62,12 @@ type User struct {
 	LoginNum int `valid:"MaxSize(6)"`
 }
 
-// type DelCard struct {
-// 	CardId  string `orm:"pk;column(card_id)"`
-// 	UserId  string `orm:"column(user_id)"`
-// 	Remark  string
-// 	DelTime time.Time `orm:"column(del_time)"`
-// }
+//type DelCard struct {
+//	CardId  string `orm:"pk;column(card_id)"`
+//	UserId  string `orm:"column(user_id)"`
+//	Remark  string
+//	DelTime time.Time `orm:"column(del_time)"`
+//}
 
 var CardParseMaps = CardParseStruct{
 	map[string]string{
@@ -127,6 +127,10 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 		"3": "Store",
 	},
 }
+
+//根据confluence
+//zyj
+//var UserParse
 
 //将card结构中的Id解析出对应的含义赋值给card的其他导出属性
 func (card *Card) CardParse() error {
