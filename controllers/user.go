@@ -128,7 +128,7 @@ func (c* UserController) SendCodeInEnroll() {
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
-//ML，用户注册 修改
+//ML，用户注册 
 // @Title Register
 // @Description user register
 // @Param userInfo body models.User  true 用户所填信息
@@ -258,8 +258,58 @@ func (c *UserController) ChangePW() {
 //忘记密码:用邮件找回，需要正确输入邮件验证码，验证通过后重新设置密码
 //zjn
 func (c *UserController) ForgetPW() {
-	//通过
+	//输入相关信息，解析出用户邮箱
+	var user models.User
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &user); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
+	}
+	o := orm.NewOrm()
+	//查询填入内容是否准确
+	if err := o.Read(&user); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对应id的用户
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200) // 身份验证成功，后续进入验证码阶段
 }
+
+// @Title NewPassword
+// @Description  通过前面忘记密码的过程后，设置新的密码
+// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
+// @Success 200 Update successfully
+// @Failure 404 数据库无此用户
+// @Failure 400 解析body失败
+// @Failure 406 更新密码失败
+// @router /ForgetPassword/New [put]
+func (c *UserController) NewPW() {
+	var user models.User
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &user); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
+	}
+	o := orm.NewOrm()
+	usr := models.User{Id: user.Id}
+	// 查询记录
+	if err := o.Read(&usr); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
+		return
+	}
+	//查询成功，更新密码
+	usr.Password = user.Password
+	if _, err := o.Update(&usr); err != nil {
+		models.Log.Error("update error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
+}
+
 
 //// @Title Feedback
 //// @Description send feedback mail
