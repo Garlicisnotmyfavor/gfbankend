@@ -293,7 +293,7 @@ func (c *UserController) ChangePW() {
 //忘记密码:用邮件找回，需要正确输入邮件验证码，验证通过后重新设置密码
 //zjn
 func (c *UserController) ForgetPW() {
-
+	//通过
 }
 
 //// @Title Feedback
