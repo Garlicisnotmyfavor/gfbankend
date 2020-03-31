@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+	util "github.com/gfbankend/utils"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -100,22 +101,49 @@ func (c *UserController) GetAllCard() {
 //	}                   //关闭上传的文件，不然的话会出现临时文件不能清除的情况
 //}
 
+//ML，用户注册时验证码获取
+// @Title getRanCodeInRegister
+// @Description send random code when user enroll
+// @Param	email	body	string	true	用户的邮箱
+// @Success 200	string	"生成的验证码"
+// @Failure 400 解析body失败
+// @Failure 500 发送邮件失败
+// @router /enroll [get]
+func (c* UserController) SendCodeInEnroll() {
+	var email string  // this is user's email
+	body := c.Ctx.Input.RequestBody
+	// get email from body
+	if err := json.Unmarshal(body, &email); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	randCode := util.GetRandCode()  // get random code
+	if err := util.SendEmail(email, randCode); err != nil {
+		models.Log.Error("send email error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+	c.Data["json"] = randCode
+	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200)
+}
 //ML，用户注册 修改
 // @Title Register
 // @Description user register
-// @Param user body models.User  true UserInfo
+// @Param userInfo body models.User  true 用户所填信息
 // @Success 200 {object} models.User "OK"
-// @Failure 400 Fail to unmarshal json
-// @Failure 406 Illegal account form
-// @Failure 403 Fail to insert
-// @router /join [post]
-func (c *UserController) Post() {
+// @Failure 400 解析body错误
+// @Failure 406 账号信息格式有误
+// @Failure 403 数据库插入错误
+// @router /enroll [post]
+func (c *UserController) Enroll() {
 	o := orm.NewOrm()
 	body := c.Ctx.Input.RequestBody
 	user := models.User{}
 	//Obtain information of the new user
 	if err := json.Unmarshal(body, &user); err != nil {
-		models.Log.Error("Unmarshal error: ", err)
+		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
@@ -125,10 +153,10 @@ func (c *UserController) Post() {
 		c.Ctx.ResponseWriter.WriteHeader(406) //非法账号
 		return
 	}
-	//解析得到用户ID
+	解析得到用户ID
 	if err := user.UserParse(&user); err != nil {
 		models.Log.Error("error in parsing user id: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(406) //用户解析出错
+		c.Ctx.ResponseWriter.WriteHeader(406) //用户ID解析出错
 		return
 	}
 	if _, err := o.Insert(&user); err != nil {
@@ -136,6 +164,8 @@ func (c *UserController) Post() {
 		c.Ctx.ResponseWriter.WriteHeader(403) //插入错误
 		return
 	}
+	c.Data["json"] = user
+	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
 }
 
@@ -143,23 +173,23 @@ func (c *UserController) Post() {
 
 // @Title Login
 // @Description user login
-// @Param userInfo body / true account(string) + password(string) + accountType（string)为mail或者phone
+// @Param userInfo body true account(string)+password(string)+accountType(string)为mail或者phone
 // @Success 200 {object} models.User Register successfully
-// @Failure 403 Fail to login
-// @Failure 400 Fail to unmarshal body
-// @Failure 406 Illegal accountType
+// @Failure 406 数据库查询报错，可能用户所填账号或密码错误
+// @Failure 400 信息内容或格式有误
 // @router /login [put]
-func (c *UserController) Put() {
+func (c *UserController) Login() {
 	o := orm.NewOrm()
 	user := models.User{}
 
 	body := c.Ctx.Input.RequestBody
+	// temp struct to get userInfo
 	var uInfo struct {
 		account     string
 		password    string
 		accountType string
 	}
-	//解析前端JSON数据获得账号密码
+	// 解析前端JSON数据获得账号密码
 	if err := json.Unmarshal(body, &uInfo); err != nil {
 		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
@@ -175,9 +205,9 @@ func (c *UserController) Put() {
 		user.Password = uInfo.password
 		column = "tel"
 	} else {
-		//非法用户类型
+		// 非法用户类型
 		models.Log.Error("login error: wrong account type")
-		c.Ctx.ResponseWriter.WriteHeader(406)
+		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
 	if err := o.Read(&user, column, "password"); err != nil {
@@ -185,19 +215,19 @@ func (c *UserController) Put() {
 		c.Ctx.ResponseWriter.WriteHeader(403)
 		return
 	}
-	//信息匹配登录成功
+	// 信息匹配登录成功
 	c.Data["json"] = user
-	c.ServeJSON() // 传用户对象给前端
+	c.ServeJSON()  // 传用户对象给前端
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @Title changePW
 // @Description change password
-// @Param    body        body     models.User    true
+// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
 // @Success 200 Update successfully
-// @Failure 404 Fail to read
-//@Failure 400 Fail to unmarshal json
-//@Failure 500 Fail to update
+// @Failure 404 数据库无此用户
+// @Failure 400 解析body失败
+// @Failure 406 更新密码失败
 // @router /password [put]
 func (c *UserController) ChangePW() {
 	var user models.User

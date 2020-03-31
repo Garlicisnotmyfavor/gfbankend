@@ -29,19 +29,18 @@ func GetRandCode() []byte {
 }
 
 /*
-*@function:发送验证码给target邮箱
-*@param {string} 目标邮箱
-*@return {[]byte}vcode，{error}err
+*@function:发msg给target邮箱
+*@param {目标邮箱email(string), 信息msg([]byte)}
+*@return {error}err
  */
-func SendEmail(target string) ([]byte, error) {
+func SendEmail(target string, rCode []byte) error {
 	//产生验证码
-	vcode := GetRandCode()
-	if len(vcode) != 6 {
+	if len(rCode) != 6 {
 		models.Log.Error("Error generating verify code")
-		return nil, errors.New("Fail to generate verify code!")
+		return errors.New("fail to generate verify code")
 	}
 	//邮箱内容
-	content := fmt.Sprintf("[ANZ]尊敬的客户' %s '，您本次登录所需的验证码为:%s,请勿向任何人提供您收到的验证码!", target, vcode)
+	content := fmt.Sprintf("[ANZ]尊敬的客户' %s '，您本次登录所需的验证码为:%s,请勿向任何人提供您收到的验证码!", target, rCode)
 	m := gomail.NewMessage()
 	//设置邮件信息
 	m.SetAddressHeader("From", "gfbankend@163.com", "ANZ-WORKSHOP") //设置发件人
@@ -53,8 +52,8 @@ func SendEmail(target string) ([]byte, error) {
 
 	if err := d.DialAndSend(m); err != nil {
 		log.Println("Fail to send: ", err)
-		return nil, err
+		return err
 	}
-	return vcode, nil
+	return nil
 }
 
