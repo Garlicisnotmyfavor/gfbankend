@@ -57,9 +57,9 @@ type User struct {
 	Tel      string `orm:"null"` 
 	Mail     string `orm:"null"`
 	Password string `valid:"Required"`
-	LoginMonth string `valid:"max(2)"`
-	LoginYear  string `valid:"max(4)"`
-	LoginNum int `valid:"MaxSize(6)"`
+	LoginMonth string `valid:"max(2)"`  //注册月份
+	LoginYear  string `valid:"max(4)"`  //注册年份
+	LoginNum int `valid:"MaxSize(6)"`   //该月份所注册的第几个用户
 }
 
 //type DelCard struct {
