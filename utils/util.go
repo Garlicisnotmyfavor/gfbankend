@@ -57,3 +57,4 @@ func SendEmail(target string, rCode []byte) error {
 	return nil
 }
 
+//用userid和密码生成session
