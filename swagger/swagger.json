@@ -352,6 +352,37 @@
                 }
             }
         },
+        "/api/user/forgetPw": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "Forget password",
+                "operationId": "UserController.ForgetPW",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "userInfo",
+                        "description": "用户信息(需要的是用户ID，邮件）",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully"
+                    },
+                    "400": {
+                        "description": "解析body失败"
+                    },
+                    "404": {
+                        "description": "数据库无此用户"
+                    }
+                }
+            }
+        },
         "/api/user/login": {
             "put": {
                 "tags": [

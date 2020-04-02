@@ -261,6 +261,13 @@ func (c *UserController) ChangePW() {
 
 //忘记密码:用邮件找回，需要正确输入邮件验证码，验证通过后重新设置密码
 //zjn
+// @Title ForgetPW
+// @Description Forget password
+// @Param userInfo body models.User true 用户信息(需要的是用户ID，邮件）
+// @Success 200 successfully
+// @Failure 404 数据库无此用户
+// @Failure 400 解析body失败
+// @router /forgetPw [post]
 func (c *UserController) ForgetPW() {
 	//输入相关信息，解析出用户邮箱
 	var user models.User
