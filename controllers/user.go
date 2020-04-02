@@ -2,12 +2,10 @@ package controllers
 
 import (
 	"encoding/json"
-
-	util "github.com/gfbankend/utils"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	util "github.com/gfbankend/utils"
 	//"io/ioutil"
 	//"path"
 )
@@ -18,7 +16,6 @@ type UserController struct {
 
 //全局的session时长
 
-
 //显示所有卡片
 //检验是否在登陆状态，检验session是否存在，有的话不用前端的id，无的话返回错误操作
 // @Title showAllCards
@@ -26,9 +23,14 @@ type UserController struct {
 // @Param    body        body     models.Card    true
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
-// @router /:id [get]
+// @router /:id:int [get]
 //zjn
 func (c *UserController) GetAllCard() {
+	if c.GetSession("userInfo") == nil {
+		models.Log.Error("no login")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	// 取得用户ID from query
 	uid := c.Ctx.Input.Param(":id")
 	//储存所有卡片信息
@@ -37,17 +39,17 @@ func (c *UserController) GetAllCard() {
 	o := orm.NewOrm()
 	qt := o.QueryTable("card")
 	//取出card表中所有信息，放入cardList中
-	_, err := qt.Filter("user_id_exact", uid).All(&cardList)
-	if err != nil {
+	_, err := qt.Filter("user_id__exact", uid).All(&cardList)
+	if err != nil || len(cardList) == 0 {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
-	c.Ctx.ResponseWriter.WriteHeader(200) //成功读取所有卡片
 	//使用json格式传输所有信息
 	c.Data["json"] = cardList
 	//发送json
 	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功读取所有卡片
 }
 
 //得到头像
@@ -180,7 +182,7 @@ func (c *UserController) Enroll() {
 // 加入是否选择记住密码，设置session，设置cookie
 // @Title Login
 // @Description user login
-// @Param userInfo body true account(string)+password(string)+accountType(string)为mail或者phone
+// @Param userInfo body true account(string)+password(string)+accounttype(string)为mail或者phone
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -188,13 +190,12 @@ func (c *UserController) Enroll() {
 func (c *UserController) Login() {
 	o := orm.NewOrm()
 	user := models.User{}
-
 	body := c.Ctx.Input.RequestBody
 	// temp struct to get userInfo
 	var uInfo struct {
-		account     string
-		password    string
-		accountType string
+		Account     string
+		Password    string
+		AccountType string
 	}
 	// 解析前端JSON数据获得账号密码
 	if err := json.Unmarshal(body, &uInfo); err != nil {
@@ -203,13 +204,13 @@ func (c *UserController) Login() {
 		return
 	}
 	var column string
-	if uInfo.accountType == "mail" {
-		user.Mail = uInfo.account
-		user.Password = uInfo.password
+	if uInfo.AccountType == "mail" {
+		user.Mail = uInfo.Account
+		user.Password = uInfo.Password
 		column = "mail"
-	} else if uInfo.accountType == "phone" {
-		user.Tel = uInfo.account
-		user.Password = uInfo.password
+	} else if uInfo.AccountType == "phone" {
+		user.Tel = uInfo.Account
+		user.Password = uInfo.Password
 		column = "tel"
 	} else {
 		// 非法用户类型
@@ -224,9 +225,16 @@ func (c *UserController) Login() {
 	}
 	// 信息匹配登录成功
 	c.Data["json"] = user
-	c.ServeJSON() // 传用户对象给前端
+	c.ServeJSON()                  // 传用户对象给前端
+	c.SetSession("userInfo", user) // 登录成功，设置session
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
+
+// @Title test
+// @Description user test
+// @Failure 406 数据库查询报错，可能用户所填账号或密码错误
+// @Failure 400 信息内容或格式有误
+// @router	/cookie/test	[get]
 
 // @Title changePW
 // @Description change password

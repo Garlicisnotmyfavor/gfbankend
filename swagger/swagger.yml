@@ -11,7 +11,7 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
 basePath: /v1
 paths:
-  /api/user/:
+  /api/user/{id}:
     get:
       tags:
       - api/user
@@ -28,7 +28,7 @@ paths:
           description: Read successfully
         "404":
           description: Fail to read
-  /api/user/ForgetPassword/New:
+  /api/user/ForgetPW/New:
     put:
       tags:
       - api/user

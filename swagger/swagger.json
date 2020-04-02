@@ -15,34 +15,7 @@
     },
     "basePath": "/v1",
     "paths": {
-        "/api/user/": {
-            "get": {
-                "tags": [
-                    "api/user"
-                ],
-                "description": "show all cards",
-                "operationId": "UserController.showAllCards",
-                "parameters": [
-                    {
-                        "in": "body",
-                        "name": "body",
-                        "description": "true",
-                        "schema": {
-                            "$ref": "#/definitions/models.Card"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "Read successfully"
-                    },
-                    "404": {
-                        "description": "Fail to read"
-                    }
-                }
-            }
-        },
-        "/api/user/ForgetPassword/New": {
+        "/api/user/ForgetPW/New": {
             "put": {
                 "tags": [
                     "api/user"
@@ -446,6 +419,33 @@
                     },
                     "406": {
                         "description": "更新密码失败"
+                    }
+                }
+            }
+        },
+        "/api/user/{id}": {
+            "get": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "show all cards",
+                "operationId": "UserController.showAllCards",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "body",
+                        "description": "true",
+                        "schema": {
+                            "$ref": "#/definitions/models.Card"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Read successfully"
+                    },
+                    "404": {
+                        "description": "Fail to read"
                     }
                 }
             }

@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"encoding/json"
-	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -55,14 +54,14 @@ func (c *CardController) Get_cardidinfo() {
 	}
 	//找到卡后要去找对应的公司的信息
 	ep.Id = card.Enterprise
-	if err := o.Read(&ep); err != nil{
+	if err := o.Read(&ep); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(401) // 查不到公司的信息
 		return
 	}
 	var cardenter struct {
-		card	models.Card
-		enterprise	models.Enterprise
+		card       models.Card
+		enterprise models.Enterprise
 	}
 	cardenter.card = card
 	cardenter.enterprise = ep
@@ -97,7 +96,7 @@ func (c *CardController) Get_cardidinfo() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	c.Data["json"] = cardenter
 	c.ServeJSON()
-	
+
 }
 
 //添加卡片 在user表里添加此user和card的关联
@@ -113,8 +112,8 @@ func (c *CardController) Get_cardidinfo() {
 func (c *CardController) AddCard() {
 	//这里没有对比enterprise和cardid
 	var addinfo struct {
-		CardId    string
-		Enterprise	string
+		CardId     string
+		Enterprise string
 	}
 	body := c.Ctx.Input.RequestBody
 	//解析body
@@ -281,10 +280,10 @@ func (c *CardController) UseScore() {
 //对优惠券的操作
 //使用优惠卷
 //前端返回给我优惠券对象的信息以及优惠券的信息
-//增加或减少某张卡的某种优惠券 
+//增加或减少某张卡的某种优惠券
 //zyj
 //@Title coupons
-//@Description 增加或减少某张卡的某种优惠券 
+//@Description 增加或减少某张卡的某种优惠券
 //@Param id query string true 卡号
 //@Param Increment body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
@@ -293,8 +292,8 @@ func (c *CardController) UseScore() {
 func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	o.Insert(&models.Card{CardId:"1234567890123456",UserId:"1234567890124",CardType:"MembershipCard",Enterprise:"StarBuck",State:"Sichuan",City:"Chengdu",Money:100,ExpireTime:time.Now()})
-	var increment struct{value int}
+	o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
+	var increment struct{ value int }
 	card := models.Card{CardId: CardId}
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
@@ -303,13 +302,13 @@ func (c *CardController) Coupons() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	if err := o.Read(&card); err != nil {	
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("can't find card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
-	} 
+	}
 	card.CouponsNum += increment.value
-	if _,err := o.Update(&card); err != nil{
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
@@ -331,13 +330,13 @@ func (c *CardController) Delete() {
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
 	card := models.Card{CardId: id}
-	if err := o.Read(&card); err != nil {	
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("can't find card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
-	} 
+	}
 	card.DelTime = time.Now()
-	if _,err := o.Update(&card); err != nil{
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
@@ -403,7 +402,7 @@ func (c *CardController) Delete() {
 // 	c.ServeJSON()
 // }
 
-//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
+//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分
 //给前端说一下
 //zjn
 
