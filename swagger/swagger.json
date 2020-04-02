@@ -42,6 +42,40 @@
                 }
             }
         },
+        "/api/user/ForgetPassword/New": {
+            "put": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "通过前面忘记密码的过程后，设置新的密码",
+                "operationId": "UserController.NewPassword",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "userInfo",
+                        "description": "用户信息(需要的是用户ID，新密码）",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Update successfully"
+                    },
+                    "400": {
+                        "description": "解析body失败"
+                    },
+                    "404": {
+                        "description": "数据库无此用户"
+                    },
+                    "406": {
+                        "description": "更新密码失败"
+                    }
+                }
+            }
+        },
         "/api/user/card/add": {
             "post": {
                 "tags": [
@@ -318,6 +352,37 @@
                 }
             }
         },
+        "/api/user/forgetPw": {
+            "post": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "Forget password",
+                "operationId": "UserController.ForgetPW",
+                "parameters": [
+                    {
+                        "in": "body",
+                        "name": "userInfo",
+                        "description": "用户信息(需要的是用户ID，邮件）",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "successfully"
+                    },
+                    "400": {
+                        "description": "解析body失败"
+                    },
+                    "404": {
+                        "description": "数据库无此用户"
+                    }
+                }
+            }
+        },
         "/api/user/login": {
             "put": {
                 "tags": [
@@ -362,7 +427,7 @@
                     {
                         "in": "body",
                         "name": "userInfo",
-                        "description": "用户信息",
+                        "description": "用户信息(需要的是用户ID，新密码）",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.User"
@@ -459,6 +524,16 @@
             "type": "object",
             "properties": {
                 "Id": {
+                    "type": "string"
+                },
+                "LoginMonth": {
+                    "type": "string"
+                },
+                "LoginNum": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "LoginYear": {
                     "type": "string"
                 },
                 "Mail": {
