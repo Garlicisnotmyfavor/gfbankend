@@ -26,7 +26,7 @@ type UserController struct {
 //zjn
 func (c *UserController) GetAllCard() {
 	// 取得用户ID from query
-	uid := c.Ctx.Input.Param("id")
+	uid := c.Ctx.Input.Param(":id")
 	//储存所有卡片信息
 	var cardList []models.Card
 	//使用orm接口查询相关信息
