@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	util "github.com/gfbankend/utils"
 
 	"github.com/astaxie/beego"
@@ -21,16 +22,18 @@ type UserController struct {
 // @Param    body        body     models.Card    true
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
-// @router / [get]
+// @router /:id [get]
 //zjn
 func (c *UserController) GetAllCard() {
+	// 取得用户ID from query
+	uid := c.Ctx.Input.Param("id")
 	//储存所有卡片信息
 	var cardList []models.Card
 	//使用orm接口查询相关信息
 	o := orm.NewOrm()
 	qt := o.QueryTable("card")
 	//取出card表中所有信息，放入cardList中
-	_, err := qt.All(&cardList)
+	_, err := qt.Filter("user_id_exact", uid).All(&cardList)
 	if err != nil {
 		models.Log.Error("read error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(403)
@@ -109,8 +112,8 @@ func (c *UserController) GetAllCard() {
 // @Failure 400 解析body失败
 // @Failure 500 发送邮件失败
 // @router /enroll [get]
-func (c* UserController) SendCodeInEnroll() {
-	var email string  // this is user's email
+func (c *UserController) SendCodeInEnroll() {
+	var email string // this is user's email
 	body := c.Ctx.Input.RequestBody
 	// get email from body
 	if err := json.Unmarshal(body, &email); err != nil {
@@ -118,7 +121,7 @@ func (c* UserController) SendCodeInEnroll() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	randCode := util.GetRandCode()  // get random code
+	randCode := util.GetRandCode() // get random code
 	if err := util.SendEmail(email, randCode); err != nil {
 		models.Log.Error("send email error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
@@ -128,7 +131,8 @@ func (c* UserController) SendCodeInEnroll() {
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
-//ML，用户注册 
+
+//ML，用户注册
 // @Title Register
 // @Description user register
 // @Param userInfo body models.User  true 用户所填信息
@@ -217,7 +221,7 @@ func (c *UserController) Login() {
 	}
 	// 信息匹配登录成功
 	c.Data["json"] = user
-	c.ServeJSON()  // 传用户对象给前端
+	c.ServeJSON() // 传用户对象给前端
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
@@ -309,7 +313,6 @@ func (c *UserController) NewPW() {
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
 }
-
 
 //// @Title Feedback
 //// @Description send feedback mail
