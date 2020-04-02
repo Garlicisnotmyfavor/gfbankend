@@ -22,7 +22,6 @@ type UserController struct {
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
 // @router / [get]
-//zjn
 func (c *UserController) GetAllCard() {
 	//储存所有卡片信息
 	var cardList []models.Card
@@ -128,6 +127,7 @@ func (c* UserController) SendCodeInEnroll() {
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
+
 //ML，用户注册 
 // @Title Register
 // @Description user register
@@ -168,8 +168,6 @@ func (c *UserController) Enroll() {
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
 }
-
-//ML，登录，修改密码可调用ChangePw
 
 // @Title Login
 // @Description user login
@@ -290,7 +288,7 @@ func (c *UserController) ForgetPW() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router /ForgetPassword/New [put]
+// @router /ForgetPW/New [put]
 func (c *UserController) NewPW() {
 	var user models.User
 	body := c.Ctx.Input.RequestBody
