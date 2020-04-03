@@ -18,7 +18,7 @@ type UserController struct {
 //全局的session时长
 
 //显示所有卡片
-//检验是否在登陆状态，检验session是否存在，有的话不用前端的id，无的话返回错误操作
+// 检验是否在登陆状态，检验session是否存在，有的话不用前端的id，无的话返回错误操作
 // @Title showAllCards
 // @Description show all cards
 // @Param    userID        path    string    true	用户ID
