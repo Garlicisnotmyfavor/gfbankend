@@ -145,7 +145,8 @@ func (c *CardController) AddCard() {
 	}
 	//匹配后建立关联
 	//这里还没有具体设置user的id
-	card.UserId = "0000000000000"
+	// card.UserId = "0000000000000"
+	card.UserId = models.Card{UserId:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	//传回这个卡片的具体信息
@@ -294,7 +295,7 @@ func (c *CardController) UseScore() {
 func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
+	//o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
 	var increment struct{ value int }
 	card := models.Card{CardId: CardId}
 	body := c.Ctx.Input.RequestBody

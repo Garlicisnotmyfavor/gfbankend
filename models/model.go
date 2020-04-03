@@ -13,7 +13,8 @@ import (
 
 type Card struct {
 	CardId      string    `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
-	UserId      string    `orm:"size(13)" valid:"Required;Length(13)"`    //UserId 必须是由用户给出的，因为CardId中不包含UserId
+	UserId      *User     `orm:"rel(fk)"`        
+	// UserId      string    `orm:"size(13)" valid:"Required;Length(13)"`    //UserId 必须是由用户给出的，因为CardId中不包含UserId
 	CardType    string    `valid:"Required"`                              //卡的类型
 	Enterprise  string    `valid:"Required"`
 	State       string    `valid:"Required"`

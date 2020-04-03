@@ -269,6 +269,7 @@ func (c *UserController) ChangePW() {
 	var user models.User
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &user); err != nil {
+		models.
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
@@ -281,6 +282,8 @@ func (c *UserController) ChangePW() {
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
+	//根据旧的userInfo删除对应session
+	c.DelSession(user)
 	//查询成功，更新密码
 	usr.Password = user.Password
 	if _, err := o.Update(&usr); err != nil {
@@ -343,6 +346,8 @@ func (c *UserController) NewPW() {
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
+	//根据旧的userInfo删除旧session
+	c.DelSession(user)
 	//查询成功，更新密码
 	usr.Password = user.Password
 	if _, err := o.Update(&usr); err != nil {
