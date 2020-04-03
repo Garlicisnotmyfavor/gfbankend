@@ -18,11 +18,11 @@ paths:
       description: show all cards
       operationId: UserController.showAllCards
       parameters:
-      - in: body
-        name: body
-        description: "true"
-        schema:
-          $ref: '#/definitions/models.Card'
+      - in: path
+        name: userID
+        description: 用户ID
+        required: true
+        type: string
       responses:
         "200":
           description: Read successfully
@@ -55,9 +55,9 @@ paths:
       tags:
       - api/user
       description: 将这张卡片的所有信息传出去
-      operationId: CardController.give_card_all_info
+      operationId: CardController.GetCardIDInfo
       parameters:
-      - in: query
+      - in: path
         name: id
         description: 查询的卡号
         required: true
@@ -76,7 +76,7 @@ paths:
       description: 增加或减少某张卡的某种优惠券
       operationId: CardController.coupons
       parameters:
-      - in: query
+      - in: path
         name: id
         description: 卡号
         required: true
@@ -102,7 +102,7 @@ paths:
       description: 删除卡片
       operationId: CardController.delete
       parameters:
-      - in: query
+      - in: path
         name: id
         description: 卡号
         required: true
@@ -119,7 +119,7 @@ paths:
       description: 修改卡片的卡号，公司
       operationId: CardController.ModifyCardInfo
       parameters:
-      - in: query
+      - in: path
         name: id
         description: 原本的卡号
         required: true
@@ -172,10 +172,12 @@ paths:
       description: 将这个user的id和卡绑定
       operationId: CardController.AddCard
       parameters:
-      - in: query
+      - in: body
         name: id
-        description: 原本的卡号
+        description: 原本的卡号cardid+企业enterprise
         required: true
+        schema:
+          type: string
         type: string
       responses:
         "200":
@@ -253,6 +255,26 @@ paths:
         "404":
           description: 数据库无此用户
   /api/user/login:
+    get:
+      tags:
+      - api/user
+      description: user login with cookie
+      operationId: UserController.LoginWithCookie
+      parameters:
+      - in: header
+        name: remeber
+        description: 是否记住密码bool型
+        required: true
+        type: boolean
+      responses:
+        "200":
+          description: Register successfully
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 信息内容或格式有误
+        "406":
+          description: 数据库查询报错，可能用户所填账号或密码错误
     put:
       tags:
       - api/user
@@ -261,9 +283,10 @@ paths:
       parameters:
       - in: body
         name: userInfo
-        description: account(string)+password(string)+accountType(string)为mail或者phone
+        description: account(string)+password(string)+accounttype(string)为mail或者phone
+        required: true
         schema:
-          $ref: '#/definitions/true'
+          $ref: '#/definitions/\'
       responses:
         "200":
           description: Register successfully
@@ -298,6 +321,9 @@ paths:
 definitions:
   /:
     title: /
+    type: object
+  \:
+    title: \
     type: object
   models.Card:
     title: Card
@@ -363,6 +389,3 @@ definitions:
         type: string
       Tel:
         type: string
-  "true":
-    title: "true"
-    type: object
