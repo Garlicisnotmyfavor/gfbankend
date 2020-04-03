@@ -182,22 +182,20 @@ func (c *UserController) Enroll() {
 
 // @Title LoginWithCookie
 // @Description user login with cookie
-// @Param remeber header bool true 是否记住密码bool型
+// @Param remember header bool true 是否记住密码bool型
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
 // @router /login [get]
 func (c *UserController) LoginWithCookie() {
 	remember := c.Ctx.Input.Header("remember")
-	if remember == "false" {
-		return
+	if remember == "true" {
+		sess := c.GetSession("userInfo")
+		if sess != nil {
+			c.Data["json"] = sess
+		}
 	}
-	sess := c.GetSession("userInfo")
-	if sess != nil {
-		c.Data["json"] = sess
-		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(200)
-	}
+	c.ServeJSON()
 }
 
 // 加入是否选择记住密码，设置session，设置cookie
