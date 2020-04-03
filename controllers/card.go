@@ -104,14 +104,21 @@ func (c *CardController) GetCardIDInfo() {
 //添加卡片 在user表里添加此user和card的关联
 //zjn
 //@Title AddCard
-//@Description 将这个user的id和卡绑定
-//@Param	id	body	string	true	原本的卡号cardid+企业enterprise
+//@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
+//@Param	id	body	\	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
 //@Failure 402	数据不匹配
 //@router  /card/add [post]
 func (c *CardController) AddCard() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	//这里没有对比enterprise和cardid
 	var addinfo struct {
 		CardID     string
@@ -146,7 +153,7 @@ func (c *CardController) AddCard() {
 	//匹配后建立关联
 	//这里还没有具体设置user的id
 	// card.UserId = "0000000000000"
-	card.UserId = models.Card{UserId:"2018091620000"}
+	card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	//传回这个卡片的具体信息
@@ -203,7 +210,7 @@ func (c *CardController) ModifyCardInfo() {
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	oldCard.UserId = ""
+	oldCard.UserId = newCard.UserId
 	if _, err := o.Update(&oldCard); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
