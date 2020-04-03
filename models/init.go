@@ -46,11 +46,11 @@ func init() {
 
 func testData(){
 	testUserData1 := User{Id:"2018091620000",Tel:"13925678240",Mail:"123456@qq.com",Password:"123456789"}
-	testCardData1 := Card{CardId:"123456790123456",UserId:&testUserData1,ExpireTime:time.Now()}
+	testCardData1 := Card{CardId:"123456790123456",UserId:"2018091620000",ExpireTime:time.Now()}
 	testUserData2 := User{Id:"2018091620001",Tel:"13665372240",Mail:"666666666@qq.com",Password:"123908789"}
-	testCardData2 := Card{CardId:"123456790000000",UserId:&testUserData2,ExpireTime:time.Now()}
+	testCardData2 := Card{CardId:"123456790000000",UserId:"2018091620001",ExpireTime:time.Now()}
 	testUserData3 := User{Id:"2018091620002",Tel:"13778372240",Mail:"666666666@qq.com",Password:"123009889"}
-	testCardData3 := Card{CardId:"123456790333000",UserId:&testUserData3,ExpireTime:time.Now()}
+	testCardData3 := Card{CardId:"123456790333000",UserId:"2018091620002",ExpireTime:time.Now()}
 	o := orm.NewOrm()
 	o.Insert(&testUserData1)
 	o.Insert(&testUserData2)

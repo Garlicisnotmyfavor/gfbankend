@@ -152,8 +152,8 @@ func (c *CardController) AddCard() {
 	}
 	//匹配后建立关联
 	//这里还没有具体设置user的id
-	// card.UserId = "0000000000000"
-	card.UserId = &models.User{Id:"2018091620000"}
+	card.UserId = "0000000000000"
+	// card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	//传回这个卡片的具体信息
