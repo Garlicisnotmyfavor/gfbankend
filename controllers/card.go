@@ -357,6 +357,15 @@ func (c *CardController) Delete() {
 	return
 }
 
+func isIdInUsers(id string) bool {
+	o := orm.NewOrm()
+	user := models.User{Id:id}
+	if err := o.Read(&user); err != nil {
+		return false;
+	}
+	return true
+}
+
 //GZH，修改备注
 //@swagger注解配置
 //@Title Put
