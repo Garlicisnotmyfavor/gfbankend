@@ -16,6 +16,6 @@ func main() {
 	beego.BConfig.WebConfig.Session.SessionOn = true
 	beego.BConfig.WebConfig.Session.SessionName = sessionID
 	beego.BConfig.WebConfig.Session.SessionGCMaxLifetime = 3600 * 24
-	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600 * 2
+	beego.BConfig.WebConfig.Session.SessionCookieLifeTime = 3600
 	beego.Run()
 }

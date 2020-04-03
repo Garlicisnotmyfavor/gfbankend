@@ -188,20 +188,13 @@ func (c *UserController) Enroll() {
 // @Failure 400 信息内容或格式有误
 // @router /login [get]
 func (c *UserController) LoginWithCookie() {
-	remember := c.Ctx.Input.Header("remember")
-	if remember == "true" {
-		sess := c.GetSession("userInfo")
-		if sess != nil {
-			c.Data["json"] = sess
-		}
-	}
-	c.ServeJSON()
+	
 }
 
 // 加入是否选择记住密码，设置session，设置cookie
 // @Title Login
 // @Description user login
-// @Param userInfo body \ true account(string)+password(string)+accounttype(string)为mail或者phone
+// @Param userInfo body \ true account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool true/false)
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -215,6 +208,7 @@ func (c *UserController) Login() {
 		Account     string
 		Password    string
 		AccountType string
+		Remember    bool
 	}
 	// 解析前端JSON数据获得账号密码
 	if err := json.Unmarshal(body, &uInfo); err != nil {
@@ -244,8 +238,15 @@ func (c *UserController) Login() {
 	}
 	// 信息匹配登录成功
 	c.Data["json"] = user
-	c.ServeJSON()                  // 传用户对象给前端
+	// 如果需要记住账号密码
+	if uInfo.Remember == true {
+		c.Ctx.SetSecureCookie("miller", "account", uInfo.Account)
+		c.Ctx.SetSecureCookie("miller", "password", uInfo.Password)
+		c.Ctx.SetCookie("accounttype", uInfo.AccountType)
+		c.Ctx.SetCookie("remember", "true")
+	}
 	c.SetSession("userInfo", user) // 登录成功，设置session
+	c.ServeJSON()                  // 传用户对象给前端
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
