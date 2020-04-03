@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -20,7 +21,7 @@ type UserController struct {
 //检验是否在登陆状态，检验session是否存在，有的话不用前端的id，无的话返回错误操作
 // @Title showAllCards
 // @Description show all cards
-// @Param    body        body     models.Card    true
+// @Param    userID        path    string    true	用户ID
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
 // @router /:id:int [get]
@@ -31,7 +32,7 @@ func (c *UserController) GetAllCard() {
 		c.Ctx.ResponseWriter.WriteHeader(403)
 		return
 	}
-	// 取得用户ID from query
+	// 取得用户ID from path
 	uid := c.Ctx.Input.Param(":id")
 	//储存所有卡片信息
 	var cardList []models.Card
@@ -179,10 +180,30 @@ func (c *UserController) Enroll() {
 	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
 }
 
+// @Title LoginWithCookie
+// @Description user login with cookie
+// @Param remeber header bool true 是否记住密码bool型
+// @Success 200 {object} models.User Register successfully
+// @Failure 406 数据库查询报错，可能用户所填账号或密码错误
+// @Failure 400 信息内容或格式有误
+// @router /login [get]
+func (c *UserController) LoginWithCookie() {
+	remember := c.Ctx.Input.Header("remember")
+	if remember == "false" {
+		return
+	}
+	sess := c.GetSession("userInfo")
+	if sess != nil {
+		c.Data["json"] = sess
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(200)
+	}
+}
+
 // 加入是否选择记住密码，设置session，设置cookie
 // @Title Login
 // @Description user login
-// @Param userInfo body true account(string)+password(string)+accounttype(string)为mail或者phone
+// @Param userInfo body \ true account(string)+password(string)+accounttype(string)为mail或者phone
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误

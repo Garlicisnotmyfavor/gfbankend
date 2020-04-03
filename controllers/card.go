@@ -2,10 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -33,12 +35,12 @@ func (c *CardController) Get_cardidinfo() {
 // zjn
 // @Title give_card_all_info
 // @Description 将这张卡片的所有信息传出去
-// @Param	id	query	string	true	查询的卡号
+// @Param	id	path	string	true	查询的卡号
 // @Success 200	查询成功
 // @Failure 400	查询不到对应的卡
 // @Failure 401	查询不到对应的公司
 // @router  /card/:id	[get]
-func (c *CardController) Get_cardidinfo() {
+func (c *CardController) GetCardIdInfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
@@ -103,7 +105,7 @@ func (c *CardController) Get_cardidinfo() {
 //zjn
 //@Title AddCard
 //@Description 将这个user的id和卡绑定
-//@Param	id	query	string	true	原本的卡号
+//@Param	id	body	string	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
@@ -112,7 +114,7 @@ func (c *CardController) Get_cardidinfo() {
 func (c *CardController) AddCard() {
 	//这里没有对比enterprise和cardid
 	var addinfo struct {
-		CardId     string
+		CardID     string
 		Enterprise string
 	}
 	body := c.Ctx.Input.RequestBody
@@ -130,7 +132,7 @@ func (c *CardController) AddCard() {
 	//}
 	o := orm.NewOrm()
 	card := models.Card{}
-	card.CardId = addinfo.CardId
+	card.CardId = addinfo.CardID
 	//用创建的新卡号查询是否在数据库中存在
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("not exist error: ", err)
@@ -155,7 +157,7 @@ func (c *CardController) AddCard() {
 //ml
 //@Title ModifyCardInfo
 //@Description 修改卡片的卡号，公司
-//@Param	id	query	string	true	原本的卡号
+//@Param	id	path	string	true	原本的卡号
 //@Param	cardInfo	body	/	true	新卡信息(卡号CardId+公司Enterprise)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
@@ -284,7 +286,7 @@ func (c *CardController) UseScore() {
 //zyj
 //@Title coupons
 //@Description 增加或减少某张卡的某种优惠券
-//@Param id query string true 卡号
+//@Param id path string true 卡号
 //@Param Increment body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
 //@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
@@ -322,7 +324,7 @@ func (c *CardController) Coupons() {
 //zyj
 //@Title delete
 //@Description 删除卡片
-//@Param id query string true 卡号
+//@Param id path string true 卡号
 //@Success 200
 //@Failure 400/404	json解析错误/卡不存在
 //@router  /card/:id/delete [post]
