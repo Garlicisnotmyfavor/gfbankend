@@ -363,29 +363,11 @@
                 "tags": [
                     "api/user"
                 ],
-                "description": "user login with cookie",
+                "description": "通过获取客户端的cookie来进行自动登录cookie在正常登录时选择自动登录后获得,失败则消除cookie",
                 "operationId": "UserController.LoginWithCookie",
-                "parameters": [
-                    {
-                        "in": "header",
-                        "name": "remember",
-                        "description": "是否记住密码bool型",
-                        "required": true,
-                        "type": "boolean"
-                    }
-                ],
                 "responses": {
                     "200": {
-                        "description": "Register successfully",
-                        "schema": {
-                            "$ref": "#/definitions/models.User"
-                        }
-                    },
-                    "400": {
-                        "description": "信息内容或格式有误"
-                    },
-                    "406": {
-                        "description": "数据库查询报错，可能用户所填账号或密码错误"
+                        "description": "通过cookie完成了自动登录"
                     }
                 }
             },
@@ -393,16 +375,16 @@
                 "tags": [
                     "api/user"
                 ],
-                "description": "user login",
+                "description": "登录，返回中由名为bsessionID的cookie，用于查用户是否已登录如果点击了自动登录（即remember为true）还会返回名为account，password，accounttype以及remember的cookie",
                 "operationId": "UserController.Login",
                 "parameters": [
                     {
                         "in": "body",
                         "name": "userInfo",
-                        "description": "account(string)+password(string)+accounttype(string)为mail或者phone",
+                        "description": "account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool)",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/\\"
+                            "$ref": "#/definitions//"
                         }
                     }
                 ],
