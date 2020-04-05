@@ -181,20 +181,57 @@ func (c *UserController) Enroll() {
 }
 
 // @Title LoginWithCookie
-// @Description user login with cookie
-// @Param remember header bool true 是否记住密码bool型
-// @Success 200 {object} models.User Register successfully
-// @Failure 406 数据库查询报错，可能用户所填账号或密码错误
-// @Failure 400 信息内容或格式有误
+// @Description 通过获取客户端的cookie来进行自动登录cookie在正常登录时选择自动登录后获得,失败则消除cookie
+// @Success 200 通过cookie完成了自动登录
+// @Succes 204 cookie失效
+// @Fail  406 cookie中的消息过期或者错误，比如另一客户端修改密码后,需要重新登录
 // @router /login [get]
 func (c *UserController) LoginWithCookie() {
-	
+	account, _ := c.Ctx.GetSecureCookie("miller", "account")
+	password, _ := c.Ctx.GetSecureCookie("miller", "password")
+	accountType := c.Ctx.GetCookie("accounttype")
+	remember := c.Ctx.GetCookie("remember")
+	if account == "" || password == "" || accountType == "" {
+		models.Log.Error("fail to get cookie")
+		c.Ctx.ResponseWriter.WriteHeader(204)
+		return
+	}
+	// 由cookie得到用户信息
+	var column string
+	user := models.User{Password: password}
+	if accountType == "mail" {
+		user.Mail = account
+		column = "mail"
+	} else {
+		user.Tel = account
+		column = "tel"
+	}
+	o := orm.NewOrm()
+	// 登录失败，说明原cookie失效（比如另一客户端修改密码之后），需老实点重新登录
+	if err := o.Read(&user, column, "password"); err != nil {
+		models.Log.Error("login error: auth fail")
+		// 删除原cookie
+		c.Ctx.SetCookie("account", "", -1)
+		c.Ctx.SetCookie("password", "", -1)
+		c.Ctx.SetCookie("accounttype", "", -1)
+		c.Ctx.SetCookie("remember", "", -1)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	if remember != "true" {
+		c.Ctx.SetCookie("account", "", -1)
+		c.Ctx.SetCookie("password", "", -1)
+		c.Ctx.SetCookie("accounttype", "", -1)
+		c.Ctx.SetCookie("remember", "", -1)
+	}
+	// 自动获取cookie后经过信息检验登录成功,需重新设置该客户端中sessionid对应session
+	c.SetSession("userInfo", user)
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
-// 加入是否选择记住密码，设置session，设置cookie
 // @Title Login
-// @Description user login
-// @Param userInfo body \ true account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool true/false)
+// @Description 登录，返回中由名为bsessionID的cookie，用于查用户是否已登录如果点击了自动登录（即remember为true）还会返回名为account，password，accounttype以及remember的cookie
+// @Param	userInfo	body	/	true account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool)
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -233,7 +270,7 @@ func (c *UserController) Login() {
 	}
 	if err := o.Read(&user, column, "password"); err != nil {
 		models.Log.Error("login error: auth fail")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
 	// 信息匹配登录成功
@@ -280,8 +317,6 @@ func (c *UserController) ChangePW() {
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
-	//根据旧的userInfo删除对应session
-	c.DelSession(user)
 	//查询成功，更新密码
 	usr.Password = user.Password
 	if _, err := o.Update(&usr); err != nil {
@@ -289,6 +324,8 @@ func (c *UserController) ChangePW() {
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
 	}
+	//根据旧的userInfo删除对应session
+	c.DelSession("userInfo")
 	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
 }
 
@@ -344,8 +381,6 @@ func (c *UserController) NewPW() {
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
-	//根据旧的userInfo删除旧session
-	c.DelSession(user)
 	//查询成功，更新密码
 	usr.Password = user.Password
 	if _, err := o.Update(&usr); err != nil {
@@ -353,6 +388,8 @@ func (c *UserController) NewPW() {
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
 	}
+	//根据旧的userInfo删除旧session
+	c.DelSession("userInfo")
 	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
 }
 
