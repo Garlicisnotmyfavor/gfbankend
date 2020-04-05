@@ -41,13 +41,13 @@ func (c *CardController) Get_cardidinfo() {
 // @Failure 401	查询不到对应的公司
 // @router  /card/:id	[get]
 func (c *CardController) GetCardIDInfo() {
-	// sess := c.GetSession("userInfo")
-	// // 由cookie 得不到session说明没登录，无权限
-	// if sess == nil {
-	// 	models.Log.Error("not login: ")
-	// 	c.Ctx.ResponseWriter.WriteHeader(403)
-	// 	return
-	// }
+	sess := c.GetSession("userInfo")
+    // 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
@@ -165,7 +165,6 @@ func (c *CardController) AddCard() {
 		return
 	}
 	//匹配后建立关联
-	//这里还没有具体设置user的id
 	card.UserId = userId
 	// card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
@@ -187,13 +186,13 @@ func (c *CardController) AddCard() {
 //@Failure 500	数据库更新操作错误
 //@router  /card/:id/info [put]
 func (c *CardController) ModifyCardInfo() {
-	// sess := c.GetSession("userInfo")
-	// // 由cookie 得不到session说明没登录，无权限
-	// if sess == nil {
-	// 	models.Log.Error("not login: ")
-	// 	c.Ctx.ResponseWriter.WriteHeader(403)
-	// 	return
-	// }
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	oldCardId := c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
 	var newCard models.Card
@@ -260,6 +259,13 @@ func (c *CardController) ModifyCardInfo() {
 //@Failure 500	数据库更新操作错误
 //@router /card/:id/score [put]
 func (c *CardController) UseScore() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	var ScoreInfo struct {
 		CardId    string
 		Increment int
@@ -321,6 +327,13 @@ func (c *CardController) UseScore() {
 //@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
 	//o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
@@ -335,7 +348,7 @@ func (c *CardController) Coupons() {
 	}
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("can't find card: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		c.Ctx.ResponseWriter.WriteHeader(403) //查找不到相应的id卡进行数据更新
 		return
 	}
 	card.CouponsNum += increment.value
@@ -355,10 +368,22 @@ func (c *CardController) Coupons() {
 //@Description 删除卡片
 //@Param id path string true 卡号
 //@Success 200
-//@Failure 400/404	json解析错误/卡不存在
+//@Failure 400/404/403	json解析错误/卡不存在/用户id不存在
 //@router  /card/:id/delete [post]
 func (c *CardController) Delete() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	id := c.Ctx.Input.Param(":id")
+	if isIdInUsers(id)==false {
+		models.Log.Error("can't find userId")
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		return
+	}
 	o := orm.NewOrm()
 	card := models.Card{CardId: id}
 	if err := o.Read(&card); err != nil {
