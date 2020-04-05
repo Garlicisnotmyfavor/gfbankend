@@ -183,7 +183,7 @@ func (c *UserController) Enroll() {
 // @Title LoginWithCookie
 // @Description 通过获取客户端的cookie来进行自动登录cookie在正常登录时选择自动登录后获得,失败则消除cookie
 // @Success 200 通过cookie完成了自动登录
-// @Succes 204 cookie失效
+// @Success 204 cookie失效
 // @Fail  406 cookie中的消息过期或者错误，比如另一客户端修改密码后,需要重新登录
 // @router /login [get]
 func (c *UserController) LoginWithCookie() {
