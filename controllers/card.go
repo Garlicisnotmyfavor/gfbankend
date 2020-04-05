@@ -179,9 +179,10 @@ func (c *CardController) AddCard() {
 //@Title ModifyCardInfo
 //@Description 修改卡片的卡号，公司
 //@Param	id	path	string	true	原本的卡号
-//@Param	cardInfo	body	/	true	新卡信息(卡号CardId+公司Enterprise)
+//@Param	cardInfo	body	/	true	新卡信息   CardId(string)+Enterprise(string)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
+//@Failure 403	卡号解析错误
 //@Failure 404	卡片信息读取错误
 //@Failure 500	数据库更新操作错误
 //@router  /card/:id/info [put]
@@ -222,17 +223,21 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
-	_ = newCard.CardParse()
+	if err := newCard.CardParse();err!=nil{
+		models.Log.Error("parse error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
 	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
 	if _, err := o.Insert(&newCard); err != nil {
-		models.Log.Error("insert error: ", err)
+		models.Log.Error("insert newCard error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	oldCard.UserId = newCard.UserId
-	if _, err := o.Update(&oldCard); err != nil {
-		models.Log.Error("update error: ", err)
+	//oldCard.UserId = newCard.UserId
+	if _, err := o.Delete(&oldCard); err != nil {
+		models.Log.Error("delete oldCard error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}

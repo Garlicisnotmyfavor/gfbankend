@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-
+	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -118,9 +118,9 @@ func (c *UserController) GetAllCard() {
 // @Success 200	string	"生成的验证码"
 // @Failure 400 解析body失败
 // @Failure 500 发送邮件失败
-// @router /enroll [get]
+// @router /enroll [put]
 func (c *UserController) SendCodeInEnroll() {
-	var email string // this is user's email
+	var email struct{Email string} // this is user's email
 	body := c.Ctx.Input.RequestBody
 	// get email from body
 	if err := json.Unmarshal(body, &email); err != nil {
@@ -129,7 +129,7 @@ func (c *UserController) SendCodeInEnroll() {
 		return
 	}
 	randCode := util.GetRandCode() // get random code
-	if err := util.SendEmail(email, randCode); err != nil {
+	if err := util.SendEmail(email.Email, randCode); err != nil {
 		models.Log.Error("send email error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
@@ -151,6 +151,7 @@ func (c *UserController) SendCodeInEnroll() {
 func (c *UserController) Enroll() {
 	o := orm.NewOrm()
 	body := c.Ctx.Input.RequestBody
+	//fmt.Println(body)
 	user := models.User{}
 	//Obtain information of the new user
 	if err := json.Unmarshal(body, &user); err != nil {
@@ -158,6 +159,7 @@ func (c *UserController) Enroll() {
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
+	//fmt.Println(user)
 	//检查用户手机或者邮箱是否为空
 	if len(user.Tel) == 0 || len(user.Mail) == 0 {
 		models.Log.Error("empty account")
@@ -253,6 +255,7 @@ func (c *UserController) Login() {
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
+	
 	var column string
 	if uInfo.AccountType == "mail" {
 		user.Mail = uInfo.Account
@@ -295,14 +298,24 @@ func (c *UserController) Login() {
 
 // @Title changePW
 // @Description change password
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
+// @Param userInfo body models.User true 用户信息(需要的是用户ID，原密码，新密码）
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
+// @Failure 403 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
 // @router /password [put]
 func (c *UserController) ChangePW() {
-	var user models.User
+	if c.GetSession("userInfo") == nil {
+		models.Log.Error("no login")
+		c.Ctx.ResponseWriter.WriteHeader(403)
+		return
+	}
+	var user struct{
+		UserId string
+		OldPassword string
+		NewPassword string
+	}
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &user); err != nil {
 		models.Log.Error("unmarshal error: ", err)
@@ -310,15 +323,20 @@ func (c *UserController) ChangePW() {
 		return
 	}
 	o := orm.NewOrm()
-	usr := models.User{Id: user.Id}
+	usr := models.User{Id: user.UserId}
 	// 查询记录
 	if err := o.Read(&usr); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
-	//查询成功，更新密码
-	usr.Password = user.Password
+	//验证用户输入的密码是否与旧密码一致
+	if user.OldPassword!=usr.Password{
+		models.Log.Error("wrong old password: ")
+		c.Ctx.ResponseWriter.WriteHeader(403) // 原密码错误
+		return
+	}
+	usr.Password = user.NewPassword
 	if _, err := o.Update(&usr); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
@@ -348,13 +366,56 @@ func (c *UserController) ForgetPW() {
 		return
 	}
 	o := orm.NewOrm()
+	//validMail := true
+	// validTel := true
+	// validId := true
 	//查询填入内容是否准确
 	if err := o.Read(&user); err != nil {
+		//validId = false
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对应id的用户
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对应邮箱或手机号的用户
 		return
 	}
+	// if err := o.Read(&user,"mail"); err != nil {
+	// 	validMail = false
+	// }
+	// if err := o.Read(&user,"tel"); err != nil {
+	// 	validTel = false
+	// }
+	// if validTel==false&&validMail==false {
+	// 	models.Log.Error("read error: ", err)
+	// 	c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对应邮箱或手机号的用户
+	// 	return
+	// }
 	c.Ctx.ResponseWriter.WriteHeader(200) // 身份验证成功，后续进入验证码阶段
+}
+
+//ML，用户注册时验证码获取
+// @Title getRanCodeInRegister
+// @Description send random code when user enroll
+// @Param	email	body	string	true	用户的邮箱
+// @Success 200	string	"生成的验证码"
+// @Failure 400 解析body失败
+// @Failure 500 发送邮件失败
+// @router /forgetPw/New [put]
+func (c *UserController) SendCodeInNew() {
+	var email struct{Email string} // this is user's email
+	body := c.Ctx.Input.RequestBody
+	// get email from body
+	if err := json.Unmarshal(body, &email); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	randCode := util.GetRandCode() // get random code
+	if err := util.SendEmail(email.Email, randCode); err != nil {
+		models.Log.Error("send email error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+	c.Data["json"] = randCode
+	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @Title NewPassword
@@ -364,7 +425,7 @@ func (c *UserController) ForgetPW() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router /ForgetPW/New [put]
+// @router /forgetPw/New [post]
 func (c *UserController) NewPW() {
 	var user models.User
 	body := c.Ctx.Input.RequestBody
@@ -375,6 +436,7 @@ func (c *UserController) NewPW() {
 	}
 	o := orm.NewOrm()
 	usr := models.User{Id: user.Id}
+	//fmt.Println(usr)
 	// 查询记录
 	if err := o.Read(&usr); err != nil {
 		models.Log.Error("read error: ", err)
@@ -383,7 +445,7 @@ func (c *UserController) NewPW() {
 	}
 	//查询成功，更新密码
 	usr.Password = user.Password
-	if _, err := o.Update(&usr); err != nil {
+	if _, err := o.Update(&usr,"password"); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return

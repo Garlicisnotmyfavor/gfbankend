@@ -58,9 +58,9 @@ type User struct {
 	Tel      string `orm:"null"` 
 	Mail     string `orm:"null"`
 	Password string `valid:"Required"`
-	LoginMonth string `valid:"max(2)"`  //注册月份
-	LoginYear  string `valid:"max(4)"`  //注册年份
-	LoginNum int `valid:"MaxSize(6)"`   //该月份所注册的第几个用户
+	LoginMonth string `valid:"max(2)" `  //注册月份
+	LoginYear  string `valid:"max(4)" `  //注册年份
+	LoginNum int `valid:"MaxSize(6)" `   //该月份所注册的第几个用户
 }
 
 //type DelCard struct {
@@ -156,7 +156,7 @@ func (card *Card) CardParse() error {
 
 //ZYJ 解析生成用户ID
 func (user *User) UserParse() error {
-	if len(user.Id) != 16 {
+	if len(user.Id) != 13 {
 		return errors.New("INVALID LENGTH USER ID")
 	}
 	var err error

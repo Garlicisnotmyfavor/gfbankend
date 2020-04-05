@@ -72,8 +72,8 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"],
         beego.ControllerComments{
-            Method: "NewPW",
-            Router: `/ForgetPW/New`,
+            Method: "SendCodeInEnroll",
+            Router: `/enroll`,
             AllowHTTPMethods: []string{"put"},
             MethodParams: param.Make(),
             Filters: nil,
@@ -90,17 +90,26 @@ func init() {
 
     beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"],
         beego.ControllerComments{
-            Method: "SendCodeInEnroll",
-            Router: `/enroll`,
-            AllowHTTPMethods: []string{"get"},
+            Method: "ForgetPW",
+            Router: `/forgetPw`,
+            AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,
             Params: nil})
 
     beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"],
         beego.ControllerComments{
-            Method: "ForgetPW",
-            Router: `/forgetPw`,
+            Method: "SendCodeInNew",
+            Router: `/forgetPw/New`,
+            AllowHTTPMethods: []string{"put"},
+            MethodParams: param.Make(),
+            Filters: nil,
+            Params: nil})
+
+    beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"] = append(beego.GlobalControllerRouter["github.com/gfbankend/controllers:UserController"],
+        beego.ControllerComments{
+            Method: "NewPW",
+            Router: `/forgetPw/New`,
             AllowHTTPMethods: []string{"post"},
             MethodParams: param.Make(),
             Filters: nil,

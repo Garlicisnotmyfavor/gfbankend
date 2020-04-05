@@ -41,7 +41,7 @@ func init() {
 	orm.RegisterModel(new(User))
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
-	//testData()
+	testData()
 }
 
 func testData(){
