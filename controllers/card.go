@@ -156,8 +156,8 @@ func (c *CardController) AddCard() {
 		return
 	}
 	if len(card.UserId)!=0 {
-		models.Log.Error("card have been binded")
-		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
+		models.Log.Error("card already bind")
+		c.Ctx.ResponseWriter.WriteHeader(403) //卡片另有主人
 		return
 	}
 	if card.Enterprise != addinfo.Enterprise {
