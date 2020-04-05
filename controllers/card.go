@@ -379,11 +379,6 @@ func (c *CardController) Delete() {
 		return
 	}
 	id := c.Ctx.Input.Param(":id")
-	if isIdInUsers(id)==false {
-		models.Log.Error("can't find userId")
-		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
-		return
-	}
 	o := orm.NewOrm()
 	card := models.Card{CardId: id}
 	if err := o.Read(&card); err != nil {
@@ -403,14 +398,14 @@ func (c *CardController) Delete() {
 	return
 }
 
-func isIdInUsers(id string) bool {
-	o := orm.NewOrm()
-	user := models.User{Id:id}
-	if err := o.Read(&user); err != nil {
-		return false;
-	}
-	return true
-}
+// func isIdInUsers(id string) bool {
+// 	o := orm.NewOrm()
+// 	user := models.User{Id:id}
+// 	if err := o.Read(&user); err != nil {
+// 		return false;
+// 	}
+// 	return true
+//}
 
 //GZH，修改备注
 //@swagger注解配置
