@@ -39,10 +39,10 @@ func init() {
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(Enterprise))
 	orm.RegisterModel(new(User))
-	testData()
+	//testData()
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
-	//testData()
+	testData()
 }
 
 func testData(){

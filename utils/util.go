@@ -3,12 +3,13 @@ package util
 import (
 	"errors"
 	"fmt"
-	"github.com/gfbankend/models"
-	"github.com/go-gomail/gomail"
 	"log"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/gfbankend/models"
+	"github.com/go-gomail/gomail"
 )
 
 /*
