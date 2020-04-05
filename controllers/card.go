@@ -41,6 +41,13 @@ func (c *CardController) Get_cardidinfo() {
 // @Failure 401	查询不到对应的公司
 // @router  /card/:id	[get]
 func (c *CardController) GetCardIDInfo() {
+	// sess := c.GetSession("userInfo")
+	// // 由cookie 得不到session说明没登录，无权限
+	// if sess == nil {
+	// 	models.Log.Error("not login: ")
+	// 	c.Ctx.ResponseWriter.WriteHeader(403)
+	// 	return
+	// }
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
@@ -119,6 +126,8 @@ func (c *CardController) AddCard() {
 		c.Ctx.ResponseWriter.WriteHeader(403)
 		return
 	}
+	user := sess.(models.User)
+	userId := user.Id
 	//这里没有对比enterprise和cardid
 	var addinfo struct {
 		CardID     string
@@ -143,7 +152,12 @@ func (c *CardController) AddCard() {
 	//用创建的新卡号查询是否在数据库中存在
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("not exist error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(403) //卡片不存在
+		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
+		return
+	}
+	if len(card.UserId)!=0 {
+		models.Log.Error("card have been binded")
+		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
 		return
 	}
 	if card.Enterprise != addinfo.Enterprise {
@@ -152,7 +166,7 @@ func (c *CardController) AddCard() {
 	}
 	//匹配后建立关联
 	//这里还没有具体设置user的id
-	card.UserId = "0000000000000"
+	card.UserId = userId
 	// card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
@@ -173,6 +187,13 @@ func (c *CardController) AddCard() {
 //@Failure 500	数据库更新操作错误
 //@router  /card/:id/info [put]
 func (c *CardController) ModifyCardInfo() {
+	// sess := c.GetSession("userInfo")
+	// // 由cookie 得不到session说明没登录，无权限
+	// if sess == nil {
+	// 	models.Log.Error("not login: ")
+	// 	c.Ctx.ResponseWriter.WriteHeader(403)
+	// 	return
+	// }
 	oldCardId := c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
 	var newCard models.Card
