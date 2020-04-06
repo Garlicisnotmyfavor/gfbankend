@@ -38,14 +38,15 @@ func (c *CardController) Get_cardidinfo() {
 // @Param	id	path	string	true	查询的卡号
 // @Success 200	查询成功
 // @Failure 400	查询不到对应的卡
-// @Failure 401	查询不到对应的公司
+// @Failure 401	没处于登录状态，无权限
+// @Failure 404	查询不到对应的公司
 // @router  /card/:id	[get]
 func (c *CardController) GetCardIDInfo() {
 	sess := c.GetSession("userInfo")
-    // 由cookie 得不到session说明没登录，无权限
+	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	// 获取路由参数
@@ -65,7 +66,7 @@ func (c *CardController) GetCardIDInfo() {
 	ep.Id = card.Enterprise
 	if err := o.Read(&ep); err != nil {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(401) // 查不到公司的信息
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到公司的信息
 		return
 	}
 	var cardenter struct {
@@ -116,6 +117,7 @@ func (c *CardController) GetCardIDInfo() {
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
+//@Failure 401	没处于登录状态，无权限
 //@Failure 402	数据不匹配
 //@router  /card/add [post]
 func (c *CardController) AddCard() {
@@ -123,7 +125,7 @@ func (c *CardController) AddCard() {
 	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	user := sess.(models.User)
@@ -155,7 +157,7 @@ func (c *CardController) AddCard() {
 		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
 		return
 	}
-	if len(card.UserId)!=0 {
+	if len(card.UserId) != 0 {
 		models.Log.Error("card already bind")
 		c.Ctx.ResponseWriter.WriteHeader(403) //卡片另有主人
 		return
@@ -182,6 +184,7 @@ func (c *CardController) AddCard() {
 //@Param	cardInfo	body	/	true	新卡信息   CardId(string)+Enterprise(string)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
+//@Failure 401	没处于登录状态，无权限
 //@Failure 403	卡号解析错误
 //@Failure 404	卡片信息读取错误
 //@Failure 500	数据库更新操作错误
@@ -191,7 +194,7 @@ func (c *CardController) ModifyCardInfo() {
 	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	oldCardId := c.Ctx.Input.Param(":id")
@@ -223,7 +226,7 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
-	if err := newCard.CardParse();err!=nil{
+	if err := newCard.CardParse(); err != nil {
 		models.Log.Error("parse error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(403)
 		return
@@ -260,6 +263,7 @@ func (c *CardController) ModifyCardInfo() {
 //@Param id body / true CardId(string)+increment(int)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
+//@Failure 401	没处于登录状态，无权限
 //@Failure 406	积分信息有误
 //@Failure 500	数据库更新操作错误
 //@router /card/:id/score [put]
@@ -268,7 +272,7 @@ func (c *CardController) UseScore() {
 	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	var ScoreInfo struct {
@@ -329,14 +333,18 @@ func (c *CardController) UseScore() {
 //@Param id path string true 卡号
 //@Param Increment body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
-//@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
+//@Failure 400	json解析错误
+//@Failure 401	没处于登录状态，无权限
+//@Failure 403	优惠券不足
+//@Failure 404	卡不存在
+//@Failure 406	非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
 	sess := c.GetSession("userInfo")
 	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	CardId := c.Ctx.Input.Param(":id")
@@ -373,14 +381,17 @@ func (c *CardController) Coupons() {
 //@Description 删除卡片
 //@Param id path string true 卡号
 //@Success 200
-//@Failure 400/404/403	json解析错误/卡不存在/用户id不存在
+//@Failure 400 json解析错误
+//@Failure 401 没登录，无权限
+//@Failure 403 用户ID不存在
+//@Failure 404 卡不存在
 //@router  /card/:id/delete [post]
 func (c *CardController) Delete() {
 	sess := c.GetSession("userInfo")
 	// 由cookie 得不到session说明没登录，无权限
 	if sess == nil {
 		models.Log.Error("not login: ")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	id := c.Ctx.Input.Param(":id")

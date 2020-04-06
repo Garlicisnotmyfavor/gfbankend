@@ -26,30 +26,10 @@ paths:
       responses:
         "200":
           description: Read successfully
+        "401":
+          description: 没登录，无权限
         "404":
           description: Fail to read
-  /api/user/ForgetPW/New:
-    put:
-      tags:
-      - api/user
-      description: 通过前面忘记密码的过程后，设置新的密码
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: userInfo
-        description: 用户信息(需要的是用户ID，新密码）
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
   "/api/user/card/{id\t[get]}":
     get:
       tags:
@@ -68,6 +48,8 @@ paths:
         "400":
           description: 查询不到对应的卡
         "401":
+          description: 没处于登录状态，无权限
+        "404":
           description: 查询不到对应的公司
   /api/user/card/{id}/coupons:
     post:
@@ -93,8 +75,16 @@ paths:
       responses:
         "200":
           description: 成功
-        400/403/404/406:
-          description: json解析错误/优惠券不足/卡不存在/非法数据
+        "400":
+          description: json解析错误
+        "401":
+          description: 没处于登录状态，无权限
+        "403":
+          description: 优惠券不足
+        "404":
+          description: 卡不存在
+        "406":
+          description: 非法数据
   /api/user/card/{id}/delete:
     post:
       tags:
@@ -110,8 +100,14 @@ paths:
       responses:
         "200":
           description: ""
-        400/404:
-          description: json解析错误/卡不存在
+        "400":
+          description: json解析错误
+        "401":
+          description: 没登录，无权限
+        "403":
+          description: 用户ID不存在
+        "404":
+          description: 卡不存在
   /api/user/card/{id}/info:
     put:
       tags:
@@ -126,10 +122,10 @@ paths:
         type: string
       - in: body
         name: cardInfo
-        description: 新卡信息(卡号CardId+公司Enterprise)
-        required: true
+        description: CardId(string)+Enterprise(string)
         schema:
           $ref: '#/definitions//'
+        default: "true"
       responses:
         "200":
           description: 修改成功，返回新卡片对象
@@ -137,6 +133,10 @@ paths:
             $ref: '#/definitions/models.Card'
         "400":
           description: body解析错误
+        "401":
+          description: 没处于登录状态，无权限
+        "403":
+          description: 卡号解析错误
         "404":
           description: 卡片信息读取错误
         "500":
@@ -161,6 +161,8 @@ paths:
             $ref: '#/definitions/models.Card'
         "400":
           description: body解析错误
+        "401":
+          description: 没处于登录状态，无权限
         "406":
           description: 积分信息有误
         "500":
@@ -185,31 +187,13 @@ paths:
             $ref: '#/definitions/models.Card'
         "400":
           description: 解析错误
+        "401":
+          description: 没处于登录状态，无权限
         "402":
           description: 数据不匹配
         "403":
           description: 绑定的卡片不存在
   /api/user/enroll:
-    get:
-      tags:
-      - api/user
-      description: send random code when user enroll
-      operationId: UserController.getRanCodeInRegister
-      parameters:
-      - in: body
-        name: email
-        description: 用户的邮箱
-        required: true
-        schema:
-          type: string
-        type: string
-      responses:
-        "200":
-          description: "string\t\"生成的验证码\""
-        "400":
-          description: 解析body失败
-        "500":
-          description: 发送邮件失败
     post:
       tags:
       - api/user
@@ -218,21 +202,19 @@ paths:
       parameters:
       - in: body
         name: userInfo
-        description: 用户所填信息
+        description: 用户id+电话tel+邮箱mail+密码password+验证码verify
         required: true
         schema:
           $ref: '#/definitions/models.User'
       responses:
         "200":
-          description: '"OK"'
-          schema:
-            $ref: '#/definitions/models.User'
+          description: 返回值：结构体其中有msg信息，数据data
         "400":
-          description: 解析body错误
+          description: 返回值：具体错误信息{"msg":xxx}
         "403":
-          description: 数据库插入错误
+          description: 返回值：错误信息{"msg":xxx}
         "406":
-          description: 账号信息格式有误
+          description: 返回值：错误信息{"msg":xxx}
   /api/user/forgetPw:
     post:
       tags:
@@ -253,6 +235,28 @@ paths:
           description: 解析body失败
         "404":
           description: 数据库无此用户
+  /api/user/forgetPw/New:
+    post:
+      tags:
+      - api/user
+      description: 通过前面忘记密码的过程后，设置新的密码
+      operationId: UserController.NewPassword
+      parameters:
+      - in: body
+        name: userInfo
+        description: 用户信息(需要的是用户ID，新密码）
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
   /api/user/login:
     get:
       tags:
@@ -262,6 +266,8 @@ paths:
       responses:
         "200":
           description: 通过cookie完成了自动登录
+        "204":
+          description: cookie失效
     put:
       tags:
       - api/user
@@ -292,7 +298,7 @@ paths:
       parameters:
       - in: body
         name: userInfo
-        description: 用户信息(需要的是用户ID，新密码）
+        description: 用户信息(需要的是用户ID，原密码，新密码）
         required: true
         schema:
           $ref: '#/definitions/models.User'
@@ -301,10 +307,35 @@ paths:
           description: Update successfully
         "400":
           description: 解析body失败
+        "401":
+          description: 没登录，无权限
+        "403":
+          description: 数据库无此用户
         "404":
           description: 数据库无此用户
         "406":
           description: 更新密码失败
+  /api/user/verify:
+    post:
+      tags:
+      - api/user
+      description: send random code
+      operationId: UserController.getRanCodeInRegister
+      parameters:
+      - in: body
+        name: email
+        description: email:xxx
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: "string\t\"生成的验证码\""
+        "400":
+          description: 解析body失败
+        "500":
+          description: 发送邮件失败
 definitions:
   /:
     title: /

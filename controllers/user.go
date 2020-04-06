@@ -2,7 +2,8 @@ package controllers
 
 import (
 	"encoding/json"
-	_"fmt"
+	_ "fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -24,12 +25,13 @@ type UserController struct {
 // @Param    userID        path    string    true	用户ID
 // @Success 200 Read successfully
 // @Failure 404 Fail to read
+// @Failure 401 没登录，无权限
 // @router /:id:int [get]
 //zjn
 func (c *UserController) GetAllCard() {
 	if c.GetSession("userInfo") == nil {
 		models.Log.Error("no login")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
 	// 取得用户ID from path
@@ -113,14 +115,14 @@ func (c *UserController) GetAllCard() {
 
 //ML，用户注册时验证码获取
 // @Title getRanCodeInRegister
-// @Description send random code when user enroll
-// @Param	email	body	string	true	用户的邮箱
+// @Description send random code
+// @Param	email	body	string	true	"email":xxx
 // @Success 200	string	"生成的验证码"
 // @Failure 400 解析body失败
 // @Failure 500 发送邮件失败
-// @router /enroll [put]
-func (c *UserController) SendCodeInEnroll() {
-	var email struct{Email string} // this is user's email
+// @router /verify [post]
+func (c *UserController) SendCode() {
+	var email struct{ Email string } // this is user's email
 	body := c.Ctx.Input.RequestBody
 	// get email from body
 	if err := json.Unmarshal(body, &email); err != nil {
@@ -134,7 +136,17 @@ func (c *UserController) SendCodeInEnroll() {
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	c.Data["json"] = randCode
+	var response struct {
+		Code int    `json:"code"`
+		Msg  string `json:"msg"`
+		Data string `json:"data"`
+	}
+	response.Code = 200
+	response.Msg = "success"
+	response.Data = string(randCode)
+	// 将验证码加入到用户对应的Session
+	c.SetSession("verify", string(randCode))
+	c.Data["json"] = response
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
@@ -142,29 +154,89 @@ func (c *UserController) SendCodeInEnroll() {
 //ML，用户注册
 // @Title Register
 // @Description user register
-// @Param userInfo body models.User  true 用户所填信息
-// @Success 200 {object} models.User "OK"
-// @Failure 400 解析body错误
-// @Failure 406 账号信息格式有误
-// @Failure 403 数据库插入错误
+// @Param userInfo body \  true 用户id+电话tel+邮箱mail+密码password+验证码verify
+// @Success 200 返回值：结构体其中有msg信息，数据data
+// @Failure 400 解析json出错，返回值：具体错误信息{"msg":xxx}
+// @Failure 406 信息有误，详见返回值：错误信息{"msg":xxx}
+// @Failure 403 插入数据库错误，返回值：错误信息{"msg":xxx}
 // @router /enroll [post]
 func (c *UserController) Enroll() {
 	o := orm.NewOrm()
 	body := c.Ctx.Input.RequestBody
-	//fmt.Println(body)
-	user := models.User{}
+	var userInfo struct {
+		ID       string
+		Tel      string
+		Mail     string
+		Password string
+		Verify   string
+	}
 	//Obtain information of the new user
-	if err := json.Unmarshal(body, &user); err != nil {
+	if err := json.Unmarshal(body, &userInfo); err != nil {
+		models.Log.Error("empty account")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "fail unmarshal json"
+		c.Data["json"] = response
+		c.ServeJSON()
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
-	//fmt.Println(user)
 	//检查用户手机或者邮箱是否为空
-	if len(user.Tel) == 0 || len(user.Mail) == 0 {
+	if len(userInfo.Tel) == 0 || len(userInfo.Mail) == 0 {
 		models.Log.Error("empty account")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "empty mail or phone"
+		c.Data["json"] = response
+		c.ServeJSON()
 		c.Ctx.ResponseWriter.WriteHeader(406) //非法账号
 		return
+	}
+
+	if len(userInfo.Password) == 0 {
+		models.Log.Error("empty password")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "empty password"
+		c.Data["json"] = response
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(406) //没输入密码
+		return
+	}
+	sess := c.GetSession("verify")
+	if sess == nil {
+		models.Log.Error("enroll without being verified")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "no verification"
+		c.Data["json"] = response
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
+		return
+	}
+	vCode := sess.(string)
+	if vCode != userInfo.Verify {
+		models.Log.Error("verify fail")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "wrong verify code"
+		c.Data["json"] = response
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
+		return
+	}
+	// ready to insert new user
+	user := models.User{
+		Id:       userInfo.ID,
+		Tel:      userInfo.Tel,
+		Mail:     userInfo.Mail,
+		Password: userInfo.Password,
 	}
 	//解析得到用户ID
 	if err := user.UserParse(); err != nil {
@@ -174,10 +246,25 @@ func (c *UserController) Enroll() {
 	}
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "insert fail"
+		c.Data["json"] = response
+		c.ServeJSON()
 		c.Ctx.ResponseWriter.WriteHeader(403) //插入错误
 		return
 	}
-	c.Data["json"] = user
+	// response to front-end
+	var response struct {
+		Msg  string      `json:"msg"`
+		Data models.User `json:"data"`
+	}
+	// 注册成功销毁验证码
+	c.DelSession("verify")
+	response.Msg = "success"
+	response.Data = user
+	c.Data["json"] = response
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
 }
@@ -255,7 +342,7 @@ func (c *UserController) Login() {
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
-	
+
 	var column string
 	if uInfo.AccountType == "mail" {
 		user.Mail = uInfo.Account
@@ -300,6 +387,7 @@ func (c *UserController) Login() {
 // @Description change password
 // @Param userInfo body models.User true 用户信息(需要的是用户ID，原密码，新密码）
 // @Success 200 Update successfully
+// @Failure 401 没登录，无权限
 // @Failure 404 数据库无此用户
 // @Failure 403 数据库无此用户
 // @Failure 400 解析body失败
@@ -308,11 +396,11 @@ func (c *UserController) Login() {
 func (c *UserController) ChangePW() {
 	if c.GetSession("userInfo") == nil {
 		models.Log.Error("no login")
-		c.Ctx.ResponseWriter.WriteHeader(403)
+		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
-	var user struct{
-		UserId string
+	var user struct {
+		UserId      string
 		OldPassword string
 		NewPassword string
 	}
@@ -331,7 +419,7 @@ func (c *UserController) ChangePW() {
 		return
 	}
 	//验证用户输入的密码是否与旧密码一致
-	if user.OldPassword!=usr.Password{
+	if user.OldPassword != usr.Password {
 		models.Log.Error("wrong old password: ")
 		c.Ctx.ResponseWriter.WriteHeader(403) // 原密码错误
 		return
@@ -390,33 +478,33 @@ func (c *UserController) ForgetPW() {
 	c.Ctx.ResponseWriter.WriteHeader(200) // 身份验证成功，后续进入验证码阶段
 }
 
-//ML，用户注册时验证码获取
-// @Title getRanCodeInRegister
-// @Description send random code when user enroll
-// @Param	email	body	string	true	用户的邮箱
-// @Success 200	string	"生成的验证码"
-// @Failure 400 解析body失败
-// @Failure 500 发送邮件失败
-// @router /forgetPw/New [put]
-func (c *UserController) SendCodeInNew() {
-	var email struct{Email string} // this is user's email
-	body := c.Ctx.Input.RequestBody
-	// get email from body
-	if err := json.Unmarshal(body, &email); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400)
-		return
-	}
-	randCode := util.GetRandCode() // get random code
-	if err := util.SendEmail(email.Email, randCode); err != nil {
-		models.Log.Error("send email error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
-		return
-	}
-	c.Data["json"] = randCode
-	c.ServeJSON()
-	c.Ctx.ResponseWriter.WriteHeader(200)
-}
+// //ML，用户注册时验证码获取
+// // @Title getRanCodeInRegister
+// // @Description send random code when user enroll
+// // @Param	email	body	string	true	用户的邮箱
+// // @Success 200	string	"生成的验证码"
+// // @Failure 400 解析body失败
+// // @Failure 500 发送邮件失败
+// // @router /forgetPw/New [put]
+// func (c *UserController) SendCodeInNew() {
+// 	var email struct{ Email string } // this is user's email
+// 	body := c.Ctx.Input.RequestBody
+// 	// get email from body
+// 	if err := json.Unmarshal(body, &email); err != nil {
+// 		models.Log.Error("unmarshal error: ", err)
+// 		c.Ctx.ResponseWriter.WriteHeader(400)
+// 		return
+// 	}
+// 	randCode := util.GetRandCode() // get random code
+// 	if err := util.SendEmail(email.Email, randCode); err != nil {
+// 		models.Log.Error("send email error: ", err)
+// 		c.Ctx.ResponseWriter.WriteHeader(500)
+// 		return
+// 	}
+// 	c.Data["json"] = randCode
+// 	c.ServeJSON()
+// 	c.Ctx.ResponseWriter.WriteHeader(200)
+// }
 
 // @Title NewPassword
 // @Description  通过前面忘记密码的过程后，设置新的密码
@@ -445,7 +533,7 @@ func (c *UserController) NewPW() {
 	}
 	//查询成功，更新密码
 	usr.Password = user.Password
-	if _, err := o.Update(&usr,"password"); err != nil {
+	if _, err := o.Update(&usr, "password"); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
