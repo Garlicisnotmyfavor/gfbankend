@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	_ "fmt"
+	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
@@ -154,7 +154,7 @@ func (c *UserController) SendCode() {
 //ML，用户注册
 // @Title Register
 // @Description user register
-// @Param userInfo body \  true 用户id+电话tel+邮箱mail+密码password+验证码verify
+// @Param userInfo body \  true 电话tel+邮箱mail+密码password+验证码verify
 // @Success 200 返回值：结构体其中有msg信息，数据data
 // @Failure 400 解析json出错，返回值：具体错误信息{"msg":xxx}
 // @Failure 406 信息有误，详见返回值：错误信息{"msg":xxx}
@@ -164,7 +164,7 @@ func (c *UserController) Enroll() {
 	o := orm.NewOrm()
 	body := c.Ctx.Input.RequestBody
 	var userInfo struct {
-		ID       string
+		// ID       string
 		Tel      string
 		Mail     string
 		Password string
@@ -192,7 +192,7 @@ func (c *UserController) Enroll() {
 		response.Msg = "empty mail or phone"
 		c.Data["json"] = response
 		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(406) //非法账号
+		c.Ctx.ResponseWriter.WriteHeader(401) //非法账号
 		return
 	}
 
@@ -204,7 +204,7 @@ func (c *UserController) Enroll() {
 		response.Msg = "empty password"
 		c.Data["json"] = response
 		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(406) //没输入密码
+		c.Ctx.ResponseWriter.WriteHeader(402) //没输入密码
 		return
 	}
 	sess := c.GetSession("verify")
@@ -220,6 +220,7 @@ func (c *UserController) Enroll() {
 		return
 	}
 	vCode := sess.(string)
+	fmt.Println(vCode,userInfo.Verify)
 	if vCode != userInfo.Verify {
 		models.Log.Error("verify fail")
 		var response struct {
@@ -228,22 +229,17 @@ func (c *UserController) Enroll() {
 		response.Msg = "wrong verify code"
 		c.Data["json"] = response
 		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
+		c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
 		return
 	}
 	// ready to insert new user
 	user := models.User{
-		Id:       userInfo.ID,
+		// Id:       userInfo.ID,
 		Tel:      userInfo.Tel,
 		Mail:     userInfo.Mail,
 		Password: userInfo.Password,
 	}
-	//解析得到用户ID
-	if err := user.UserParse(); err != nil {
-		models.Log.Error("error in parsing user id: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(406) //用户ID解析出错
-		return
-	}
+	user.UserParse()
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
 		var response struct {
@@ -252,7 +248,7 @@ func (c *UserController) Enroll() {
 		response.Msg = "insert fail"
 		c.Data["json"] = response
 		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(403) //插入错误
+		c.Ctx.ResponseWriter.WriteHeader(405) //插入错误
 		return
 	}
 	// response to front-end
@@ -264,6 +260,7 @@ func (c *UserController) Enroll() {
 	c.DelSession("verify")
 	response.Msg = "success"
 	response.Data = user
+	fmt.Println(response)
 	c.Data["json"] = response
 	c.ServeJSON()
 	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
@@ -456,7 +453,7 @@ func (c *UserController) ForgetPW() {
 	o := orm.NewOrm()
 	//validMail := true
 	// validTel := true
-	// validId := true
+	// validId := true"
 	//查询填入内容是否准确
 	if err := o.Read(&user); err != nil {
 		//validId = false
@@ -515,15 +512,44 @@ func (c *UserController) ForgetPW() {
 // @Failure 406 更新密码失败
 // @router /forgetPw/New [post]
 func (c *UserController) NewPW() {
-	var user models.User
+	var userInfo struct{
+		Id string
+		NewPassword string
+		Verify string
+	}
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body, &user); err != nil {
+	if err := json.Unmarshal(body, &userInfo); err != nil {
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
+	sess := c.GetSession("verify")
+	if sess == nil {
+		models.Log.Error("set new password without being verified")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "no verification"
+		c.Data["json"] = response
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
+		return
+	}
+	vCode := sess.(string)
+	fmt.Println(vCode,userInfo.Verify)
+	if vCode != userInfo.Verify {
+		models.Log.Error("verify fail")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "wrong verify code"
+		c.Data["json"] = response
+		c.ServeJSON()
+		c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
+		return
+	}
 	o := orm.NewOrm()
-	usr := models.User{Id: user.Id}
+	usr := models.User{Id: userInfo.Id}
 	//fmt.Println(usr)
 	// 查询记录
 	if err := o.Read(&usr); err != nil {
@@ -532,12 +558,13 @@ func (c *UserController) NewPW() {
 		return
 	}
 	//查询成功，更新密码
-	usr.Password = user.Password
+	usr.Password = userInfo.NewPassword
 	if _, err := o.Update(&usr, "password"); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
 	}
+	c.DelSession("verify")
 	//根据旧的userInfo删除旧session
 	c.DelSession("userInfo")
 	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功

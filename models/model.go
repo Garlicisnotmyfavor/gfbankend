@@ -2,6 +2,7 @@ package models
 
 //改改改！！！
 import (
+	"fmt"
 	"errors"
 	"strconv"
 	"time"
@@ -61,11 +62,11 @@ type User struct {
 	Password   string `valid:"Required"`
 	LoginMonth string `valid:"max(2)" `     //注册月份
 	LoginYear  string `valid:"max(4)" `     //注册年份
-	LoginNum   int    `valid:"MaxSize(6)" ` //该月份所注册的第几个用户
+	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
 }
 
 type Count struct{
-	Time string `valid:"pk;max(7)"`
+	Time string `valid:"max(7)" orm:"pk"`
 	Num  int `orm:"default(1)"`
 }
 
@@ -138,8 +139,6 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 //根据confluence
 //zyj
 //var UserParse
-
-
 func (card *Card) CardParse() error {
 	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
@@ -165,18 +164,23 @@ func (user *User) UserParse() {
 	var item Count
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
+	user.Id = curTime[0:4]+curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
 	if err := o.Read(&item); err!=nil{
 		item.Time = curTime
 		item.Num = 1
 		user.LoginNum = 1
+		user.Id += fmt.Sprintf("%07d",user.LoginNum)
 		o.Insert(&item)
 		return
 	}
-	user.LoginNum = item.Num+1
 	item.Num += 1
+	user.LoginNum = item.Num
+	user.Id += fmt.Sprintf("%07d",user.LoginNum)
+	fmt.Println(user)
 	o.Update(&item)
+	return
 }
 
 func (enterprise *Enterprise) EnterpriseParse() error {
