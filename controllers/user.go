@@ -239,11 +239,7 @@ func (c *UserController) Enroll() {
 		Password: userInfo.Password,
 	}
 	//解析得到用户ID
-	if err := user.UserParse(); err != nil {
-		models.Log.Error("error in parsing user id: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(406) //用户ID解析出错
-		return
-	}
+	user.UserParse()
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
 		var response struct {
