@@ -5,7 +5,7 @@ import (
 	"errors"
 	"strconv"
 	"time"
-
+	"github.com/astaxie/beego/orm"
 	_ "github.com/astaxie/beego/validation"
 )
 
@@ -15,7 +15,7 @@ import (
 type Card struct {
 	CardId string `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
 	// UserId      *User     `orm:"rel(fk)"`
-	UserId     string    `orm:"size(13)" valid:"Required;Length(13)"` //UserId 必须是由用户给出的，因为CardId中不包含UserId
+	UserId     string    `orm:"size(13)"` //UserId是依据时间生成的，因为CardId中不包含UserId
 	CardType   string    `valid:"Required"`                           //卡的类型
 	Enterprise string    `valid:"Required"`
 	State      string    `valid:"Required"`
@@ -62,6 +62,11 @@ type User struct {
 	LoginMonth string `valid:"max(2)" `     //注册月份
 	LoginYear  string `valid:"max(4)" `     //注册年份
 	LoginNum   int    `valid:"MaxSize(6)" ` //该月份所注册的第几个用户
+}
+
+type Count struct{
+	Time string `valid:"pk;max(7)"`
+	Num  int `orm:"default(1)"`
 }
 
 //type DelCard struct {
@@ -134,7 +139,7 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 //zyj
 //var UserParse
 
-//将card结构中的Id解析出对应的含义赋值给card的其他导出属性
+
 func (card *Card) CardParse() error {
 	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
@@ -156,18 +161,22 @@ func (card *Card) CardParse() error {
 }
 
 //ZYJ 解析生成用户ID
-func (user *User) UserParse() error {
-	if len(user.Id) != 13 {
-		return errors.New("INVALID LENGTH USER ID")
+func (user *User) UserParse() {
+	var item Count
+	o := orm.NewOrm()
+	curTime := time.Now().String()[:7]
+	user.LoginYear = curTime[0:4]
+	user.LoginMonth = curTime[5:7]
+	if err := o.Read(&item); err!=nil{
+		item.Time = curTime
+		item.Num = 1
+		user.LoginNum = 1
+		o.Insert(&item)
+		return
 	}
-	var err error
-	user.LoginYear = user.Id[0:4]
-	user.LoginMonth = user.Id[4:6]
-	user.LoginNum, err = strconv.Atoi(user.Id[6:])
-	if err != nil {
-		return errors.New("INVALID USER")
-	}
-	return nil
+	user.LoginNum = item.Num+1
+	item.Num += 1
+	o.Update(&item)
 }
 
 func (enterprise *Enterprise) EnterpriseParse() error {

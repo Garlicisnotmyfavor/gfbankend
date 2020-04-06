@@ -52,6 +52,8 @@ func testData(){
 	testCardData2 := Card{CardId:"123456790000000",UserId:"2018091620001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"subway",ExpireTime:time.Now()}
 	testUserData3 := User{Id:"2018091620002",Tel:"13778372240",Mail:"666666@qq.com",Password:"123009889"}
 	testCardData3 := Card{CardId:"123456790333000",UserId:"2018091620002",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	testUserData4 := User{Id:"2018091620020",Tel:"13778788240",Mail:"78902166@qq.com",Password:"33235323"}
+	testCardData4 := Card{CardId:"123456790333000",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
 	o := orm.NewOrm()
 	o.Insert(&testUserData1)
 	o.Insert(&testUserData2)
@@ -59,4 +61,6 @@ func testData(){
 	o.Insert(&testCardData1)
 	o.Insert(&testCardData2)
 	o.Insert(&testCardData3)
+	o.Insert(&testUserData4)
+	o.Insert(&testCardData4)
 }
