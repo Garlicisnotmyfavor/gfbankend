@@ -7,7 +7,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
-
+	"fmt"
 	//"strconv"
 	//"strings"
 	"time"
@@ -64,17 +64,19 @@ func (c *CardController) GetCardIDInfo() {
 	}
 	//找到卡后要去找对应的公司的信息
 	ep.Name = card.Enterprise
-	if err := o.Read(&ep); err != nil {
+	if err := o.Read(&ep,"name"); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到公司的信息
 		return
 	}
 	var cardenter struct {
-		card       models.Card
-		enterprise models.Enterprise
+		Card       models.Card
+		Enterprise models.Enterprise
 	}
-	cardenter.card = card
-	cardenter.enterprise = ep
+	fmt.Println(card)
+	fmt.Println(ep)
+	cardenter.Card = card
+	cardenter.Enterprise = ep
 	////若查到card这一列后，需要找到它的卡的积分或卷的规则
 	//var CouponsDetails models.Coupons
 	//var ScoreDetails   models.Score
@@ -161,11 +163,17 @@ func (c *CardController) AddCard() {
 		return
 	}
 	if card.Enterprise != addinfo.Enterprise {
+		models.Log.Error("wrong cardID")
 		c.Ctx.ResponseWriter.WriteHeader(402) //输入id和公司名不匹配
 		return
 	}
 	//匹配后建立关联
 	card.UserId = userId
+	if _,err:= o.Update(&card);err!=nil{
+		models.Log.Error("update database error")
+		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+		return
+	}
 	// card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
@@ -199,17 +207,18 @@ func (c *CardController) ModifyCardInfo() {
 	body := c.Ctx.Input.RequestBody
 	var newCard models.Card
 	oldCard := models.Card{CardId: oldCardId}
-	//解析body
-	if err := json.Unmarshal(body, &newCard); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400)
-		return
-	}
 	o := orm.NewOrm()
 	//读取原卡片
 	if err := o.Read(&oldCard); err != nil {
 		models.Log.Error("sql read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	newCard = oldCard
+	//解析body
+	if err := json.Unmarshal(body, &newCard); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
 	////读取新卡片
@@ -224,22 +233,22 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
-	if err := newCard.CardParse(); err != nil {
-		models.Log.Error("parse error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(403)
+	// if err := newCard.CardParse(); err != nil {
+	// 	models.Log.Error("parse error: ", err)
+	// 	c.Ctx.ResponseWriter.WriteHeader(403)
+	// 	return
+	// }
+	// 增加新卡片中UserId关联,并取消原卡片的关联
+	// oldCard.UserId = newCard.UserId
+	if _, err := o.Delete(&oldCard); err != nil {
+		models.Log.Error("delete oldCard error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	//增加新卡片中UserId关联,并取消原卡片的关联
 	newCard.UserId = oldCard.UserId
 	if _, err := o.Insert(&newCard); err != nil {
 		models.Log.Error("insert newCard error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(406)
-		return
-	}
-	//oldCard.UserId = newCard.UserId
-	if _, err := o.Delete(&oldCard); err != nil {
-		models.Log.Error("delete oldCard error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
 	//if _, err := o.Update(&newCard); err != nil {
@@ -277,6 +286,7 @@ func (c *CardController) UseScore() {
 		CardId    string
 		Increment int
 	}
+	ScoreInfo.CardId = c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
 	if err := json.Unmarshal(body, &ScoreInfo); err != nil {
@@ -348,7 +358,7 @@ func (c *CardController) Coupons() {
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
 	//o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
-	var increment struct{ value int }
+	var increment struct{ Value int }
 	card := models.Card{CardId: CardId}
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
@@ -362,7 +372,8 @@ func (c *CardController) Coupons() {
 		c.Ctx.ResponseWriter.WriteHeader(403) //查找不到相应的id卡进行数据更新
 		return
 	}
-	card.CouponsNum += increment.value
+	card.CouponsNum += increment.Value
+	fmt.Println(card)
 	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新

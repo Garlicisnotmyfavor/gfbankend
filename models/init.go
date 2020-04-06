@@ -39,21 +39,24 @@ func init() {
 	orm.RegisterModel(new(Card)) //登记orm
 	orm.RegisterModel(new(Enterprise))
 	orm.RegisterModel(new(User))
+	orm.RegisterModel(new(Count))
 	//testData()
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
-	//testData()
+	testData()
 }
 
 func testData(){
-	testUserData1 := User{Id:"2018091620000",Tel:"13925678240",Mail:"123456@qq.com",Password:"123456789"}
+	testUserData1 := User{Id:"2018091620000",Tel:"13925678240",Mail:"123456@qq.com",Password:"123456789",LoginNum:0}
 	testCardData1 := Card{CardId:"123456790123456",UserId:"2018091620000",State:"California",City:"San Jose", CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
-	testUserData2 := User{Id:"2018091620001",Tel:"13665372240",Mail:"654321@qq.com",Password:"123908789"}
+	testUserData2 := User{Id:"2018091620001",Tel:"13665372240",Mail:"654321@qq.com",Password:"123908789",LoginNum:1}
 	testCardData2 := Card{CardId:"123456790000000",UserId:"2018091620001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"subway",ExpireTime:time.Now()}
-	testUserData3 := User{Id:"2018091620002",Tel:"13778372240",Mail:"666666@qq.com",Password:"123009889"}
+	testUserData3 := User{Id:"2018091620002",Tel:"13778372240",Mail:"666666@qq.com",Password:"123009889",LoginNum:2}
 	testCardData3 := Card{CardId:"123456790333000",UserId:"2018091620002",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
-	testUserData4 := User{Id:"2018091620020",Tel:"13778788240",Mail:"78902166@qq.com",Password:"33235323"}
-	testCardData4 := Card{CardId:"123456790333000",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	testUserData4 := User{Id:"2018091620020",Tel:"13778788240",Mail:"78902166@qq.com",Password:"33235323",LoginNum:20}
+	testCardData4 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	testEnterpriseData1 := Enterprise{Id:"001",Name:"starbucks"}
+	testEnterpriseData2 := Enterprise{Id:"002",Name:"subway"}
 	o := orm.NewOrm()
 	o.Insert(&testUserData1)
 	o.Insert(&testUserData2)
@@ -63,4 +66,6 @@ func testData(){
 	o.Insert(&testCardData3)
 	o.Insert(&testUserData4)
 	o.Insert(&testCardData4)
+	o.Insert(&testEnterpriseData1)
+	o.Insert(&testEnterpriseData2)
 }
