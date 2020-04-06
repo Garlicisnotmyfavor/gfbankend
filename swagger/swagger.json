@@ -276,7 +276,7 @@
                         "description": "用户id+电话tel+邮箱mail+密码password+验证码verify",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/\\"
                         }
                     }
                 ],
@@ -285,13 +285,13 @@
                         "description": "返回值：结构体其中有msg信息，数据data"
                     },
                     "400": {
-                        "description": "返回值：具体错误信息{\"msg\":xxx}"
+                        "description": "解析json出错，返回值：具体错误信息{\"msg\":xxx}"
                     },
                     "403": {
-                        "description": "返回值：错误信息{\"msg\":xxx}"
+                        "description": "插入数据库错误，返回值：错误信息{\"msg\":xxx}"
                     },
                     "406": {
-                        "description": "返回值：错误信息{\"msg\":xxx}"
+                        "description": "信息有误，详见返回值：错误信息{\"msg\":xxx}"
                     }
                 }
             }

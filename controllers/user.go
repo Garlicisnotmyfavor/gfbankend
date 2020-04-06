@@ -370,7 +370,6 @@ func (c *UserController) Login() {
 	}
 	c.SetSession("userInfo", user) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
-	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @Title test

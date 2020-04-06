@@ -63,7 +63,7 @@ func (c *CardController) GetCardIDInfo() {
 		return
 	}
 	//找到卡后要去找对应的公司的信息
-	ep.Id = card.Enterprise
+	ep.Name = card.Enterprise
 	if err := o.Read(&ep); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到公司的信息
@@ -102,11 +102,9 @@ func (c *CardController) GetCardIDInfo() {
 	//	}
 	//	cardinfo.CouponsDetails = append(cardinfo.CouponsDetails, CouponsDetails)
 	//}
-
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	c.Data["json"] = cardenter
 	c.ServeJSON()
-
 }
 
 //添加卡片 在user表里添加此user和card的关联
