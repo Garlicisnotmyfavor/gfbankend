@@ -5,3 +5,4 @@ go install: no install location for directory /gfbankend/controllers outside GOP
 	For more details see: 'go help gopath'
 go install: no install location for directory /gfbankend/controllers outside GOPATH
 	For more details see: 'go help gopath'
+github.com/gfbankend/controllers
