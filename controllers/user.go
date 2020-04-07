@@ -240,6 +240,7 @@ func (c *UserController) Enroll() {
 		Password: userInfo.Password,
 	}
 	user.UserParse()
+	fmt.Println(user)
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
 		var response struct {
@@ -371,7 +372,6 @@ func (c *UserController) Login() {
 	}
 	c.SetSession("userInfo", user) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
-	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @Title test
