@@ -1,0 +1,258 @@
+[35m[1m______
+| ___ \
+| |_/ /  ___   ___
+| ___ \ / _ \ / _ \
+| |_/ /|  __/|  __/
+\____/  \___| \___| v1.10.0
+[21m[0m2020/04/06 22:07:49 [34m[1mINFO    [21m[0m ▶ 0001 Using 'gfbankend' as 'appname'
+2020/04/06 22:07:49 [34m[1mINFO    [21m[0m ▶ 0002 Initializing watcher...
+2020/04/06 22:07:49 [34m[1mINFO    [21m[0m ▶ 0003 Generating the docs...
+2020/04/06 22:07:49 [32m[1mSUCCESS [21m[0m ▶ 0004 Docs generated!
+2020/04/06 22:07:50 [32m[1mSUCCESS [21m[0m ▶ 0005 Built Successfully!
+2020/04/06 22:07:50 [34m[1mINFO    [21m[0m ▶ 0006 Restarting 'gfbankend'...
+2020/04/06 22:07:50 [32m[1mSUCCESS [21m[0m ▶ 0007 './gfbankend' is running...
+table `card` already exists, skip
+table `enterprise` already exists, skip
+table `user` already exists, skip
+table `count` already exists, skip
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.3ms] - [INSERT INTO `user` (`id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `2018091620000`, `13925678240`, `123456@qq.com`, `123456789`, ``, ``, `0` - Error 1062: Duplicate entry '2018091620000' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.3ms] - [INSERT INTO `user` (`id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `2018091620001`, `13665372240`, `654321@qq.com`, `123908789`, ``, ``, `1` - Error 1062: Duplicate entry '2018091620001' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.3ms] - [INSERT INTO `user` (`id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `2018091620002`, `13778372240`, `666666@qq.com`, `123009889`, ``, ``, `2` - Error 1062: Duplicate entry '2018091620002' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     1.4ms] - [INSERT INTO `card` (`card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)] - `123456790123456`, `2018091620000`, `Integrate`, `starbucks`, `California`, `San Jose`, `0`, `0`, `0`, ``, `2020-04-06 22:07:50.984634961 +0800 CST`, `<nil>`, `0`, `0`, `0`, `0` - Error 1062: Duplicate entry '123456790123456' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.1ms] - [INSERT INTO `card` (`card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)] - `123456790000000`, `2018091620001`, `Discount`, `subway`, `California`, `San Jose`, `0`, `0`, `0`, ``, `2020-04-06 22:07:50.984635941 +0800 CST`, `<nil>`, `0`, `0`, `0`, `0` - Error 1062: Duplicate entry '123456790000000' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.1ms] - [INSERT INTO `card` (`card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)] - `123456790333000`, `2018091620002`, `Integrate`, `starbucks`, `California`, `San Jose`, `0`, `0`, `0`, ``, `2020-04-06 22:07:50.984636642 +0800 CST`, `<nil>`, `0`, `0`, `0`, `0` - Error 1062: Duplicate entry '123456790333000' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.3ms] - [INSERT INTO `user` (`id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `2018091620020`, `13778788240`, `78902166@qq.com`, `33235323`, ``, ``, `20` - Error 1062: Duplicate entry '2018091620020' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.2ms] - [INSERT INTO `card` (`card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num`) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)] - `123456790333001`, ``, `Integrate`, `starbucks`, `California`, `San Jose`, `0`, `0`, `0`, ``, `2020-04-06 22:07:50.984637295 +0800 CST`, `<nil>`, `0`, `0`, `0`, `0` - Error 1062: Duplicate entry '123456790333001' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.4ms] - [INSERT INTO `enterprise` (`id`, `is_local`, `type`, `register_num`, `name`, `help_msg`, `website`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `001`, ``, ``, ``, `starbucks`, ``, `` - Error 1062: Duplicate entry 'starbucks' for key 'PRIMARY'
+[ORM]2020/04/06 22:07:50  -[Queries/default] - [FAIL /     db.Exec /     0.3ms] - [INSERT INTO `enterprise` (`id`, `is_local`, `type`, `register_num`, `name`, `help_msg`, `website`) VALUES (?, ?, ?, ?, ?, ?, ?)] - `002`, ``, ``, ``, `subway`, ``, `` - Error 1062: Duplicate entry 'subway' for key 'PRIMARY'
+2020/04/06 22:07:50.991 [1;34m[I][0m [router.go:270]  /root/go/src/github.com/gfbankend/controllers no changed
+2020/04/06 22:07:50.992 [1;34m[I][0m [proc.go:198]  App start
+2020/04/06 22:07:50.997 [1;34m[I][0m [asm_amd64.s:2361]  http server Running on http://:8080
+[ORM]2020/04/06 22:07:51  -[Queries/default] - [  OK / db.QueryRow /     0.5ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:07:51.334 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.629378ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:07:51  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:07:51.968 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.346506ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:07:52  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:07:52.546 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    1.39672ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:07:53  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:07:53.014 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.514996ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:07:53  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:07:53.387 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.399742ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+2020/04/06 22:07:55.707 [1;31m[E][0m [user.go:354]  login error: wrong account type
+2020/04/06 22:07:55.707 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|     854.61µs|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:08:07  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:08:07.895 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.336228ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:08:25  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:08:25.399 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    2.33202ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+2020/04/06 22:08:38.755 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    216.497µs| nomatch|[97;44m GET     [0m /v1/api/user/card
+2020/04/06 22:08:47.198 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    249.621µs| nomatch|[97;44m GET     [0m /v1/api/card
+2020/04/06 22:08:47.839 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    190.254µs| nomatch|[97;44m GET     [0m /v1/api/card
+2020/04/06 22:08:53.080 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    191.708µs| nomatch|[97;44m GET     [0m /v1/api/card/123
+2020/04/06 22:08:57.436 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    212.021µs| nomatch|[97;44m GET     [0m /v1/api/card
+2020/04/06 22:09:00.804 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    222.496µs| nomatch|[97;44m GET     [0m /v1/api/user/
+2020/04/06 22:09:02.410 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|     210.78µs| nomatch|[97;44m GET     [0m /v1/api/user
+2020/04/06 22:09:14.697 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    172.229µs|   match|[97;44m GET     [0m /swagger/
+2020/04/06 22:09:14.772 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    261.137µs|   match|[97;44m GET     [0m /swagger/swagger-ui.css
+2020/04/06 22:09:14.960 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|  143.12879ms|   match|[97;44m GET     [0m /swagger/swagger-ui-standalone-preset.js
+2020/04/06 22:09:15.335 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|  561.61119ms|   match|[97;44m GET     [0m /swagger/swagger-ui-bundle.js
+2020/04/06 22:09:16.515 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    190.622µs|   match|[97;44m GET     [0m /swagger/swagger.json
+2020/04/06 22:09:16.552 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|    129.486µs|   match|[97;44m GET     [0m /swagger/favicon-32x32.png
+2020/04/06 22:09:30.438 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[90;47m 304 [0m|     57.625µs|   match|[97;44m GET     [0m /swagger/
+2020/04/06 22:09:30.586 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[90;47m 304 [0m|     48.013µs|   match|[97;44m GET     [0m /swagger/swagger.json
+[ORM]2020/04/06 22:09:47  -[Queries/default] - [  OK / db.QueryRow /     0.6ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `123`
+2020/04/06 22:09:47.509 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:09:47.511 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|   4.932582ms|   match|[97;44m GET     [0m /v1/api/user/card/123   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:09:52  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:09:52.598 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   3.683074ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:09:58  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:09:58.814 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|     2.4378ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:09:59  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `123`
+2020/04/06 22:09:59.586 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:09:59.587 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|    2.01058ms|   match|[97;44m GET     [0m /v1/api/user/card/123   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:10:00  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:00.523 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.475689ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:00  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:00.866 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.382311ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:01  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:01.079 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.558846ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:01  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:01.253 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.612154ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:01  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:01.407 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|    1.12371ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:01  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:01.599 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.047047ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:06  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:06.361 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.478609ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:07  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:07.803 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.384197ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:08  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:08.644 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.314863ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:10:13  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:10:13.880 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   1.340132ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+2020/04/06 22:11:16.256 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|     189.08µs| nomatch|[97;44m GET     [0m /v1/card/201809162000
+2020/04/06 22:11:16.643 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    244.646µs| nomatch|[97;44m GET     [0m /v1/card/201809162000
+2020/04/06 22:11:29.533 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    175.264µs| nomatch|[97;44m GET     [0m /v1/user/card/201809162000
+[ORM]2020/04/06 22:11:58  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `20180916200`
+2020/04/06 22:11:58.280 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:11:58.282 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|   3.073649ms|   match|[97;44m GET     [0m /v1/api/user/card/20180916200   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:12:01  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `201809162000`
+2020/04/06 22:12:01.171 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:12:01.172 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|   3.141471ms|   match|[97;44m GET     [0m /v1/api/user/card/201809162000   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:12:01  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `201809162000`
+2020/04/06 22:12:01.864 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:12:01.865 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|   1.185033ms|   match|[97;44m GET     [0m /v1/api/user/card/201809162000   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:12:30  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `card_id`, `user_id`, `card_type`, `enterprise`, `state`, `city`, `money`, `score`, `coupons_num`, `coupons`, `expire_time`, `del_time`, `card_order`, `factory_num`, `batch_num`, `serial_num` FROM `card` WHERE `card_id` = ? ] - `201809162000`
+2020/04/06 22:12:30.160 [1;31m[E][0m [card.go:61]  read error: %!(EXTRA *errors.errorString=<QuerySeter> no row found)
+2020/04/06 22:12:30.160 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 400 [0m|   1.636795ms|   match|[97;44m GET     [0m /v1/api/user/card/201809162000   r:/v1/api/user/card/:id
+[ORM]2020/04/06 22:13:26  -[Queries/default] - [  OK /    db.Query /     3.0ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `201809162000`
+2020/04/06 22:13:26.177 [1;31m[E][0m [user.go:47]  read error%!(EXTRA <nil>)
+2020/04/06 22:13:26.177 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|   5.653979ms|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:14:09  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `201809162000`
+2020/04/06 22:14:09.774 [1;31m[E][0m [user.go:47]  read error%!(EXTRA <nil>)
+2020/04/06 22:14:09.775 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|   5.470489ms|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:14:19  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `201809162001`
+2020/04/06 22:14:19.393 [1;31m[E][0m [user.go:47]  read error%!(EXTRA <nil>)
+2020/04/06 22:14:19.394 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|   1.701921ms|   match|[97;44m GET     [0m /v1/api/user/201809162001   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:14:22  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `201809162000`
+2020/04/06 22:14:22.759 [1;31m[E][0m [user.go:47]  read error%!(EXTRA <nil>)
+2020/04/06 22:14:22.759 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|   1.716211ms|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:14:40.997 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    206.706µs| nomatch|[97;44m GET     [0m /  
+2020/04/06 22:14:41.908 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    254.861µs| nomatch|[97;44m GET     [0m /v1/api/
+2020/04/06 22:14:41.973 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    236.014µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:14:43.686 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    173.366µs| nomatch|[97;44m GET     [0m /v1/api/
+2020/04/06 22:14:45.522 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    225.441µs| nomatch|[97;44m GET     [0m /v1/api/uesr
+2020/04/06 22:14:45.580 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    179.551µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:14:45.734 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|     245.05µs| nomatch|[97;44m GET     [0m /v1/api/user.
+2020/04/06 22:14:45.809 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|     227.88µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:14:45.946 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    276.459µs| nomatch|[97;44m GET     [0m /v1/api/user/
+2020/04/06 22:14:46.031 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    248.453µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:14:53.983 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:14:53.983 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    900.841µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:14:54.055 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    208.622µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:15:57.320 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    199.246µs| nomatch|[97;43m PUT     [0m /v1/api/user/201809162000
+[ORM]2020/04/06 22:16:05  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:16:05.307 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.584928ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:16:14  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `2018091620000`
+2020/04/06 22:16:14.982 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/06 22:16:14.982 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   3.666057ms|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+2020/04/06 22:16:36.653 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    189.187µs| nomatch|[97;44m GET     [0m /  
+2020/04/06 22:16:37.072 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:37.073 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    866.326µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:37.669 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:37.670 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    858.387µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:38.319 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:38.320 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    718.527µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:41.485 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:41.487 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|   2.440642ms|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:41.969 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:41.969 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    809.995µs|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+2020/04/06 22:16:42.056 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    196.123µs| nomatch|[97;44m GET     [0m /favicon.ico
+2020/04/06 22:16:44.334 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:44.335 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    737.963µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:45.982 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 404 [0m|    193.586µs| nomatch|[97;44m GET     [0m /v1/api/user/
+2020/04/06 22:16:46.277 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:46.278 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    691.851µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:47.718 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:47.719 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    790.216µs|   match|[97;44m GET     [0m /v1/api/user/201809162000   r:/v1/api/user/:id:int
+2020/04/06 22:16:49.884 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:49.885 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    712.628µs|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+2020/04/06 22:16:50.110 [1;31m[E][0m [user.go:33]  no login
+2020/04/06 22:16:50.111 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;43m 401 [0m|    769.183µs|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:16:54  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `2018091620000`
+2020/04/06 22:16:54.902 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/06 22:16:54.904 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   3.234724ms|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:16:55  -[Queries/default] - [  OK /    db.Query /     0.4ms] - [SELECT T0.`card_id`, T0.`user_id`, T0.`card_type`, T0.`enterprise`, T0.`state`, T0.`city`, T0.`money`, T0.`score`, T0.`coupons_num`, T0.`coupons`, T0.`expire_time`, T0.`del_time`, T0.`card_order`, T0.`factory_num`, T0.`batch_num`, T0.`serial_num` FROM `card` T0 WHERE T0.`user_id` = ? ] - `2018091620000`
+2020/04/06 22:16:55.590 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/06 22:16:55.590 [1;44m[D][0m [server.go:2697]  |117.173.136.184|[97;42m 200 [0m|   1.300912ms|   match|[97;44m GET     [0m /v1/api/user/2018091620000   r:/v1/api/user/:id:int
+[ORM]2020/04/06 22:19:14  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:19:14.820 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   3.799547ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:19:38  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `12345yyy`
+2020/04/06 22:19:38.678 [1;31m[E][0m [user.go:359]  login error: auth fail
+2020/04/06 22:19:38.679 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;43m 406 [0m|   12.53444ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:23:50  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `1234567`
+2020/04/06 22:23:50.529 [1;31m[E][0m [user.go:359]  login error: auth fail
+2020/04/06 22:23:50.530 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;43m 406 [0m|   4.209953ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:23:54  -[Queries/default] - [  OK / db.QueryRow /     0.3ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:23:54.196 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|   3.791371ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+[ORM]2020/04/06 22:25:16  -[Queries/default] - [  OK / db.QueryRow /     0.4ms] - [SELECT `id`, `tel`, `mail`, `password`, `login_month`, `login_year`, `login_num` FROM `user` WHERE `mail` = ? AND `password` = ? ] - `123456@qq.com`, `123456789`
+2020/04/06 22:25:16.640 [1;44m[D][0m [server.go:2697]  | 112.47.157.212|[97;42m 200 [0m|     4.6544ms|   match|[97;43m PUT     [0m /v1/api/user/login   r:/v1/api/user/login
+2020/04/06 23:07:15.990 [1;44m[D][0m [server.go:2697]  | 167.71.190.138|[97;43m 404 [0m|     207.01µs| nomatch|[97;44m GET     [0m /  
+2020/04/06 23:31:47.177 [1;44m[D][0m [server.go:2697]  |    47.100.64.9|[97;43m 404 [0m|    274.578µs| nomatch|[97;44m GET     [0m /  
+2020/04/06 23:49:43.844 [1;44m[D][0m [server.go:2697]  | 47.100.124.106|[97;43m 404 [0m|    300.552µs| nomatch|[97;44m GET     [0m /  
+2020/04/06 23:56:49.536 [1;44m[D][0m [server.go:2697]  |    45.13.93.90|[97;43m 404 [0m|    318.056µs| nomatch|[0m CONNECT [0m    
+2020/04/07 01:06:14.822 [1;44m[D][0m [server.go:2697]  |  167.172.46.65|[97;43m 404 [0m|    234.907µs| nomatch|[97;44m GET     [0m /admin-scripts.asp
+2020/04/07 01:06:15.252 [1;44m[D][0m [server.go:2697]  |  167.172.46.65|[97;43m 404 [0m|     275.72µs| nomatch|[97;44m GET     [0m /admin-scripts.asp
+2020/04/07 01:21:49.531 [1;44m[D][0m [server.go:2697]  |     71.6.232.4|[97;43m 404 [0m|    219.161µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 01:43:50.389 [1;44m[D][0m [server.go:2697]  |151.234.131.110|[97;43m 404 [0m|    256.348µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 02:07:04.366 [1;44m[D][0m [server.go:2697]  |  196.52.43.125|[97;43m 404 [0m|    276.067µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 02:17:08.716 [1;44m[D][0m [server.go:2697]  |109.148.168.189|[97;43m 404 [0m|     253.38µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 02:21:18.934 [1;44m[D][0m [server.go:2697]  |  35.183.69.225|[97;43m 404 [0m|    218.275µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 03:09:40.326 [1;44m[D][0m [server.go:2697]  |  198.98.52.141|[97;43m 404 [0m|    215.523µs| nomatch|[97;44m GET     [0m /manager/html
+2020/04/07 03:34:40.150 [1;44m[D][0m [server.go:2697]  | 120.78.225.124|[97;43m 404 [0m|    276.553µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 04:00:00.634 [1;44m[D][0m [server.go:2697]  |197.245.104.251|[97;43m 404 [0m|    260.472µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 04:19:37.605 [1;44m[D][0m [server.go:2697]  | 173.11.219.249|[97;43m 404 [0m|    218.176µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 04:29:50.148 [1;44m[D][0m [server.go:2697]  |192.241.238.166|[97;43m 404 [0m|    233.531µs| nomatch|[97;44m GET     [0m /hudson
+2020/04/07 05:18:54.043 [1;44m[D][0m [server.go:2697]  | 192.241.238.98|[97;43m 404 [0m|    233.166µs| nomatch|[97;44m GET     [0m /manager/html
+2020/04/07 05:46:35.510 [1;44m[D][0m [server.go:2697]  |   80.82.70.187|[97;43m 404 [0m|    217.365µs| nomatch|[97;44m GET     [0m /cache/global/img/gs.gif
+2020/04/07 06:01:27.399 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    234.283µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 06:01:31.844 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    288.056µs| nomatch|[90;47m OPTIONS [0m /  
+2020/04/07 06:01:35.277 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    220.638µs| nomatch|[97;44m GET     [0m /nice ports,/Trinity.txt.bak
+2020/04/07 06:03:04.993 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    281.897µs| nomatch|[97;44m GET     [0m /nmaplowercheck1586210584
+2020/04/07 06:03:05.145 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|     258.16µs| nomatch|[97;44m GET     [0m /evox/about
+2020/04/07 06:03:05.448 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    228.297µs| nomatch|[97;44m GET     [0m /HNAP1
+2020/04/07 06:03:09.815 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    225.912µs| nomatch|[97;46m POST    [0m /sdk
+2020/04/07 06:03:49.087 [1;44m[D][0m [server.go:2697]  |    47.101.72.8|[97;43m 404 [0m|    248.321µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 06:08:12.005 [1;44m[D][0m [server.go:2697]  |  47.93.180.168|[97;43m 404 [0m|    234.053µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 06:17:32.300 [1;44m[D][0m [server.go:2697]  |  198.98.52.141|[97;43m 404 [0m|    222.423µs| nomatch|[97;44m GET     [0m /manager/html
+2020/04/07 07:48:29.815 [1;44m[D][0m [server.go:2697]  |   80.82.70.118|[97;43m 404 [0m|     243.89µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 07:54:26.058 [1;44m[D][0m [server.go:2697]  | 154.47.130.110|[97;43m 404 [0m|    242.124µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 08:11:46.345 [1;44m[D][0m [server.go:2697]  |162.243.129.184|[97;43m 404 [0m|    280.391µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 08:35:28.441 [1;44m[D][0m [server.go:2697]  |   47.100.36.95|[97;43m 404 [0m|    253.137µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 08:46:46.463 [1;44m[D][0m [server.go:2697]  | 176.119.28.211|[97;43m 404 [0m|    310.541µs| nomatch|[97;46m POST    [0m /tmUnblock.cgi
+2020/04/07 09:10:10.342 [1;44m[D][0m [server.go:2697]  | 45.127.220.160|[97;43m 404 [0m|    255.433µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 09:25:12.959 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:25:12.960 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 1.573534186s|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 09:26:28.177 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 404 [0m|    279.955µs| nomatch|[97;46m POST    [0m /v1/api/user/register
+2020/04/07 09:31:16.685 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 404 [0m|    589.242µs| nomatch|[97;46m POST    [0m /v1/api/user/register
+2020/04/07 09:31:20.602 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 404 [0m|    309.401µs| nomatch|[97;46m POST    [0m /v1/api/user/register
+2020/04/07 09:32:09.939 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:32:09.942 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 436.379332ms|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 09:32:28.277 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 404 [0m|    279.805µs| nomatch|[97;46m POST    [0m /v1/api/user/register
+2020/04/07 09:33:02.466 [1;31m[E][0m [user.go:188]  empty account
+2020/04/07 09:33:02.466 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:33:02.467 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 401 [0m|    1.84179ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 09:34:22.956 [1;31m[E][0m [user.go:188]  empty account
+2020/04/07 09:34:22.960 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:34:22.960 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 401 [0m|   5.002304ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 09:49:13.457 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 09:49:13.458 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:49:13.459 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|   2.945014ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 09:51:05.840 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:51:05.844 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 1.061334046s|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 09:51:18.054 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 09:51:18.055 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:51:18.056 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|    1.64866ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 09:54:13.702 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 09:54:13.703 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 09:54:13.705 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|   4.291368ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 09:59:09.439 [1;44m[D][0m [server.go:2697]  | 132.255.88.138|[97;43m 404 [0m|    246.663µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 10:14:04.399 [1;44m[D][0m [server.go:2697]  | 101.251.238.50|[97;43m 404 [0m|     249.01µs| nomatch|[97;44m GET     [0m /  
+2020/04/07 10:21:12.864 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:21:12.865 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 441.178019ms|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 10:23:33.001 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:23:33.002 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 368.598915ms|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 10:23:40.570 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 10:23:40.571 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:23:40.572 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|   1.771526ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 10:32:38.161 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:32:38.162 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 3.531186015s|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 10:34:58.212 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:34:58.213 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 358.921077ms|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 10:35:06.884 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 10:35:06.884 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:35:06.885 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|   2.003425ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll
+2020/04/07 10:35:38.390 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:35:38.395 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;42m 200 [0m| 365.001522ms|   match|[97;46m POST    [0m /v1/api/user/verify   r:/v1/api/user/verify
+2020/04/07 10:36:04.097 [1;31m[E][0m [user.go:212]  enroll without being verified
+2020/04/07 10:36:04.098 [server.go:2924]  [HTTP] http: multiple response.WriteHeader calls
+2020/04/07 10:36:04.098 [1;44m[D][0m [server.go:2697]  |  36.63.180.230|[97;43m 406 [0m|   1.216303ms|   match|[97;46m POST    [0m /v1/api/user/enroll   r:/v1/api/user/enroll

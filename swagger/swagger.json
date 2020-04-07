@@ -273,7 +273,7 @@
                     {
                         "in": "body",
                         "name": "userInfo",
-                        "description": "用户id+电话tel+邮箱mail+密码password+验证码verify",
+                        "description": "电话tel+邮箱mail+密码password+验证码verify",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/\\"
