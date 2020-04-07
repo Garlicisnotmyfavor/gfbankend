@@ -168,7 +168,7 @@ func (c *UserController) Enroll() {
 		Tel      string
 		Mail     string
 		Password string
-		Verify   string
+		//Verify   string
 	}
 	//Obtain information of the new user
 	if err := json.Unmarshal(body, &userInfo); err != nil {
@@ -207,31 +207,31 @@ func (c *UserController) Enroll() {
 		c.Ctx.ResponseWriter.WriteHeader(402) //没输入密码
 		return
 	}
-	sess := c.GetSession("verify")
-	if sess == nil {
-		models.Log.Error("enroll without being verified")
-		var response struct {
-			Msg string `json:"msg"`
-		}
-		response.Msg = "no verification"
-		c.Data["json"] = response
-		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
-		return
-	}
-	vCode := sess.(string)
-	fmt.Println(vCode,userInfo.Verify)
-	if vCode != userInfo.Verify {
-		models.Log.Error("verify fail")
-		var response struct {
-			Msg string `json:"msg"`
-		}
-		response.Msg = "wrong verify code"
-		c.Data["json"] = response
-		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
-		return
-	}
+	// sess := c.GetSession("verify")
+	// if sess == nil {
+	// 	models.Log.Error("enroll without being verified")
+	// 	var response struct {
+	// 		Msg string `json:"msg"`
+	// 	}
+	// 	response.Msg = "no verification"
+	// 	c.Data["json"] = response
+	// 	c.ServeJSON()
+	// 	c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
+	// 	return
+	// }
+	// vCode := sess.(string)
+	// fmt.Println(vCode,userInfo.Verify)
+	// if vCode != userInfo.Verify {
+	// 	models.Log.Error("verify fail")
+	// 	var response struct {
+	// 		Msg string `json:"msg"`
+	// 	}
+	// 	response.Msg = "wrong verify code"
+	// 	c.Data["json"] = response
+	// 	c.ServeJSON()
+	// 	c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
+	// 	return
+	// }
 	// ready to insert new user
 	user := models.User{
 		// Id:       userInfo.ID,
@@ -258,7 +258,7 @@ func (c *UserController) Enroll() {
 		Data models.User `json:"data"`
 	}
 	// 注册成功销毁验证码
-	c.DelSession("verify")
+	//c.DelSession("verify")
 	response.Msg = "success"
 	response.Data = user
 	fmt.Println(response)
