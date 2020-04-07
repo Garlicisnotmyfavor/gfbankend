@@ -167,6 +167,7 @@ func (user *User) UserParse() {
 	user.Id = curTime[0:4]+curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
+	item.Time = user.LoginYear+"-"+user.LoginMonth
 	if err := o.Read(&item); err!=nil{
 		item.Time = curTime
 		item.Num = 1
@@ -176,6 +177,7 @@ func (user *User) UserParse() {
 		return
 	}
 	item.Num += 1
+	fmt.Println(item)
 	user.LoginNum = item.Num
 	user.Id += fmt.Sprintf("%07d",user.LoginNum)
 	fmt.Println(user)
