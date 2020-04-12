@@ -1,4 +1,0 @@
-nohup: ignoring input
-[mysql] 2020/04/09 17:14:09 packets.go:123: closing bad idle connection: EOF
-[mysql] 2020/04/12 18:26:12 packets.go:123: closing bad idle connection: EOF
-[mysql] 2020/04/12 18:26:12 connection.go:159: driver: bad connection
