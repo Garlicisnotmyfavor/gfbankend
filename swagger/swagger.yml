@@ -346,6 +346,64 @@ definitions:
   models.Card:
     title: Card
     type: object
+    properties:
+      BatchNum:
+        type: integer
+        format: int64
+      CardId:
+        type: string
+      CardOrder:
+        type: integer
+        format: int64
+      CardType:
+        type: string
+      City:
+        type: string
+      Coupons:
+        type: string
+      CouponsNum:
+        type: integer
+        format: int64
+      DelTime:
+        type: string
+        format: datetime
+      Enterprise:
+        type: string
+      ExpireTime:
+        type: string
+        format: datetime
+      FactoryNum:
+        type: integer
+        format: int64
+      Money:
+        type: integer
+        format: int64
+      Score:
+        type: integer
+        format: int64
+      SerialNum:
+        type: integer
+        format: int64
+      State:
+        type: string
+      UserId:
+        type: string
   models.User:
     title: User
     type: object
+    properties:
+      Id:
+        type: string
+      LoginMonth:
+        type: string
+      LoginNum:
+        type: integer
+        format: int64
+      LoginYear:
+        type: string
+      Mail:
+        type: string
+      Password:
+        type: string
+      Tel:
+        type: string

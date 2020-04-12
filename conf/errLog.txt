@@ -1,2 +1,0 @@
-nohup: ignoring input
-can't load package: package .: no Go files in /gfbankend/conf
