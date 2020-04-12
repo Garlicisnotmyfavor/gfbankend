@@ -20,3 +20,47 @@
 2020/04/07 10:47:31 [32m[1mSUCCESS [21m[0m ▶ 0014 Built Successfully!
 2020/04/07 10:47:31 [34m[1mINFO    [21m[0m ▶ 0015 Restarting 'controllers'...
 2020/04/07 10:47:31 [32m[1mSUCCESS [21m[0m ▶ 0016 './controllers' is running...
+2020/04/07 18:32:46 [31m[1mERROR   [21m[0m ▶ 0017 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 18:32:49 [31m[1mERROR   [21m[0m ▶ 0018 Failed to build the application: # github.com/gfbankend/controllers
+./user.go:235:9: syntax error: unexpected to at end of statement
+
+2020/04/07 18:33:57 [31m[1mERROR   [21m[0m ▶ 0019 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 18:34:01 [31m[1mERROR   [21m[0m ▶ 0020 Failed to build the application: # github.com/gfbankend/controllers
+./user.go:223:29: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+./user.go:224:23: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+
+2020/04/07 18:34:32 [31m[1mERROR   [21m[0m ▶ 0021 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 18:34:36 [31m[1mERROR   [21m[0m ▶ 0022 Failed to build the application: # github.com/gfbankend/controllers
+./user.go:223:23: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+
+2020/04/07 18:35:22 [31m[1mERROR   [21m[0m ▶ 0023 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 18:35:27 [32m[1mSUCCESS [21m[0m ▶ 0024 Built Successfully!
+2020/04/07 18:35:27 [34m[1mINFO    [21m[0m ▶ 0025 Restarting 'controllers'...
+2020/04/07 18:35:27 [32m[1mSUCCESS [21m[0m ▶ 0026 './controllers' is running...
+2020/04/07 19:20:01 [31m[1mERROR   [21m[0m ▶ 0027 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 19:20:06 [32m[1mSUCCESS [21m[0m ▶ 0028 Built Successfully!
+2020/04/07 19:20:06 [34m[1mINFO    [21m[0m ▶ 0029 Restarting 'controllers'...
+2020/04/07 19:20:06 [32m[1mSUCCESS [21m[0m ▶ 0030 './controllers' is running...
+2020/04/07 19:25:05 [31m[1mERROR   [21m[0m ▶ 0031 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 19:25:10 [32m[1mSUCCESS [21m[0m ▶ 0032 Built Successfully!
+2020/04/07 19:25:10 [34m[1mINFO    [21m[0m ▶ 0033 Restarting 'controllers'...
+2020/04/07 19:25:10 [32m[1mSUCCESS [21m[0m ▶ 0034 './controllers' is running...
+2020/04/07 19:28:10 [31m[1mERROR   [21m[0m ▶ 0035 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 19:28:16 [32m[1mSUCCESS [21m[0m ▶ 0036 Built Successfully!
+2020/04/07 19:28:16 [34m[1mINFO    [21m[0m ▶ 0037 Restarting 'controllers'...
+2020/04/07 19:28:16 [32m[1mSUCCESS [21m[0m ▶ 0038 './controllers' is running...
+2020/04/07 20:07:11 [31m[1mERROR   [21m[0m ▶ 0039 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 20:07:15 [31m[1mERROR   [21m[0m ▶ 0040 Failed to build the application: # github.com/gfbankend/controllers
+./user.go:233:3: syntax error: non-declaration statement outside function body
+./user.go:247:3: syntax error: non-declaration statement outside function body
+./user.go:255:7: response redeclared in this block
+	previous declaration at ./user.go:244:7
+./user.go:258:3: syntax error: non-declaration statement outside function body
+./user.go:265:6: response redeclared in this block
+	previous declaration at ./user.go:255:7
+./user.go:270:2: syntax error: non-declaration statement outside function body
+
+2020/04/07 20:07:55 [31m[1mERROR   [21m[0m ▶ 0041 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/07 20:08:01 [32m[1mSUCCESS [21m[0m ▶ 0042 Built Successfully!
+2020/04/07 20:08:01 [34m[1mINFO    [21m[0m ▶ 0043 Restarting 'controllers'...
+2020/04/07 20:08:01 [32m[1mSUCCESS [21m[0m ▶ 0044 './controllers' is running...

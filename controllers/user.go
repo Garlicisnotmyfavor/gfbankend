@@ -208,7 +208,7 @@ func (c *UserController) Enroll() {
 		return
 	}
 	// sess := c.GetSession("verify")
-	// if sess == nil {
+	//if sess == nil {
 	// 	models.Log.Error("enroll without being verified")
 	// 	var response struct {
 	// 		Msg string `json:"msg"`
@@ -219,25 +219,35 @@ func (c *UserController) Enroll() {
 	// 	c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
 	// 	return
 	// }
-	// vCode := sess.(string)
-	// fmt.Println(vCode,userInfo.Verify)
-	// if vCode != userInfo.Verify {
-	// 	models.Log.Error("verify fail")
-	// 	var response struct {
+	 //vCode := sess.(string)
+	 //if vCode != userInfo.Verify {
+	 //	models.Log.Error("verify fail")
+	 //	var response struct {
 	// 		Msg string `json:"msg"`
-	// 	}
+	 //	}
 	// 	response.Msg = "wrong verify code"
 	// 	c.Data["json"] = response
 	// 	c.ServeJSON()
 	// 	c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
 	// 	return
 	// }
-	// ready to insert new user
+	 //ready to insert new user
 	user := models.User{
 		// Id:       userInfo.ID,
 		Tel:      userInfo.Tel,
 		Mail:     userInfo.Mail,
 		Password: userInfo.Password,
+	}
+	//fmt.Println(user)
+	if err:= o.Read(&user, "tel", "mail"); err == nil {
+		models.Log.Error("enroll error")
+		var response struct {
+			Msg string `json:"msg"`
+		}
+		response.Msg = "email or phone already used"
+		c.Data["json"] = response
+		c.ServeJSON()
+		return
 	}
 	user.UserParse()
 	if _, err := o.Insert(&user); err != nil {
@@ -257,7 +267,7 @@ func (c *UserController) Enroll() {
 		Data models.User `json:"data"`
 	}
 	// 注册成功销毁验证码
-	//c.DelSession("verify")
+	c.DelSession("verify")
 	response.Msg = "success"
 	response.Data = user
 	fmt.Println(response)

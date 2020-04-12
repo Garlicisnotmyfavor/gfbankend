@@ -161,12 +161,12 @@ func (card *Card) CardParse() error {
 
 //ZYJ 解析生成用户ID
 func (user *User) UserParse() {
-	var item Count
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
 	user.Id = curTime[0:4]+curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
+	item := Count{Time:curTime}
 	if err := o.Read(&item); err!=nil{
 		item.Time = curTime
 		item.Num = 1

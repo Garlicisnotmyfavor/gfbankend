@@ -6,3 +6,28 @@ go install: no install location for directory /gfbankend/controllers outside GOP
 go install: no install location for directory /gfbankend/controllers outside GOPATH
 	For more details see: 'go help gopath'
 github.com/gfbankend/controllers
+github.com/gfbankend/controllers
+# github.com/gfbankend/controllers
+./user.go:235:9: syntax error: unexpected to at end of statement
+github.com/gfbankend/controllers
+# github.com/gfbankend/controllers
+./user.go:223:29: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+./user.go:224:23: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+github.com/gfbankend/controllers
+# github.com/gfbankend/controllers
+./user.go:223:23: userInfo.Verify undefined (type struct { Tel string; Mail string; Password string } has no field or method Verify)
+github.com/gfbankend/controllers
+github.com/gfbankend/controllers
+github.com/gfbankend/controllers
+github.com/gfbankend/controllers
+github.com/gfbankend/controllers
+# github.com/gfbankend/controllers
+./user.go:233:3: syntax error: non-declaration statement outside function body
+./user.go:247:3: syntax error: non-declaration statement outside function body
+./user.go:255:7: response redeclared in this block
+	previous declaration at ./user.go:244:7
+./user.go:258:3: syntax error: non-declaration statement outside function body
+./user.go:265:6: response redeclared in this block
+	previous declaration at ./user.go:255:7
+./user.go:270:2: syntax error: non-declaration statement outside function body
+github.com/gfbankend/controllers
