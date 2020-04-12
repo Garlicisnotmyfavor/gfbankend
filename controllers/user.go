@@ -250,6 +250,7 @@ func (c *UserController) Enroll() {
 		return
 	}
 	user.UserParse()
+	fmt.Println(user)
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
 		var response struct {

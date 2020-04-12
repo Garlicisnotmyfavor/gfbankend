@@ -64,3 +64,7 @@
 2020/04/07 20:08:01 [32m[1mSUCCESS [21m[0m ▶ 0042 Built Successfully!
 2020/04/07 20:08:01 [34m[1mINFO    [21m[0m ▶ 0043 Restarting 'controllers'...
 2020/04/07 20:08:01 [32m[1mSUCCESS [21m[0m ▶ 0044 './controllers' is running...
+2020/04/12 21:43:51 [31m[1mERROR   [21m[0m ▶ 0045 Failed to open file on '/gfbankend/controllers/user.go': open /gfbankend/controllers/user.go: no such file or directory
+2020/04/12 21:43:56 [31m[1mERROR   [21m[0m ▶ 0046 Failed to build the application: # github.com/gfbankend/models
+../models/model.go:170:1: syntax error: unexpected <<, expecting }
+

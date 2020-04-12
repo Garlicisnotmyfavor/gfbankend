@@ -31,3 +31,6 @@ github.com/gfbankend/controllers
 	previous declaration at ./user.go:255:7
 ./user.go:270:2: syntax error: non-declaration statement outside function body
 github.com/gfbankend/controllers
+github.com/gfbankend/models
+# github.com/gfbankend/models
+../models/model.go:170:1: syntax error: unexpected <<, expecting }

@@ -163,12 +163,16 @@ func (card *Card) CardParse() error {
 func (user *User) UserParse() {
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
+	item := Count{Time:curTime}
 	user.Id = curTime[0:4]+curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
+<<<<<<< HEAD
 	item := Count{Time:curTime}
+=======
+	item.Time = user.LoginYear+"-"+user.LoginMonth
+>>>>>>> a48e3fdf1f0bbe065b88d941ac3fd6d22a3c6df3
 	if err := o.Read(&item); err!=nil{
-		item.Time = curTime
 		item.Num = 1
 		user.LoginNum = 1
 		user.Id += fmt.Sprintf("%07d",user.LoginNum)
@@ -176,6 +180,7 @@ func (user *User) UserParse() {
 		return
 	}
 	item.Num += 1
+	fmt.Println(item)
 	user.LoginNum = item.Num
 	user.Id += fmt.Sprintf("%07d",user.LoginNum)
 	fmt.Println(user)
