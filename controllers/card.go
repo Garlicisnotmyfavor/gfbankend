@@ -349,7 +349,7 @@ func (c *CardController) Delete() {
 	return
 }
 
-//author:
+//author: lj
 //@Title 查看卡片使用记录
 //@Description 
 //@Param id query string true 卡号
@@ -360,7 +360,7 @@ func (c *CardController) CardLog() {
 
 }
 
-//author:
+//author: zyj
 //@Title  获取虚拟卡片
 //@Description 
 //@Param id query string true 卡号
