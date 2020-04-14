@@ -1,7 +1,8 @@
 *.exe
 *.exe~
+*.txt
 *.out
 routers/commentsRouter*.go
 .idea/
-**/*.tmp
+*.tmp
 test.go

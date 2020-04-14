@@ -2,11 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
-	_"fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
+	"fmt"
 	//"strconv"
 	//"strings"
 	"time"
@@ -32,14 +33,22 @@ func (c *CardController) Get_cardidinfo() {
 
 // 查询指定card_id对应的卡片的所有信息
 // zjn
-// @Title give_card_all_info
+// @Title GetCardIDInfo
 // @Description 将这张卡片的所有信息传出去
-// @Param	id	query	string	true	查询的卡号
+// @Param	id	path	string	true	查询的卡号
 // @Success 200	查询成功
 // @Failure 400	查询不到对应的卡
-// @Failure 401	查询不到对应的公司
-// @router  /card/:id	[get]  
-func (c *CardController) Get_cardidinfo() {
+// @Failure 401	没处于登录状态，无权限
+// @Failure 404	查询不到对应的公司
+// @router  /card/:id	[get]
+func (c *CardController) GetCardIDInfo() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
@@ -54,18 +63,20 @@ func (c *CardController) Get_cardidinfo() {
 		return
 	}
 	//找到卡后要去找对应的公司的信息
-	ep.Id = card.Enterprise
-	if err := o.Read(&ep); err != nil{
+	ep.Name = card.Enterprise
+	if err := o.Read(&ep,"name"); err != nil {
 		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(401) // 查不到公司的信息
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到公司的信息
 		return
 	}
 	var cardenter struct {
-		card	models.Card
-		enterprise	models.Enterprise
+		Card       models.Card
+		Enterprise models.Enterprise
 	}
-	cardenter.card = card
-	cardenter.enterprise = ep
+	fmt.Println(card)
+	fmt.Println(ep)
+	cardenter.Card = card
+	cardenter.Enterprise = ep
 	////若查到card这一列后，需要找到它的卡的积分或卷的规则
 	//var CouponsDetails models.Coupons
 	//var ScoreDetails   models.Score
@@ -93,29 +104,37 @@ func (c *CardController) Get_cardidinfo() {
 	//	}
 	//	cardinfo.CouponsDetails = append(cardinfo.CouponsDetails, CouponsDetails)
 	//}
-
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	c.Data["json"] = cardenter
 	c.ServeJSON()
-	
 }
 
 //添加卡片 在user表里添加此user和card的关联
 //userid从cookie，session取得
 //zjn
 //@Title AddCard
-//@Description 将这个user的id和卡绑定
-//@Param	id	query	string	true	原本的卡号
+//@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
+//@Param	id	body	\	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
+//@Failure 401	没处于登录状态，无权限
 //@Failure 402	数据不匹配
 //@router  /card/add [post]
 func (c *CardController) AddCard() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
+	user := sess.(models.User)
+	userId := user.Id
 	//这里没有对比enterprise和cardid
 	var addinfo struct {
-		CardId    string
-		Enterprise	string
+		CardID     string
+		Enterprise string
 	}
 	body := c.Ctx.Input.RequestBody
 	//解析body
@@ -132,20 +151,31 @@ func (c *CardController) AddCard() {
 	//}
 	o := orm.NewOrm()
 	card := models.Card{}
-	card.CardId = addinfo.CardId
+	card.CardId = addinfo.CardID
 	//用创建的新卡号查询是否在数据库中存在
 	if err := o.Read(&card); err != nil {
 		models.Log.Error("not exist error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(403) //卡片不存在
+		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
+		return
+	}
+	if len(card.UserId) != 0 {
+		models.Log.Error("card already bind")
+		c.Ctx.ResponseWriter.WriteHeader(403) //卡片另有主人
 		return
 	}
 	if card.Enterprise != addinfo.Enterprise {
+		models.Log.Error("wrong cardID")
 		c.Ctx.ResponseWriter.WriteHeader(402) //输入id和公司名不匹配
 		return
 	}
 	//匹配后建立关联
-	//这里还没有具体设置user的id
-	card.UserId = "0000000000000"
+	card.UserId = userId
+	if _,err:= o.Update(&card);err!=nil{
+		models.Log.Error("update database error")
+		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+		return
+	}
+	// card.UserId = &models.User{Id:"2018091620000"}
 	//card.UserId = addinfo.Enterprise
 	c.Ctx.ResponseWriter.WriteHeader(200) //成功
 	//传回这个卡片的具体信息
@@ -157,29 +187,39 @@ func (c *CardController) AddCard() {
 //ml
 //@Title ModifyCardInfo
 //@Description 修改卡片的卡号，公司
-//@Param	id	query	string	true	原本的卡号
-//@Param	cardInfo	body	/	true	新卡信息(卡号CardId+公司Enterprise)
+//@Param	id	path	string	true	原本的卡号
+//@Param	cardInfo	body	/	true	新卡信息   CardId(string)+Enterprise(string)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
+//@Failure 401	没处于登录状态，无权限
+//@Failure 403	卡号解析错误
 //@Failure 404	卡片信息读取错误
 //@Failure 500	数据库更新操作错误
 //@router  /card/:id/info [put]
 func (c *CardController) ModifyCardInfo() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
 	oldCardId := c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
 	var newCard models.Card
 	oldCard := models.Card{CardId: oldCardId}
-	//解析body
-	if err := json.Unmarshal(body, &newCard); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400)
-		return
-	}
 	o := orm.NewOrm()
 	//读取原卡片
 	if err := o.Read(&oldCard); err != nil {
 		models.Log.Error("sql read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	newCard = oldCard
+	//解析body
+	if err := json.Unmarshal(body, &newCard); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
 	////读取新卡片
@@ -194,18 +234,22 @@ func (c *CardController) ModifyCardInfo() {
 	//	c.Ctx.ResponseWriter.WriteHeader(409)
 	//	return
 	//}
-	_ = newCard.CardParse()
-	//增加新卡片中UserId关联,并取消原卡片的关联
-	newCard.UserId = oldCard.UserId
-	if _, err := o.Insert(&newCard); err != nil {
-		models.Log.Error("insert error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(406)
+	// if err := newCard.CardParse(); err != nil {
+	// 	models.Log.Error("parse error: ", err)
+	// 	c.Ctx.ResponseWriter.WriteHeader(403)
+	// 	return
+	// }
+	// 增加新卡片中UserId关联,并取消原卡片的关联
+	// oldCard.UserId = newCard.UserId
+	if _, err := o.Delete(&oldCard); err != nil {
+		models.Log.Error("delete oldCard error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	oldCard.UserId = ""
-	if _, err := o.Update(&oldCard); err != nil {
-		models.Log.Error("update error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500)
+	newCard.UserId = oldCard.UserId
+	if _, err := o.Insert(&newCard); err != nil {
+		models.Log.Error("insert newCard error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
 	//if _, err := o.Update(&newCard); err != nil {
@@ -227,14 +271,23 @@ func (c *CardController) ModifyCardInfo() {
 //@Param id body / true CardId(string)+increment(int)
 //@Success 200	{object} models.Card 	修改成功，返回新卡片对象
 //@Failure 400	body解析错误
+//@Failure 401	没处于登录状态，无权限
 //@Failure 406	积分信息有误
 //@Failure 500	数据库更新操作错误
 //@router /card/:id/score [put]
 func (c *CardController) UseScore() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
 	var ScoreInfo struct {
 		CardId    string
 		Increment int
 	}
+	ScoreInfo.CardId = c.Ctx.Input.Param(":id")
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
 	if err := json.Unmarshal(body, &ScoreInfo); err != nil {
@@ -282,20 +335,31 @@ func (c *CardController) UseScore() {
 //对优惠券的操作
 //使用优惠卷
 //前端返回给我优惠券对象的信息以及优惠券的信息
-//增加或减少某张卡的某种优惠券 
+//增加或减少某张卡的某种优惠券
 //zyj
 //@Title coupons
-//@Description 增加或减少某张卡的某种优惠券 
-//@Param id query string true 卡号
+//@Description 增加或减少某张卡的某种优惠券
+//@Param id path string true 卡号
 //@Param Increment body int true  优惠券改变的数量，可以为负数
 //@Success 200  成功
-//@Failure 400/403/404/406	json解析错误/优惠券不足/卡不存在/非法数据
+//@Failure 400	json解析错误
+//@Failure 401	没处于登录状态，无权限
+//@Failure 403	优惠券不足
+//@Failure 404	卡不存在
+//@Failure 406	非法数据
 //@router  /card/:id/coupons [post]
 func (c *CardController) Coupons() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
 	CardId := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
-	o.Insert(&models.Card{CardId:"1234567890123456",UserId:"1234567890124",CardType:"MembershipCard",Enterprise:"StarBuck",State:"Sichuan",City:"Chengdu",Money:100,ExpireTime:time.Now()})
-	var increment struct{value int}
+	//o.Insert(&models.Card{CardId: "1234567890123456", UserId: "1234567890124", CardType: "MembershipCard", Enterprise: "StarBuck", State: "Sichuan", City: "Chengdu", Money: 100, ExpireTime: time.Now()})
+	var increment struct{ Value int }
 	card := models.Card{CardId: CardId}
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
@@ -304,13 +368,14 @@ func (c *CardController) Coupons() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	if err := o.Read(&card); err != nil {	
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("can't find card: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
+		c.Ctx.ResponseWriter.WriteHeader(403) //查找不到相应的id卡进行数据更新
 		return
-	} 
-	card.CouponsNum += increment.value
-	if _,err := o.Update(&card); err != nil{
+	}
+	card.CouponsNum += increment.Value
+	fmt.Println(card)
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
@@ -324,21 +389,31 @@ func (c *CardController) Coupons() {
 //zyj
 //@Title delete
 //@Description 删除卡片
-//@Param id query string true 卡号
+//@Param id path string true 卡号
 //@Success 200
-//@Failure 400/404	json解析错误/卡不存在
+//@Failure 400 json解析错误
+//@Failure 401 没登录，无权限
+//@Failure 403 用户ID不存在
+//@Failure 404 卡不存在
 //@router  /card/:id/delete [post]
 func (c *CardController) Delete() {
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
 	id := c.Ctx.Input.Param(":id")
 	o := orm.NewOrm()
 	card := models.Card{CardId: id}
-	if err := o.Read(&card); err != nil {	
+	if err := o.Read(&card); err != nil {
 		models.Log.Error("can't find card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
-	} 
+	}
 	card.DelTime = time.Now()
-	if _,err := o.Update(&card); err != nil{
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("can't update card: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到相应的id卡进行数据更新
 		return
@@ -370,6 +445,14 @@ func (c *CardController) CardLog() {
 func (c *CardController) GetNewCard() {
 
 }
+// func isIdInUsers(id string) bool {
+// 	o := orm.NewOrm()
+// 	user := models.User{Id:id}
+// 	if err := o.Read(&user); err != nil {
+// 		return false;
+// 	}
+// 	return true
+//}
 
 //GZH，修改备注
 //@swagger注解配置
@@ -426,7 +509,7 @@ func (c *CardController) GetNewCard() {
 // 	c.ServeJSON()
 // }
 
-//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分 
+//nfc扫码增加积分,兑换免费咖啡，前端传给我们1加积分
 //给前端说一下
 //zjn
 

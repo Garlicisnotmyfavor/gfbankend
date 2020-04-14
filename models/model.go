@@ -1,32 +1,35 @@
 package models
 
 import (
+	"fmt"
 	"errors"
-	_ "github.com/astaxie/beego/validation"
 	"strconv"
 	"time"
+	"github.com/astaxie/beego/orm"
+	_ "github.com/astaxie/beego/validation"
 )
 
 //mysql
 //结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
 
 type Card struct {
-	CardId      string    `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
-	UserId      string    `orm:"size(13)" valid:"Required;Length(13)"`    //UserId 必须是由用户给出的，因为CardId中不包含UserId
-	CardType    string    `valid:"Required"`                              //卡的类型
-	Enterprise  string    `valid:"Required"`
-	State       string    `valid:"Required"`
-	City        string    `valid:"Required"`
-	Money       int       `orm:"default(0)"`
-	Score       int    `orm:"null"`
-	CouponsNum  int    `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
-	Coupons     string    `orm:"null"` //描述优惠的方法
-	ExpireTime  time.Time `valid:"Required"`
-	DelTime     time.Time `orm:"null"`
-	CardOrder   int       `valid:"Required"` //该商家合作以来发布的第N条卡片
-	FactoryNum  int       `valid:"Required"`
-	BatchNum    int       `valid:"Required"`
-	SerialNum   int       `valid:"Required"`
+	CardId string `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
+	// UserId      *User     `orm:"rel(fk)"`
+	UserId     string    `orm:"size(13)"` //UserId是依据时间生成的，因为CardId中不包含UserId
+	CardType   string    `valid:"Required"`                           //卡的类型
+	Enterprise string    `valid:"Required"`
+	State      string    `valid:"Required"`
+	City       string    `valid:"Required"`
+	Money      int       `orm:"default(0)"`
+	Score      int       `orm:"null"`
+	CouponsNum int       `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
+	Coupons    string    `orm:"null"` //描述优惠的方法
+	ExpireTime time.Time `valid:"Required"`
+	DelTime    time.Time `orm:"null"`
+	CardOrder  int       `valid:"Required"` //该商家合作以来发布的第N条卡片
+	FactoryNum int       `valid:"Required"`
+	BatchNum   int       `valid:"Required"`
+	SerialNum  int       `valid:"Required"`
 }
 
 type CardDemo struct {
@@ -63,13 +66,18 @@ type EnterpriseParseStruct struct {
 }
 
 type User struct {
-	Id       string `orm:"pk;size(13)" valid:"Required"` 
-	Tel      string `orm:"null"` 
-	Mail     string `orm:"null"`
-	Password string `valid:"Required"`
-	LoginMonth string `valid:"max(2)"`  //注册月份
-	LoginYear  string `valid:"max(4)"`  //注册年份
-	LoginNum int `valid:"MaxSize(6)"`   //该月份所注册的第几个用户
+	Id         string `orm:"pk;size(13)" valid:"Required"`
+	Tel        string `orm:"null"`
+	Mail       string `orm:"null"`
+	Password   string `valid:"Required"`
+	LoginMonth string `valid:"max(2)" `     //注册月份
+	LoginYear  string `valid:"max(4)" `     //注册年份
+	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
+}
+
+type Count struct{
+	Time string `valid:"max(7)" orm:"pk"`
+	Num  int `orm:"default(1)"`
 }
 
 type CardLog struct {
@@ -147,8 +155,6 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 //根据confluence
 //zyj
 //var UserParse
-
-//将card结构中的Id解析出对应的含义赋值给card的其他导出属性
 func (card *Card) CardParse() error {
 	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
@@ -170,18 +176,28 @@ func (card *Card) CardParse() error {
 }
 
 //ZYJ 解析生成用户ID
-func (user *User) UserParse() error {
-	if len(user.Id) != 16 {
-		return errors.New("INVALID LENGTH USER ID")
+func (user *User) UserParse() {
+	o := orm.NewOrm()
+	curTime := time.Now().String()[:7]
+	var item Count
+	user.Id = curTime[0:4]+curTime[5:7]
+	user.LoginYear = curTime[0:4]
+	user.LoginMonth = curTime[5:7]
+	item.Time = user.LoginYear+"-"+user.LoginMonth
+	if err := o.Read(&item); err!=nil{
+		item.Num = 1
+		user.LoginNum = 1
+		user.Id += fmt.Sprintf("%07d",user.LoginNum)
+		o.Insert(&item)
+		return
 	}
-	var err error
-	user.LoginYear = user.Id[0:4]
-	user.LoginMonth = user.Id[4:6]
-	user.LoginNum,err = strconv.Atoi(user.Id[6:])
-	if err!=nil{
-		return errors.New("INVALID USER")
-	}
-	return nil
+	item.Num += 1
+	fmt.Println(item)
+	user.LoginNum = item.Num
+	user.Id += fmt.Sprintf("%07d",user.LoginNum)
+	fmt.Println(user)
+	o.Update(&item)
+	return
 }
 
 func (enterprise *Enterprise) EnterpriseParse() error {

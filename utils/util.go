@@ -3,12 +3,13 @@ package util
 import (
 	"errors"
 	"fmt"
-	"github.com/gfbankend/models"
-	"github.com/go-gomail/gomail"
 	"log"
 	"math/rand"
 	"strings"
 	"time"
+
+	"github.com/gfbankend/models"
+	"github.com/go-gomail/gomail"
 )
 
 /*
@@ -40,7 +41,7 @@ func SendEmail(target string, rCode []byte) error {
 		return errors.New("fail to generate verify code")
 	}
 	//邮箱内容
-	content := fmt.Sprintf("[ANZ]尊敬的客户' %s '，您本次登录所需的验证码为:%s,请勿向任何人提供您收到的验证码!", target, rCode)
+	content := fmt.Sprintf("[ANZ]尊敬的客户'%s'，您本次登录所需的验证码为:%s,请勿向任何人提供您收到的验证码!", target, rCode)
 	m := gomail.NewMessage()
 	//设置邮件信息
 	m.SetAddressHeader("From", "gfbankend@163.com", "ANZ-WORKSHOP") //设置发件人
