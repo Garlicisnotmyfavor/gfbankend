@@ -1,6 +1,5 @@
 package models
 
-//改改改！！！
 import (
 	"fmt"
 	"errors"
@@ -33,6 +32,14 @@ type Card struct {
 	SerialNum  int       `valid:"Required"`
 }
 
+type CardDemo struct {
+	CardType    string    `valid:"Required"`   
+	Enterprise  string    `valid:"Required"`
+	State       string    `valid:"Required"`
+	City        string    `valid:"Required"`
+	Coupons     string    `orm:"null"`  
+}
+
 type CardParseStruct struct {
 	EnterpriseMap map[string]string `orm:"-"`
 	KindMap       map[string]string `orm:"-"`
@@ -42,12 +49,15 @@ type CardParseStruct struct {
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
+	Password	string
 	IsLocal     string `orm:"column(is_local)"`
 	Type        string
 	RegisterNum string `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
+	ManagerId	string
+	LicenseId	string
 }
 
 type EnterpriseParseStruct struct {
@@ -68,6 +78,12 @@ type User struct {
 type Count struct{
 	Time string `valid:"max(7)" orm:"pk"`
 	Num  int `orm:"default(1)"`
+}
+
+type CardLog struct {
+	CardId		string
+	Date		time.Time
+	Operate		string //操作描述
 }
 
 //type DelCard struct {
