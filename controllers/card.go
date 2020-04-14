@@ -101,6 +101,7 @@ func (c *CardController) Get_cardidinfo() {
 }
 
 //添加卡片 在user表里添加此user和card的关联
+//userid从cookie，session取得
 //zjn
 //@Title AddCard
 //@Description 将这个user的id和卡绑定
