@@ -38,7 +38,7 @@ func (c *CardController) Get_cardidinfo() {
 // @Success 200	查询成功
 // @Failure 400	查询不到对应的卡
 // @Failure 401	查询不到对应的公司
-// @router  /card/:id	[get]
+// @router  /card/:id	[get]  
 func (c *CardController) Get_cardidinfo() {
 	// 获取路由参数
 	id := c.Ctx.Input.Param(":id")
@@ -347,6 +347,28 @@ func (c *CardController) Delete() {
 	c.Data["json"] = card
 	c.ServeJSON()
 	return
+}
+
+//author:
+//@Title 查看卡片使用记录
+//@Description 
+//@Param id query string true 卡号
+//@Success 200
+//@Failure 400/404	json解析错误/卡不存在
+//@router  /card/:id/CardLog [get]
+func (c *CardController) CardLog() {
+
+}
+
+//author:
+//@Title  获取虚拟卡片
+//@Description 
+//@Param id query string true 卡号
+//@Success 200
+//@Failure  
+//@router  /card/getnewcard [post]
+func (c *CardController) GetNewCard() {
+
 }
 
 //GZH，修改备注

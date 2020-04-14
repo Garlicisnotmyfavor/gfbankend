@@ -2,9 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-
 	util "github.com/gfbankend/utils"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"

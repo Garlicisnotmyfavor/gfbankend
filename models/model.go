@@ -1,6 +1,5 @@
 package models
 
-//改改改！！！
 import (
 	"errors"
 	_ "github.com/astaxie/beego/validation"
@@ -30,6 +29,14 @@ type Card struct {
 	SerialNum   int       `valid:"Required"`
 }
 
+type CardDemo struct {
+	CardType    string    `valid:"Required"`   
+	Enterprise  string    `valid:"Required"`
+	State       string    `valid:"Required"`
+	City        string    `valid:"Required"`
+	Coupons     string    `orm:"null"`  
+}
+
 type CardParseStruct struct {
 	EnterpriseMap map[string]string `orm:"-"`
 	KindMap       map[string]string `orm:"-"`
@@ -39,12 +46,15 @@ type CardParseStruct struct {
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
+	Password	string
 	IsLocal     string `orm:"column(is_local)"`
 	Type        string
 	RegisterNum string `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
+	ManagerId	string
+	LicenseId	string
 }
 
 type EnterpriseParseStruct struct {
@@ -60,6 +70,12 @@ type User struct {
 	LoginMonth string `valid:"max(2)"`  //注册月份
 	LoginYear  string `valid:"max(4)"`  //注册年份
 	LoginNum int `valid:"MaxSize(6)"`   //该月份所注册的第几个用户
+}
+
+type CardLog struct {
+	CardId		string
+	Date		time.Time
+	Operate		string //操作描述
 }
 
 //type DelCard struct {
