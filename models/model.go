@@ -163,7 +163,7 @@ func (card *Card) CardParse() error {
 func (user *User) UserParse() {
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
-	item := Count{Time:curTime}
+	var item Count
 	user.Id = curTime[0:4]+curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
