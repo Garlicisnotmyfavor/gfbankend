@@ -1,0 +1,8 @@
+*.exe
+*.exe~
+*.txt
+*.out
+routers/commentsRouter*.go
+.idea/
+*.tmp
+test.go

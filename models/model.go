@@ -1,53 +1,83 @@
 package models
 
+//改改改！！！
 import (
+	"fmt"
 	"errors"
+	"strconv"
 	"time"
+	"github.com/astaxie/beego/orm"
+	_ "github.com/astaxie/beego/validation"
 )
 
+//mysql
+//结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
+
 type Card struct {
-	Id         string `orm:"pk"`
-	UserId     string `orm:"column(user_id);"` //rel(fk)
-	Kind       string `orm:"column(type)"`
-	Style      string
-	Remark     string
-	EName      string `orm:"column(e_name)"`
-	State      string
-	City       string
-	FactoryNum string `orm:"column(factory_num)"` //印刷厂编号
-	BatchNum   string `orm:"column(batch_num)"`   //印刷批次
-	SerialNum  string `orm:"column(serial_num)"`  //同批次的卡片编号
+	CardId string `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
+	// UserId      *User     `orm:"rel(fk)"`
+	UserId     string    `orm:"size(13)"` //UserId是依据时间生成的，因为CardId中不包含UserId
+	CardType   string    `valid:"Required"`                           //卡的类型
+	Enterprise string    `valid:"Required"`
+	State      string    `valid:"Required"`
+	City       string    `valid:"Required"`
+	Money      int       `orm:"default(0)"`
+	Score      int       `orm:"null"`
+	CouponsNum int       `orm:"null"` //每一种种类的数量，数量与数量之间用空格隔开
+	Coupons    string    `orm:"null"` //描述优惠的方法
+	ExpireTime time.Time `valid:"Required"`
+	DelTime    time.Time `orm:"null"`
+	CardOrder  int       `valid:"Required"` //该商家合作以来发布的第N条卡片
+	FactoryNum int       `valid:"Required"`
+	BatchNum   int       `valid:"Required"`
+	SerialNum  int       `valid:"Required"`
 }
 
-type User struct {
-	Id       string `orm:"pk"`
-	Tel      string
-	Mail     string
-	Password string
+type CardParseStruct struct {
+	EnterpriseMap map[string]string `orm:"-"`
+	KindMap       map[string]string `orm:"-"`
+	StateMap      map[string]string `orm:"-"`
+	CityMap       map[string]string `orm:"-"`
 }
 
 type Enterprise struct {
-	Id      string `orm:"pk"`
-	Name    string
-	HelpMsg string `orm:"column(help_msg)"`
-	Website string
+	Id          string `orm:"unique"`
+	IsLocal     string `orm:"column(is_local)"`
+	Type        string
+	RegisterNum string `orm:"column(register_num)"`
+	Name        string `orm:"pk"`
+	HelpMsg     string `orm:"column(help_msg)"`
+	Website     string
 }
 
-type DelCard struct {
-	CardId  string `orm:"pk;column(card_id)"`
-	UserId  string `orm:"column(user_id)"`
-	Remark  string
-	DelTime time.Time `orm:"column(del_time)"`
+type EnterpriseParseStruct struct {
+	IsLocalMap map[string]string
+	TypeMap    map[string]string
 }
 
-type ParseStruct struct {
-	EnterpriseMap map[string]string
-	KindMap       map[string]string
-	StateMap      map[string]string
-	CityMap       map[string]string
+type User struct {
+	Id         string `orm:"pk;size(13)" valid:"Required"`
+	Tel        string `orm:"null"`
+	Mail       string `orm:"null"`
+	Password   string `valid:"Required"`
+	LoginMonth string `valid:"max(2)" `     //注册月份
+	LoginYear  string `valid:"max(4)" `     //注册年份
+	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
 }
 
-var ParseMaps = ParseStruct{
+type Count struct{
+	Time string `valid:"max(7)" orm:"pk"`
+	Num  int `orm:"default(1)"`
+}
+
+//type DelCard struct {
+//	CardId  string `orm:"pk;column(card_id)"`
+//	UserId  string `orm:"column(user_id)"`
+//	Remark  string
+//	DelTime time.Time `orm:"column(del_time)"`
+//}
+
+var CardParseMaps = CardParseStruct{
 	map[string]string{
 		"001": "ANZ",
 		"002": "Calvin Klein",
@@ -94,22 +124,76 @@ var ParseMaps = ParseStruct{
 	},
 }
 
-//将card结构中的Id解析出对应的含义赋值给card的其他导出属性
+var EnterpriseParseMaps = EnterpriseParseStruct{
+	map[string]string{
+		"1": "True",
+		"2": "False",
+	},
+	map[string]string{
+		"1": "Bank",
+		"2": "Supermarket",
+		"3": "Store",
+	},
+}
+
+//根据confluence
+//zyj
+//var UserParse
 func (card *Card) CardParse() error {
-	if len(card.Id) != 16 {
+	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
 	}
 	var ok bool
-	card.EName, ok = ParseMaps.EnterpriseMap[card.Id[0:3]]
-	card.Kind, ok = ParseMaps.KindMap[card.Id[3:4]]
-	card.Style = card.Id[4:6]
-	card.State, ok = ParseMaps.StateMap[card.Id[6:7]]
-	card.City, ok = ParseMaps.CityMap[card.Id[6:10]]
-	card.FactoryNum = card.Id[10:12]
-	card.BatchNum = card.Id[12:13]
-	card.SerialNum = card.Id[13:16]
-	if !ok {
-		return errors.New("INVALID CONTENT CARD ID")
+	var err error
+	card.Enterprise, ok = CardParseMaps.EnterpriseMap[card.CardId[0:3]]
+	card.CardType, ok = CardParseMaps.KindMap[card.CardId[3:4]]
+	card.CardOrder, err = strconv.Atoi(card.CardId[4:6])
+	card.State, ok = CardParseMaps.StateMap[card.CardId[6:7]]
+	card.City, ok = CardParseMaps.CityMap[card.CardId[6:10]]
+	card.FactoryNum, err = strconv.Atoi(card.CardId[10:12])
+	card.BatchNum, err = strconv.Atoi(card.CardId[12:13])
+	card.SerialNum, err = strconv.Atoi(card.CardId[13:])
+	if !ok && err != nil {
+		return errors.New("INVALID CARD ID")
+	}
+	return nil
+}
+
+//ZYJ 解析生成用户ID
+func (user *User) UserParse() {
+	o := orm.NewOrm()
+	curTime := time.Now().String()[:7]
+	var item Count
+	user.Id = curTime[0:4]+curTime[5:7]
+	user.LoginYear = curTime[0:4]
+	user.LoginMonth = curTime[5:7]
+	item.Time = user.LoginYear+"-"+user.LoginMonth
+	if err := o.Read(&item); err!=nil{
+		item.Num = 1
+		user.LoginNum = 1
+		user.Id += fmt.Sprintf("%07d",user.LoginNum)
+		o.Insert(&item)
+		return
+	}
+	item.Num += 1
+	fmt.Println(item)
+	user.LoginNum = item.Num
+	user.Id += fmt.Sprintf("%07d",user.LoginNum)
+	fmt.Println(user)
+	o.Update(&item)
+	return
+}
+
+func (enterprise *Enterprise) EnterpriseParse() error {
+	if len(enterprise.Id) != 5 {
+		return errors.New("INVALID LENGTH ENTERPRISE ID")
+	}
+	var flag bool
+	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocalMap[enterprise.Id[0:1]]
+	enterprise.Type, flag = EnterpriseParseMaps.TypeMap[enterprise.Id[1:2]]
+	enterprise.RegisterNum = enterprise.Id[2:]
+	if !flag {
+		return errors.New("INVALID CONTENT ENTERPRISE ID")
 	}
 	return nil
 }
