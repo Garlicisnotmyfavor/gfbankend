@@ -55,6 +55,7 @@ func init() {
 			beego.NSInclude(
 				&controllers.UserController{},
 				&controllers.CardController{},
+				&controllers.EnterpriseController{},
 			),
 		),
 	)
