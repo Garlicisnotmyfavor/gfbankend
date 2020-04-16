@@ -43,7 +43,6 @@ type CardDemo struct {
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
-	Password    string
 	Addr        string `orm:"column(addr)"`
 	IsLocal     bool   `orm:"column(is_local)"`
 	Type        string

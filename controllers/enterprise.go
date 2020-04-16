@@ -4,12 +4,9 @@ import (
 	"encoding/json"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-
 	//"encoding/json"
-	_"fmt"
+	_ "fmt"
 	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/orm"
-	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
 	//util "github.com/gfbankend/utils"
 	//"strconv"
@@ -45,7 +42,7 @@ func (c *UserController) AllCarddemo() {
 	//取出carddemo表中所有信息，放入carddemoList中
 	_, err := qt.Filter("enterprise__exact", id).All(&carddemoList)
 	if err != nil || len(carddemoList) == 0 {
-		models.Log.Error("read error", err)  
+		models.Log.Error("read error", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
@@ -53,7 +50,7 @@ func (c *UserController) AllCarddemo() {
 	c.Data["json"] = carddemoList
 	//发送json
 	c.ServeJSON()
-	c.Ctx.ResponseWriter.WriteHeader(200)  
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @author: ml
@@ -66,27 +63,66 @@ func (c *UserController) AllCarddemo() {
 // @Failure 403 数据库插入错误
 // @router enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
-	  body := c.Ctx.Input.RequestBody
-	  var enterprise models.Enterprise
-	  if err := json.Unmarshal(body, &enterprise); err != nil {
-	  	models.Log.Error("Enterprise enroll: wrong json")
-	  	c.Ctx.ResponseWriter.WriteHeader(400)
-		  return
-	  }
-	  // parse to get id
-	  if err := enterprise.EnterpriseParse(); err != nil {
-		  models.Log.Error("Enterprise enroll: fail to parse")
-		  c.Ctx.ResponseWriter.WriteHeader(406)
-		  return
-	  }
-	  o := orm.NewOrm()
-	  if _, err := o.Insert(&enterprise); err != nil {
-	  	models.Log.Error("Enterprise enroll: fail to insert")
-	  	c.Ctx.ResponseWriter.WriteHeader(406)
-	  	return
-	  }
-	  c.Data["json"] = enterprise
-	  c.ServeJSON()
+	var Request struct {
+		// Enterprise Info
+		Name      string `json:"name"`
+		LicenseId string `json:"license_id"`
+		Addr      string `json:"addr"`
+		Type      string `json:"type"`
+		IsLocal   bool   `json:"is_local"`
+		// Manager Info
+		ManagerName string `json:"manager_name"`
+		ManagerID   string `json:"manager_id"`
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+	}
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &Request); err != nil {
+		models.Log.Error("Enterprise enroll: wrong json")
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	enterprise := models.Enterprise{
+		Name:      Request.Name,
+		LicenseId: Request.LicenseId,
+		Addr:      Request.Addr,
+		Type:      Request.Type,
+		IsLocal:   Request.IsLocal,
+	}
+	manager := models.Manager{
+		Enterprise: Request.Name,
+		Name:       Request.ManagerName,
+		ID:         Request.ManagerID,
+		Phone:      Request.Phone,
+		Password:   Request.Password,
+	}
+	// parse to get id
+	if err := enterprise.EnterpriseParse(); err != nil {
+		models.Log.Error("Enterprise enroll: fail to parse", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	o := orm.NewOrm()
+	if _, err := o.Insert(&manager); err != nil {
+		models.Log.Error("Enterprise enroll: fail to insert", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	if _, err := o.Insert(&enterprise); err != nil {
+		// 防止出现管理员插入成功，而商家插入失败
+		_, _ = o.Delete(&manager)
+		models.Log.Error("Enterprise enroll: fail to insert", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	var Response struct {
+		Enterprise models.Enterprise `json:"enterprise"`
+		Manager models.Manager `json:"manager"`
+	}
+	Response.Manager = manager
+	Response.Enterprise = enterprise
+	c.Data["json"] = Response
+	c.ServeJSON()
 }
 
 // @author: zyj
@@ -98,7 +134,7 @@ func (c *UserController) EnterpriseEnroll() {
 // @Failure 400 信息内容或格式有误
 // @router enterprise/login [put]
 func (c *UserController) EnterpriseLogin() {
-	
+
 }
 
 // @author: zyj
@@ -111,7 +147,7 @@ func (c *UserController) EnterpriseLogin() {
 // @Failure 406 更新密码失败
 // @router Enterprise/password [put]
 func (c *UserController) EnterpriseChangePW() {
-	 
+
 }
 
 // @author: lj
@@ -123,7 +159,7 @@ func (c *UserController) EnterpriseChangePW() {
 // @Failure 400 解析body失败
 // @router Enterprise/forgetPw [post]
 func (c *UserController) EnterpriseForgetPW() {
-	 
+
 }
 
 // @author: ml
@@ -136,7 +172,25 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/ForgetPW/New [put]
 func (c *UserController) EnterpriseNewPW() {
-
+	var Request struct {
+		Phone string
+		Password string
+	}
+	manager := models.Manager{Phone: Request.Phone}
+	o := orm.NewOrm()
+	if err := o.Read(manager, "phone"); err != nil {
+		models.Log.Error("NewPW: fail to read", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	manager.Password = Request.Password
+	if _,err := o.Update(&manager); err != nil {
+		models.Log.Error("NewPW: fail to update", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	c.Data["json"] = manager
+	c.ServeJSON()
 }
 
 // @author:zjn
@@ -149,7 +203,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/infomodify [put]
 func (c *UserController) EnterpriseInfomodify() {
-	 
+
 }
 
 // @author:
@@ -162,7 +216,7 @@ func (c *UserController) EnterpriseInfomodify() {
 // @Failure 406 更新密码失败
 // @router Enterprise/newdemo [put]
 func (c *UserController) EnterpriseNewDemo() {
-	 
+
 }
 
 // @author:
@@ -175,5 +229,5 @@ func (c *UserController) EnterpriseNewDemo() {
 // @Failure 406 更新密码失败
 // @router Enterprise/NewCard [put]
 func (c *UserController) EnterpriseNewCard() {
-	 
+
 }
