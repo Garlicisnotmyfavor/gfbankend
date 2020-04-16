@@ -1,6 +1,10 @@
 package controllers
 
 import (
+	"encoding/json"
+	"github.com/astaxie/beego/orm"
+	"github.com/gfbankend/models"
+
 	//"encoding/json"
 	_"fmt"
 	"github.com/astaxie/beego"
@@ -32,13 +36,33 @@ func (c *UserController) AllCarddemo() {
 // @Title Register
 // @Description  商家注册
 // @Param EnterPriseInfo body models.Enterprise true 注册信息
-// @Success 200 {object} models.User "OK"
+// @Success 200 {object} models.Enterprise "OK"
 // @Failure 400 解析body错误
 // @Failure 406 账号信息格式有误
 // @Failure 403 数据库插入错误
 // @router enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
-	  
+	  body := c.Ctx.Input.RequestBody
+	  var enterprise models.Enterprise
+	  if err := json.Unmarshal(body, &enterprise); err != nil {
+	  	models.Log.Error("Enterprise enroll: wrong json")
+	  	c.Ctx.ResponseWriter.WriteHeader(400)
+		  return
+	  }
+	  // parse to get id
+	  if err := enterprise.EnterpriseParse(); err != nil {
+		  models.Log.Error("Enterprise enroll: fail to parse")
+		  c.Ctx.ResponseWriter.WriteHeader(406)
+		  return
+	  }
+	  o := orm.NewOrm()
+	  if _, err := o.Insert(&enterprise); err != nil {
+	  	models.Log.Error("Enterprise enroll: fail to insert")
+	  	c.Ctx.ResponseWriter.WriteHeader(406)
+	  	return
+	  }
+	  c.Data["json"] = enterprise
+	  c.ServeJSON()
 }
 
 // @author: zyj
