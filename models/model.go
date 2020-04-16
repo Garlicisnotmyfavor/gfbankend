@@ -40,19 +40,14 @@ type CardDemo struct {
 	Coupons    string `orm:"null"`
 }
 
-type CardParseStruct struct {
-	EnterpriseMap map[string]string `orm:"-"`
-	KindMap       map[string]string `orm:"-"`
-	StateMap      map[string]string `orm:"-"`
-	CityMap       map[string]string `orm:"-"`
-}
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
 	Password    string
-	IsLocal     string `orm:"column(is_local)"`
+	Addr        string `orm:"column(addr)"`
+	IsLocal     bool `orm:"column(is_local)"`
 	Type        string
-	RegisterNum string `orm:"column(register_num)"`
+	RegisterNum int64  `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
@@ -60,17 +55,14 @@ type Enterprise struct {
 }
 
 type Manager struct {
-	Name       string	//管理员名称
+	Name       string //管理员名称
 	ID         string `orm:"pk;column(id)"` //身份证号(保证唯一）
-	Enterprise string 	//与企业关联, n..1关系
-	Phone      string	//手机号，登录用
+	Enterprise string //与企业关联, n..1关系
+	Phone      string //手机号，登录用
 	Password   string
 }
 
-type EnterpriseParseStruct struct {
-	IsLocalMap map[string]string
-	TypeMap    map[string]string
-}
+
 
 type User struct {
 	Id         string `orm:"pk;size(13)" valid:"Required"`
@@ -99,6 +91,21 @@ type CardLog struct {
 //	Remark  string
 //	DelTime time.Time `orm:"column(del_time)"`
 //}
+
+/**
+*	Below are some maps for parse
+*/
+type EnterpriseParseStruct struct {
+	IsLocalMap map[string]string
+	TypeMap    map[string]string
+}
+
+type CardParseStruct struct {
+	EnterpriseMap map[string]string `orm:"-"`
+	KindMap       map[string]string `orm:"-"`
+	StateMap      map[string]string `orm:"-"`
+	CityMap       map[string]string `orm:"-"`
+}
 
 var CardParseMaps = CardParseStruct{
 	map[string]string{
