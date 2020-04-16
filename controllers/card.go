@@ -4,10 +4,12 @@ import (
 	"encoding/json"
 
 	"fmt"
+
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
+
 	//"strconv"
 	//"strings"
 	"time"
@@ -64,7 +66,7 @@ func (c *CardController) GetCardIDInfo() {
 	}
 	//找到卡后要去找对应的公司的信息
 	ep.Name = card.Enterprise
-	if err := o.Read(&ep,"name"); err != nil {
+	if err := o.Read(&ep, "name"); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到公司的信息
 		return
@@ -170,7 +172,7 @@ func (c *CardController) AddCard() {
 	}
 	//匹配后建立关联
 	card.UserId = userId
-	if _,err:= o.Update(&card);err!=nil{
+	if _, err := o.Update(&card); err != nil {
 		models.Log.Error("update database error")
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
@@ -426,25 +428,48 @@ func (c *CardController) Delete() {
 
 //author: lj
 //@Title 查看卡片使用记录
-//@Description 
+//@Description
 //@Param id query string true 卡号
 //@Success 200
-//@Failure 400/404	json解析错误/卡不存在
+//@Failure 401/404 没有登录/卡不存在
 //@router  /card/:id/CardLog [get]
 func (c *CardController) CardLog() {
-
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
+	// 获取路由参数
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	//设置一个填充了CardID的CardLog结构
+	var cardLog models.CardLog
+	cardLog.CardID = id
+	// 查询记录
+	if err := o.Read(&cardLog); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	c.Data["json"] = cardLog
+	c.ServeJSON()
+	return
 }
 
 //author: zyj
 //@Title  获取虚拟卡片
-//@Description 
+//@Description
 //@Param id query string true 卡号
 //@Success 200
-//@Failure  
+//@Failure
 //@router  /card/getnewcard [post]
 func (c *CardController) GetNewCard() {
 
 }
+
 // func isIdInUsers(id string) bool {
 // 	o := orm.NewOrm()
 // 	user := models.User{Id:id}
