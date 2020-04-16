@@ -218,13 +218,39 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @author: lj
 // @Title ForgetPW
 // @Description Forget password
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，邮件）
+// @Param enterpriseInfo body models.Enterprise true 用户信息(需要的是用户ID，Phone）
 // @Success 200 successfully
-// @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
+// @Failure 404 ID错误
+// @Failure 405 Phone错误
 // @router Enterprise/forgetPw [post]
 func (c *UserController) EnterpriseForgetPW() {
-
+	var Request struct {
+		ID string
+		Phone string
+	}
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body,&Request); err!= nil{
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
+	}
+	manager := models.Manager{ID: Request.ID}
+	o := orm.NewOrm()
+	if err := o.Read(&manager); err != nil {
+		models.Log.Error("NewPW: fail to read", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到对应的ID
+		return
+	}
+	manager := models.Manager{Phone: Request.Phone}
+	o := orm.NewOrm()
+	if err := o.Read(&manager); err != nil {
+		models.Log.Error("NewPW: fail to read", err)
+		c.Ctx.ResponseWriter.WriteHeader(405) //查找不到对应的Phone
+		return
+	}
+	c.Data["json"] = manager
+	c.ServeJSON()
 }
 
 // @author: ml
