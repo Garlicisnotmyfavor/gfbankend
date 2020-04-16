@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	_"fmt"
 	"github.com/astaxie/beego"
+	_ "github.com/pkg/errors"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-	_ "github.com/pkg/errors"
 	//util "github.com/gfbankend/utils"
 	//"strconv"
 	//"strings"
@@ -230,7 +230,7 @@ func (c *UserController) EnterpriseForgetPW() {
 // @author: ml
 // @Title NewPassword
 // @Description  通过前面忘记密码的过程后，设置新的密码
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
+// @Param enterpriseInfo body models.Enterprise true 用户信息(需要的是用户ID，新密码）
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
@@ -259,16 +259,35 @@ func (c *UserController) EnterpriseNewPW() {
 }
 
 // @author:zjn
-// @Title
-// @Description  修改注册的商家信息
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
-// @Success 200 Update successfully
-// @Failure 404 数据库无此用户
+// @Title enterprise information modify
+// @Description  修改注册的商家注册信息
+// @Param enterpriseInfo body models.Enterprise true 重新提交的商家注册信息
+// @Success 200 Update成功
+// @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
-// @Failure 406 更新密码失败
+// @Failure 406 更新商铺信息失败
 // @router Enterprise/infomodify [put]
 func (c *UserController) EnterpriseInfomodify() {
-
+	body := c.Ctx.Input.RequestBody
+	var enterprise models.Enterprise
+	var newenterprise models.Enterprise
+	if err := json.Unmarshal(body, &enterprise); err != nil {
+		models.Log.Error("Enterprise enroll: wrong json")
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	o := orm.NewOrm()
+	if err := o.Read(&newenterprise); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对于商铺的信息
+		return
+	}
+	if _, err := o.Update(&enterprise); err != nil {
+		models.Log.Error("Enterprise enroll: fail to update")
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @author:

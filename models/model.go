@@ -82,7 +82,7 @@ type EnterpriseCount struct {
 }
 
 type CardLog struct {
-	CardId  string
+	CardId  string	`orm:"pk"`
 	Date    time.Time
 	Operate string //操作描述
 }
