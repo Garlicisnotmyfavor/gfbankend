@@ -393,7 +393,7 @@ func (c *UserController) Login() {
 
 // @Title changePW
 // @Description change password
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，原密码，新密码）
+// @Param userInfo body / true 用户信息(需要的是用户ID，原密码，新密码）
 // @Success 200 Update successfully
 // @Failure 401 没登录，无权限
 // @Failure 404 数据库无此用户
