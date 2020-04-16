@@ -251,7 +251,6 @@ func (c *UserController) Enroll() {
 		return
 	}
 	user.UserParse()
-	fmt.Println(user)
 	if _, err := o.Insert(&user); err != nil {
 		models.Log.Error("error in insert user: ", err)
 		var response struct {
@@ -272,10 +271,8 @@ func (c *UserController) Enroll() {
 	c.DelSession("verify")
 	response.Msg = "success"
 	response.Data = user
-	fmt.Println(response)
 	c.Data["json"] = response
 	c.ServeJSON()
-	c.Ctx.ResponseWriter.WriteHeader(200) //注册成功
 }
 
 // @Title LoginWithCookie

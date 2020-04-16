@@ -18,27 +18,110 @@ type EnterpriseController struct {
 }
 
 // @author: zjn
-// @Title 
+// @Title show all card type
 // @Description 显示所有优惠政策
-// @Param eid path string true 商家ID
+// @Param id	path	string	true 商家ID
 // @Success 200  
-// @Failure 404 Fail to read
+// @Failure 404 Fail to read enterpriseId
 // @router enterprise/:id [get]
 func (c *UserController) AllCarddemo() {
-	 
+	//查看session的操作
+	//if c.GetSession("userInfo") == nil {
+	//	models.Log.Error("no login")
+	//	c.Ctx.ResponseWriter.WriteHeader(401)
+	//	return
+	//}
+	// 取得用户ID from path
+	id := c.Ctx.Input.Param(":id")
+	//储存所有卡片类型信息
+	var carddemoList []models.CardDemo
+	//使用orm接口查询相关信息
+	o := orm.NewOrm()
+	qt := o.QueryTable("carddemo")
+	//取出carddemo表中所有信息，放入carddemoList中
+	_, err := qt.Filter("enterprise__exact", id).All(&carddemoList)
+	if err != nil || len(carddemoList) == 0 {
+		models.Log.Error("read error", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	//使用json格式传输所有信息
+	c.Data["json"] = carddemoList
+	//发送json
+	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @author: ml
 // @Title Register
 // @Description  商家注册
 // @Param EnterPriseInfo body models.Enterprise true 注册信息
-// @Success 200 {object} models.User "OK"
+// @Success 200 {object} models.Enterprise "OK"
 // @Failure 400 解析body错误
 // @Failure 406 账号信息格式有误
 // @Failure 403 数据库插入错误
 // @router enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
-	  
+	var Request struct {
+		// Enterprise Info
+		Name      string `json:"name"`
+		LicenseId string `json:"license_id"`
+		Addr      string `json:"addr"`
+		Type      string `json:"type"`
+		IsLocal   bool   `json:"is_local"`
+		// Manager Info
+		ManagerName string `json:"manager_name"`
+		ManagerID   string `json:"manager_id"`
+		Phone       string `json:"phone"`
+		Password    string `json:"password"`
+	}
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body, &Request); err != nil {
+		models.Log.Error("Enterprise enroll: wrong json")
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	enterprise := models.Enterprise{
+		Name:      Request.Name,
+		LicenseId: Request.LicenseId,
+		Addr:      Request.Addr,
+		Type:      Request.Type,
+		IsLocal:   Request.IsLocal,
+	}
+	manager := models.Manager{
+		Enterprise: Request.Name,
+		Name:       Request.ManagerName,
+		ID:         Request.ManagerID,
+		Phone:      Request.Phone,
+		Password:   Request.Password,
+	}
+	// parse to get id
+	if err := enterprise.EnterpriseParse(); err != nil {
+		models.Log.Error("Enterprise enroll: fail to parse", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	o := orm.NewOrm()
+	if _, err := o.Insert(&manager); err != nil {
+		models.Log.Error("Enterprise enroll: fail to insert", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	if _, err := o.Insert(&enterprise); err != nil {
+		// 防止出现管理员插入成功，而商家插入失败
+		_, _ = o.Delete(&manager)
+		models.Log.Error("Enterprise enroll: fail to insert", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	var Response struct {
+		Enterprise models.Enterprise `json:"enterprise"`
+		Manager models.Manager `json:"manager"`
+	}
+	Response.Manager = manager
+	Response.Enterprise = enterprise
+	c.Data["json"] = Response
+	c.ServeJSON()
 }
 
 // @author: zyj
@@ -51,7 +134,7 @@ func (c *UserController) EnterpriseEnroll() {
 // @router enterprise/login [put]
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
-	enterprise := models.Enterprise{}
+	manager := models.Manager{}
 	body := c.Ctx.Input.RequestBody
 	var eInfo struct {
 		Account    string
@@ -63,21 +146,21 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	enterprise.Name = eInfo.Account
-	enterprise.Password = eInfo.Password
-	if err:= o.Read(&enterprise,"name","password");err!=nil{
+	manager.ID = eInfo.Account
+	manager.Password = eInfo.Password
+	if err:= o.Read(&manager,"id","password");err!=nil{
 		models.Log.Error("login error: auth fail")
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	c.Data["json"] = enterprise
+	c.Data["json"] = manager
 	// 如果需要记住账号密码
 	if eInfo.Remember == true {
 		c.Ctx.SetSecureCookie("miller", "account", eInfo.Account)
 		c.Ctx.SetSecureCookie("miller", "password", eInfo.Password)
 		c.Ctx.SetCookie("remember", "true")
 	}
-	c.SetSession("enterpriseInfo", enterprise) // 登录成功，设置session
+	c.SetSession("managerInfo", manager) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
 
 }
@@ -85,50 +168,50 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @author: zyj
 // @Title changePW
 // @Description change password
-// @Param userInfo body / true 用户信息(需要的是用户ID,原密码,新密码）
+// @Param enterpriseInfo body  true 用户信息(需要的是用户ID,原密码,新密码）
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 500 数据库更新密码失败
 // @router Enterprise/password [put]
 func (c *EnterpriseController) EnterpriseChangePW() {
-	if c.GetSession("enterpriseInfo") == nil {
+	if c.GetSession("managerInfo") == nil {
 		models.Log.Error("no login")
 		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
-	var enterprise struct {
+	var manager struct {
 		Id          string
 		OldPassword string
 		NewPassword string
 	}
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body,&enterprise); err!= nil{
+	if err := json.Unmarshal(body,&manager); err!= nil{
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
 	o := orm.NewOrm()
-	enpri := models.Enterprise{Id:enterprise.Id}
-	if err := o.Read(&enpri);err!=nil{
+	man := models.Manager{ID:manager.Id}
+	if err := o.Read(&man);err!=nil{
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
 	}
 	//验证用户输入的密码是否与旧密码一致
-	if enterprise.OldPassword != enpri.Password {
+	if manager.OldPassword != man.Password {
 		models.Log.Error("wrong old password: ")
 		c.Ctx.ResponseWriter.WriteHeader(403) // 原密码错误
 		return
 	}
-	enpri.Password = enterprise.NewPassword
-	if _, err := o.Update(&enpri); err != nil {
+	man.Password = manager.NewPassword
+	if _, err := o.Update(&man); err != nil {
 		models.Log.Error("update error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
 		return
 	}
 	//根据旧的userInfo删除对应session
-	c.DelSession("enterpriseInfo")
+	c.DelSession("managerInfo")
 	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
 }
 
@@ -141,7 +224,7 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @Failure 400 解析body失败
 // @router Enterprise/forgetPw [post]
 func (c *UserController) EnterpriseForgetPW() {
-	 
+
 }
 
 // @author: ml
@@ -154,7 +237,25 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/ForgetPW/New [put]
 func (c *UserController) EnterpriseNewPW() {
-	 
+	var Request struct {
+		Phone string
+		Password string
+	}
+	manager := models.Manager{Phone: Request.Phone}
+	o := orm.NewOrm()
+	if err := o.Read(manager, "phone"); err != nil {
+		models.Log.Error("NewPW: fail to read", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	manager.Password = Request.Password
+	if _,err := o.Update(&manager); err != nil {
+		models.Log.Error("NewPW: fail to update", err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	c.Data["json"] = manager
+	c.ServeJSON()
 }
 
 // @author:zjn
@@ -167,7 +268,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/infomodify [put]
 func (c *UserController) EnterpriseInfomodify() {
-	 
+
 }
 
 // @author:
@@ -180,7 +281,7 @@ func (c *UserController) EnterpriseInfomodify() {
 // @Failure 406 更新密码失败
 // @router Enterprise/newdemo [put]
 func (c *UserController) EnterpriseNewDemo() {
-	 
+
 }
 
 // @author:
@@ -193,5 +294,5 @@ func (c *UserController) EnterpriseNewDemo() {
 // @Failure 406 更新密码失败
 // @router Enterprise/NewCard [put]
 func (c *UserController) EnterpriseNewCard() {
-	 
+
 }

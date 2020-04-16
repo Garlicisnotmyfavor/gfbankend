@@ -1,12 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"errors"
-	"strconv"
-	"time"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/astaxie/beego/validation"
+	"strconv"
+	"time"
 )
 
 //mysql
@@ -15,8 +15,8 @@ import (
 type Card struct {
 	CardId string `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
 	// UserId      *User     `orm:"rel(fk)"`
-	UserId     string    `orm:"size(13)"` //UserId是依据时间生成的，因为CardId中不包含UserId
-	CardType   string    `valid:"Required"`                           //卡的类型
+	UserId     string    `orm:"size(13)"`   //UserId是依据时间生成的，因为CardId中不包含UserId
+	CardType   string    `valid:"Required"` //卡的类型
 	Enterprise string    `valid:"Required"`
 	State      string    `valid:"Required"`
 	City       string    `valid:"Required"`
@@ -33,36 +33,32 @@ type Card struct {
 }
 
 type CardDemo struct {
-	CardType    string    `valid:"Required"`   
-	Enterprise  string    `valid:"Required"`
-	State       string    `valid:"Required"`
-	City        string    `valid:"Required"`
-	Coupons     string    `orm:"null"`  
-}
-
-type CardParseStruct struct {
-	EnterpriseMap map[string]string `orm:"-"`
-	KindMap       map[string]string `orm:"-"`
-	StateMap      map[string]string `orm:"-"`
-	CityMap       map[string]string `orm:"-"`
+	ID         int    `orm:"pk;auto"`
+	CardType   string `valid:"Required"`
+	Enterprise string `valid:"Required"`
+	State      string `valid:"Required"`
+	City       string `valid:"Required"`
+	Coupons    string `orm:"null"`
 }
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
-	Password	string
-	IsLocal     bool 
+	Addr        string `orm:"column(addr)"`
+	IsLocal     bool   `orm:"column(is_local)"`
 	Type        string
-	RegisterNum string `orm:"column(register_num)"`
+	RegisterNum int64  `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
-	ManagerId	string
-	LicenseId	string
+	LicenseId   string
 }
 
-type EnterpriseParseStruct struct {
-	IsLocalMap map[string]string
-	TypeMap    map[string]string
+type Manager struct {
+	Name       string //管理员名称
+	ID         string `orm:"pk;column(id)"` //身份证号(保证唯一）
+	Enterprise string //与企业关联, n..1关系
+	Phone      string //手机号，登录用
+	Password   string
 }
 
 type User struct {
@@ -70,25 +66,25 @@ type User struct {
 	Tel        string `orm:"null"`
 	Mail       string `orm:"null"`
 	Password   string `valid:"Required"`
-	LoginMonth string `valid:"max(2)" `     //注册月份
-	LoginYear  string `valid:"max(4)" `     //注册年份
+	LoginMonth string `valid:"max(2)" `                      //注册月份
+	LoginYear  string `valid:"max(4)" `                      //注册年份
 	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
 }
 
-type Count struct{
+type Count struct {
 	Time string `valid:"max(7)" orm:"pk"`
-	Num  int `orm:"default(1)"`
+	Num  int    `orm:"default(1)"`
 }
 
-type EnterpriseCount struct{
-	flag int `orm:"pk;default(1)"`
-	Num int 
+type EnterpriseCount struct {
+	Flag int `orm:"pk;default(1)"`
+	Num  int
 }
 
 type CardLog struct {
-	CardId		string
-	Date		time.Time
-	Operate		string //操作描述
+	CardId  string
+	Date    time.Time
+	Operate string //操作描述
 }
 
 //type DelCard struct {
@@ -97,6 +93,21 @@ type CardLog struct {
 //	Remark  string
 //	DelTime time.Time `orm:"column(del_time)"`
 //}
+
+/**
+*	Below are some maps for parse
+ */
+type EnterpriseParseStruct struct {
+	IsLocalMap map[string]string
+	TypeMap    map[string]string
+}
+
+type CardParseStruct struct {
+	EnterpriseMap map[string]string `orm:"-"`
+	KindMap       map[string]string `orm:"-"`
+	StateMap      map[string]string `orm:"-"`
+	CityMap       map[string]string `orm:"-"`
+}
 
 var CardParseMaps = CardParseStruct{
 	map[string]string{
@@ -157,9 +168,6 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 	},
 }
 
-//根据confluence
-//zyj
-//var UserParse
 func (card *Card) CardParse() error {
 	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
@@ -185,21 +193,21 @@ func (user *User) UserParse() {
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
 	var item Count
-	user.Id = curTime[0:4]+curTime[5:7]
+	user.Id = curTime[0:4] + curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
-	item.Time = user.LoginYear+"-"+user.LoginMonth
-	if err := o.Read(&item); err!=nil{
+	item.Time = user.LoginYear + "-" + user.LoginMonth
+	if err := o.Read(&item); err != nil {
 		item.Num = 1
 		user.LoginNum = 1
-		user.Id += fmt.Sprintf("%07d",user.LoginNum)
+		user.Id += fmt.Sprintf("%07d", user.LoginNum)
 		o.Insert(&item)
 		return
 	}
 	item.Num += 1
 	fmt.Println(item)
 	user.LoginNum = item.Num
-	user.Id += fmt.Sprintf("%07d",user.LoginNum)
+	user.Id += fmt.Sprintf("%07d", user.LoginNum)
 	fmt.Println(user)
 	o.Update(&item)
 	return
@@ -208,26 +216,26 @@ func (user *User) UserParse() {
 func (enterprise *Enterprise) EnterpriseParse() error {
 	o := orm.NewOrm()
 	var item EnterpriseCount
-	item.flag = 1; //flag这个没有意义，只是用于充当主键，取出数据库中的数据
-	if err := o.Read(&item);err!=nil{
-		return errors.New("Get RegisterNum Fail")
+	item.Flag = 1 //flag这个没有意义，只是用于充当主键，取出数据库中的数据
+	if err := o.Read(&item); err != nil {
+		return errors.New("fail to get registerNum")
 	}
 	item.Num += 1
-	enterprise.RegisterNum = strconv.Itoa(item.Num)
+	enterprise.RegisterNum = int64(item.Num)
 	o.Update(&item)
-	if enterprise.IsLocal==true {
+	if enterprise.IsLocal == true {
 		enterprise.Id = "1"
-	}else{
+	} else {
 		enterprise.Id = "2"
 	}
-	if enterprise.Type=="bank" {
+	if enterprise.Type == "bank" {
 		enterprise.Id += "1"
-	}else if enterprise.Type=="supermarket" {
+	} else if enterprise.Type == "supermarket" {
 		enterprise.Id += "2"
-	}else if enterprise.Type=="store" {
+	} else if enterprise.Type == "store" {
 		enterprise.Id += "3"
 	}
-	enterprise.Id += enterprise.RegisterNum
+	enterprise.Id += strconv.Itoa(int(enterprise.RegisterNum))
 	return nil
 }
 
