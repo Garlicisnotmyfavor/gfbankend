@@ -431,7 +431,9 @@ func (c *CardController) Delete() {
 //@Description
 //@Param id query string true 卡号
 //@Success 200
-//@Failure 401/404 没有登录/卡不存在
+//@Failure 400 解析Json失败
+//@Failure 401 没有登录
+//@Failure 404 卡不存在
 //@router  /card/:id/CardLog [get]
 func (c *CardController) CardLog() {
 	sess := c.GetSession("userInfo")
@@ -447,6 +449,13 @@ func (c *CardController) CardLog() {
 	//设置一个填充了CardID的CardLog结构
 	var cardLog models.CardLog
 	cardLog.CardID = id
+	body := c.Ctx.Input.RequestBody
+	//解析请求体
+	if err := json.Unmarshal(body, &cardLog); err != nil {
+		models.Log.Error("unmarshal error：", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析Json失败
+		return
+	}
 	// 查询记录
 	if err := o.Read(&cardLog); err != nil {
 		models.Log.Error("read error: ", err)
