@@ -38,7 +38,7 @@ func (c *UserController) AllCarddemo() {
 	// 取得用户ID from path
 	id := c.Ctx.Input.Param(":id")
 	//储存所有卡片类型信息
-	var carddemoList []models.Carddemo
+	var carddemoList []models.CardDemo
 	//使用orm接口查询相关信息
 	o := orm.NewOrm()
 	qt := o.QueryTable("carddemo")
