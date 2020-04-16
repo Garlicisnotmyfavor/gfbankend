@@ -33,6 +33,7 @@ type Card struct {
 }
 
 type CardDemo struct {
+	ID         int    `orm:"pk;auto"`
 	CardType   string `valid:"Required"`
 	Enterprise string `valid:"Required"`
 	State      string `valid:"Required"`
@@ -40,12 +41,11 @@ type CardDemo struct {
 	Coupons    string `orm:"null"`
 }
 
-
 type Enterprise struct {
 	Id          string `orm:"unique"`
 	Password    string
 	Addr        string `orm:"column(addr)"`
-	IsLocal     bool `orm:"column(is_local)"`
+	IsLocal     bool   `orm:"column(is_local)"`
 	Type        string
 	RegisterNum int64  `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
@@ -62,8 +62,6 @@ type Manager struct {
 	Password   string
 }
 
-
-
 type User struct {
 	Id         string `orm:"pk;size(13)" valid:"Required"`
 	Tel        string `orm:"null"`
@@ -77,6 +75,11 @@ type User struct {
 type Count struct {
 	Time string `valid:"max(7)" orm:"pk"`
 	Num  int    `orm:"default(1)"`
+}
+
+type EnterpriseCount struct {
+	Flag int `orm:"pk;default(1)"`
+	Num  int
 }
 
 type CardLog struct {
@@ -94,7 +97,7 @@ type CardLog struct {
 
 /**
 *	Below are some maps for parse
-*/
+ */
 type EnterpriseParseStruct struct {
 	IsLocalMap map[string]string
 	TypeMap    map[string]string
@@ -215,16 +218,28 @@ func (user *User) UserParse() {
 }
 
 func (enterprise *Enterprise) EnterpriseParse() error {
-	if len(enterprise.Id) != 5 {
-		return errors.New("INVALID LENGTH ENTERPRISE ID")
+	o := orm.NewOrm()
+	var item EnterpriseCount
+	item.Flag = 1 //flag这个没有意义，只是用于充当主键，取出数据库中的数据
+	if err := o.Read(&item); err != nil {
+		return errors.New("fail to get registerNum")
 	}
-	var flag bool
-	enterprise.IsLocal, flag = EnterpriseParseMaps.IsLocalMap[enterprise.Id[0:1]]
-	enterprise.Type, flag = EnterpriseParseMaps.TypeMap[enterprise.Id[1:2]]
-	enterprise.RegisterNum = enterprise.Id[2:]
-	if !flag {
-		return errors.New("INVALID CONTENT ENTERPRISE ID")
+	item.Num += 1
+	enterprise.RegisterNum = int64(item.Num)
+	o.Update(&item)
+	if enterprise.IsLocal == true {
+		enterprise.Id = "1"
+	} else {
+		enterprise.Id = "2"
 	}
+	if enterprise.Type == "bank" {
+		enterprise.Id += "1"
+	} else if enterprise.Type == "supermarket" {
+		enterprise.Id += "2"
+	} else if enterprise.Type == "store" {
+		enterprise.Id += "3"
+	}
+	enterprise.Id += strconv.Itoa(int(enterprise.RegisterNum))
 	return nil
 }
 
