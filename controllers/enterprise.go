@@ -4,8 +4,8 @@ import (
 	//"encoding/json"
 	_"fmt"
 	"github.com/astaxie/beego"
-	//"github.com/astaxie/beego/orm"
-	//"github.com/gfbankend/models"
+	"github.com/astaxie/beego/orm"
+	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
 	//util "github.com/gfbankend/utils"
 	//"strconv"
@@ -18,14 +18,38 @@ type EnterpriseController struct {
 }
 
 // @author: zjn
-// @Title 
+// @Title show all card type
 // @Description 显示所有优惠政策
-// @Param eid path string true 商家ID
+// @Param id	path	string	true 商家ID
 // @Success 200  
-// @Failure 404 Fail to read
+// @Failure 404 Fail to read enterpriseId
 // @router enterprise/:id [get]
 func (c *UserController) AllCarddemo() {
-	 
+	//查看session的操作
+	//if c.GetSession("userInfo") == nil {
+	//	models.Log.Error("no login")
+	//	c.Ctx.ResponseWriter.WriteHeader(401)
+	//	return
+	//}
+	// 取得用户ID from path
+	id := c.Ctx.Input.Param(":id")
+	//储存所有卡片类型信息
+	var carddemoList []models.Carddemo
+	//使用orm接口查询相关信息
+	o := orm.NewOrm()
+	qt := o.QueryTable("carddemo")
+	//取出carddemo表中所有信息，放入carddemoList中
+	_, err := qt.Filter("enterprise__exact", id).All(&carddemoList)
+	if err != nil || len(carddemoList) == 0 {
+		models.Log.Error("read error", err)  
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	//使用json格式传输所有信息
+	c.Data["json"] = carddemoList
+	//发送json
+	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200)  
 }
 
 // @author: ml
