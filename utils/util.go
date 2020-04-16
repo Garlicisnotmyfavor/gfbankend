@@ -58,4 +58,11 @@ func SendEmail(target string, rCode []byte) error {
 	return nil
 }
 
-//用userid和密码生成session
+/*
+*@function:生成cardid
+*@param {}
+*@return {error}err
+ */
+ func GetCardid() {
+	 
+ }

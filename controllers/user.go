@@ -2,12 +2,13 @@ package controllers
 
 import (
 	"encoding/json"
+	util "github.com/gfbankend/utils"
 	"fmt"
 
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-	util "github.com/gfbankend/utils"
+	//util "github.com/gfbankend/utils"
 	//"io/ioutil"
 	//"path"
 )

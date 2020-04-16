@@ -110,6 +110,7 @@ func (c *CardController) GetCardIDInfo() {
 }
 
 //添加卡片 在user表里添加此user和card的关联
+//userid从cookie，session取得
 //zjn
 //@Title AddCard
 //@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
@@ -423,6 +424,27 @@ func (c *CardController) Delete() {
 	return
 }
 
+//author: lj
+//@Title 查看卡片使用记录
+//@Description 
+//@Param id query string true 卡号
+//@Success 200
+//@Failure 400/404	json解析错误/卡不存在
+//@router  /card/:id/CardLog [get]
+func (c *CardController) CardLog() {
+
+}
+
+//author: zyj
+//@Title  获取虚拟卡片
+//@Description 
+//@Param id query string true 卡号
+//@Success 200
+//@Failure  
+//@router  /card/getnewcard [post]
+func (c *CardController) GetNewCard() {
+
+}
 // func isIdInUsers(id string) bool {
 // 	o := orm.NewOrm()
 // 	user := models.User{Id:id}
