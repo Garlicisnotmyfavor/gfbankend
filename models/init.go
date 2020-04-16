@@ -56,7 +56,30 @@ func testData(){
 	testUserData3 := User{Id:"2018091620002",Tel:"13778372240",Mail:"666666@qq.com",Password:"123009889",LoginNum:2}
 	testCardData3 := Card{CardId:"123456790333000",UserId:"2018091620002",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
 	testUserData4 := User{Id:"2018091620020",Tel:"13778788240",Mail:"78902166@qq.com",Password:"33235323",LoginNum:20}
-	testCardData4 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	container := []Card{
+		Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333002",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333003",State:"Beijing",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333004",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333005",State:"Guangzhou",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333006",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333007",State:"Hangzhou",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333008",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333009",State:"Shandong",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333010",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333011",State:"Mianyang",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333012",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333013",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333014",State:"Tokyo",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+	}
+	// testCardData4 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData5 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData6 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData7 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData8 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData9 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData10 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()}
+	// testCardData11 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()}
 	testEnterpriseData1 := Enterprise{Id:"001",Name:"starbucks"}
 	testEnterpriseData2 := Enterprise{Id:"002",Name:"subway"}
 	o := orm.NewOrm()
@@ -67,7 +90,10 @@ func testData(){
 	o.Insert(&testCardData2)
 	o.Insert(&testCardData3)
 	o.Insert(&testUserData4)
-	o.Insert(&testCardData4)
 	o.Insert(&testEnterpriseData1)
 	o.Insert(&testEnterpriseData2)
+	for _,item := range container {
+		o.Insert(&item)
+	}
+
 }
