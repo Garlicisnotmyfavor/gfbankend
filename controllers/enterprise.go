@@ -20,7 +20,7 @@ type EnterpriseController struct {
 // @author: zjn
 // @Title 
 // @Description 显示所有优惠政策
-// @Param   商家ID
+// @Param eid path string true 商家ID
 // @Success 200  
 // @Failure 404 Fail to read
 // @router enterprise/:id [get]
@@ -31,7 +31,7 @@ func (c *UserController) AllCarddemo() {
 // @author: ml
 // @Title Register
 // @Description  商家注册
-// @Param 注册信息
+// @Param EnterPriseInfo body models.Enterprise true 注册信息
 // @Success 200 {object} models.User "OK"
 // @Failure 400 解析body错误
 // @Failure 406 账号信息格式有误
@@ -120,7 +120,7 @@ func (c *UserController) EnterpriseNewDemo() {
 // @author:
 // @Title NewPassword
 // @Description  发布新的卡片
-// @Param  用户类型 数量
+// @Param  cardInfo body models.CardDemo true 用户类型,数量
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
