@@ -32,7 +32,7 @@ type Card struct {
 	SerialNum  int       `valid:"Required"`
 }
 
-type CardDemo struct {
+type Carddemo struct {
 	CardType    string    `valid:"Required"`   
 	Enterprise  string    `valid:"Required"`
 	State       string    `valid:"Required"`
@@ -152,9 +152,6 @@ var EnterpriseParseMaps = EnterpriseParseStruct{
 	},
 }
 
-//根据confluence
-//zyj
-//var UserParse
 func (card *Card) CardParse() error {
 	if len(card.CardId) != 16 {
 		return errors.New("INVALID LENGTH CARD ID")
