@@ -2,9 +2,12 @@ package controllers
 
 import (
 	"encoding/json"
+<<<<<<< HEAD
 
 	"fmt"
 
+=======
+>>>>>>> ed06038ceab1bc984952d665f7c0215a52d08dbd
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
