@@ -40,6 +40,7 @@ func init() {
 	orm.RegisterModel(new(Enterprise))
 	orm.RegisterModel(new(User))
 	orm.RegisterModel(new(Count))
+	orm.RegisterModel(new(EnterpriseCount))
 	//testData()
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)

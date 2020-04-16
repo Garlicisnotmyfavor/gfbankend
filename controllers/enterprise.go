@@ -50,7 +50,7 @@ func (c *UserController) EnterpriseEnroll() {
 // @Failure 400 信息内容或格式有误
 // @router enterprise/login [put]
 func (c *UserController) EnterpriseLogin() {
-
+	
 }
 
 // @author: zyj
