@@ -1,12 +1,12 @@
 package models
 
 import (
-	"fmt"
 	"errors"
-	"strconv"
-	"time"
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	_ "github.com/astaxie/beego/validation"
+	"strconv"
+	"time"
 )
 
 //mysql
@@ -15,8 +15,8 @@ import (
 type Card struct {
 	CardId string `orm:"pk;size(16)" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
 	// UserId      *User     `orm:"rel(fk)"`
-	UserId     string    `orm:"size(13)"` //UserId是依据时间生成的，因为CardId中不包含UserId
-	CardType   string    `valid:"Required"`                           //卡的类型
+	UserId     string    `orm:"size(13)"`   //UserId是依据时间生成的，因为CardId中不包含UserId
+	CardType   string    `valid:"Required"` //卡的类型
 	Enterprise string    `valid:"Required"`
 	State      string    `valid:"Required"`
 	City       string    `valid:"Required"`
@@ -33,11 +33,11 @@ type Card struct {
 }
 
 type CardDemo struct {
-	CardType    string    `valid:"Required"`   
-	Enterprise  string    `valid:"Required"`
-	State       string    `valid:"Required"`
-	City        string    `valid:"Required"`
-	Coupons     string    `orm:"null"`  
+	CardType   string `valid:"Required"`
+	Enterprise string `valid:"Required"`
+	State      string `valid:"Required"`
+	City       string `valid:"Required"`
+	Coupons    string `orm:"null"`
 }
 
 type CardParseStruct struct {
@@ -49,15 +49,22 @@ type CardParseStruct struct {
 
 type Enterprise struct {
 	Id          string `orm:"unique"`
-	Password	string
+	Password    string
 	IsLocal     string `orm:"column(is_local)"`
 	Type        string
 	RegisterNum string `orm:"column(register_num)"`
 	Name        string `orm:"pk"`
 	HelpMsg     string `orm:"column(help_msg)"`
 	Website     string
-	ManagerId	string
-	LicenseId	string
+	LicenseId   string
+}
+
+type Manager struct {
+	Name       string	//管理员名称
+	ID         string `orm:"pk;column(id)"` //身份证号(保证唯一）
+	Enterprise string 	//与企业关联, n..1关系
+	Phone      string	//手机号，登录用
+	Password   string
 }
 
 type EnterpriseParseStruct struct {
@@ -70,20 +77,20 @@ type User struct {
 	Tel        string `orm:"null"`
 	Mail       string `orm:"null"`
 	Password   string `valid:"Required"`
-	LoginMonth string `valid:"max(2)" `     //注册月份
-	LoginYear  string `valid:"max(4)" `     //注册年份
+	LoginMonth string `valid:"max(2)" `                      //注册月份
+	LoginYear  string `valid:"max(4)" `                      //注册年份
 	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
 }
 
-type Count struct{
+type Count struct {
 	Time string `valid:"max(7)" orm:"pk"`
-	Num  int `orm:"default(1)"`
+	Num  int    `orm:"default(1)"`
 }
 
 type CardLog struct {
-	CardId		string
-	Date		time.Time
-	Operate		string //操作描述
+	CardId  string
+	Date    time.Time
+	Operate string //操作描述
 }
 
 //type DelCard struct {
@@ -180,21 +187,21 @@ func (user *User) UserParse() {
 	o := orm.NewOrm()
 	curTime := time.Now().String()[:7]
 	var item Count
-	user.Id = curTime[0:4]+curTime[5:7]
+	user.Id = curTime[0:4] + curTime[5:7]
 	user.LoginYear = curTime[0:4]
 	user.LoginMonth = curTime[5:7]
-	item.Time = user.LoginYear+"-"+user.LoginMonth
-	if err := o.Read(&item); err!=nil{
+	item.Time = user.LoginYear + "-" + user.LoginMonth
+	if err := o.Read(&item); err != nil {
 		item.Num = 1
 		user.LoginNum = 1
-		user.Id += fmt.Sprintf("%07d",user.LoginNum)
+		user.Id += fmt.Sprintf("%07d", user.LoginNum)
 		o.Insert(&item)
 		return
 	}
 	item.Num += 1
 	fmt.Println(item)
 	user.LoginNum = item.Num
-	user.Id += fmt.Sprintf("%07d",user.LoginNum)
+	user.Id += fmt.Sprintf("%07d", user.LoginNum)
 	fmt.Println(user)
 	o.Update(&item)
 	return

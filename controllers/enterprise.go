@@ -112,7 +112,8 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/ForgetPW/New [put]
 func (c *UserController) EnterpriseNewPW() {
-	 
+	 body := c.Ctx.Input.RequestBody
+
 }
 
 // @author:zjn
