@@ -2,12 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-<<<<<<< HEAD
-
 	"fmt"
-
-=======
->>>>>>> ed06038ceab1bc984952d665f7c0215a52d08dbd
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -451,7 +446,7 @@ func (c *CardController) CardLog() {
 	o := orm.NewOrm()
 	//设置一个填充了CardID的CardLog结构
 	var cardLog models.CardLog
-	cardLog.CardID = id
+	cardLog.CardId = id
 	body := c.Ctx.Input.RequestBody
 	//解析请求体
 	if err := json.Unmarshal(body, &cardLog); err != nil {
