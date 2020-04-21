@@ -55,11 +55,10 @@ func (c *UserController) AllCarddemo() {
 // @author: ml
 // @Title Register
 // @Description  商家注册
-// @Param EnterPriseInfo body models.Enterprise true 注册信息
+// @Param EnterPriseInfo body models.Enterprise true 注册信息(商家名称name+营业执照号码license_id+地址Addr+商家类型type+是否为本地is_local+管理人名称manager_name+管理人身份证manager_id+手机号码phone+密码password
 // @Success 200 {object} models.Enterprise "OK"
-// @Failure 400 解析body错误
-// @Failure 406 账号信息格式有误
-// @Failure 403 数据库插入错误
+// @Failure 400 信息有误
+// @Failure 406 数据库加入错误
 // @router enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
 	var Request struct {
@@ -218,13 +217,32 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @author: lj
 // @Title ForgetPW
 // @Description Forget password
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，邮件）
+// @Param enterpriseInfo body models.Enterprise true 用户信息(需要的是用户ID，Phone）
 // @Success 200 successfully
-// @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
+// @Failure 404 ID错误
+// @Failure 405 Phone错误
 // @router Enterprise/forgetPw [post]
 func (c *UserController) EnterpriseForgetPW() {
-
+	var Request struct {
+		ID string
+		Phone string
+	}
+	body := c.Ctx.Input.RequestBody
+	if err := json.Unmarshal(body,&Request); err!= nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
+	}
+	manager := models.Manager{ID: Request.ID, Phone:Request.Phone}
+	o := orm.NewOrm()
+	if err := o.Read(&manager); err != nil {
+		models.Log.Error("NewPW: fail to read", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到对应的ID
+		return
+	}
+	c.Data["json"] = manager
+	c.ServeJSON()
 }
 
 // @author: ml
@@ -237,9 +255,15 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 406 更新密码失败
 // @router Enterprise/ForgetPW/New [put]
 func (c *UserController) EnterpriseNewPW() {
+	body := c.Ctx.Input.RequestBody
 	var Request struct {
 		Phone string
 		Password string
+	}
+	if err := json.Unmarshal(body, &Request); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
+		return
 	}
 	manager := models.Manager{Phone: Request.Phone}
 	o := orm.NewOrm()

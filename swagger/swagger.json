@@ -131,8 +131,14 @@
                     "200": {
                         "description": ""
                     },
-                    "400/404": {
-                        "description": "json解析错误/卡不存在"
+                    "400": {
+                        "description": "解析Json失败"
+                    },
+                    "401": {
+                        "description": "没有登录"
+                    },
+                    "404": {
+                        "description": "卡不存在"
                     }
                 }
             }
@@ -474,7 +480,7 @@
                         "description": "用户信息(需要的是用户ID，原密码，新密码）",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions//"
                         }
                     }
                 ],
@@ -571,11 +577,11 @@
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "userInfo",
+                        "name": "enterpriseInfo",
                         "description": "用户信息(需要的是用户ID，新密码）",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Enterprise"
                         }
                     }
                 ],
@@ -665,31 +671,31 @@
                 "tags": [
                     "api/user"
                 ],
-                "description": "修改注册的商家信息",
-                "operationId": "UserController.",
+                "description": "修改注册的商家注册信息",
+                "operationId": "UserController.enterprise information modify",
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "userInfo",
-                        "description": "用户信息(需要的是用户ID，新密码）",
+                        "name": "enterpriseInfo",
+                        "description": "重新提交的商家注册信息",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Enterprise"
                         }
                     }
                 ],
                 "responses": {
                     "200": {
-                        "description": "Update successfully"
+                        "description": "Update成功"
                     },
                     "400": {
                         "description": "解析body失败"
                     },
                     "404": {
-                        "description": "数据库无此用户"
+                        "description": "数据库无此商铺"
                     },
                     "406": {
-                        "description": "更新密码失败"
+                        "description": "更新商铺信息失败"
                     }
                 }
             }
@@ -734,15 +740,14 @@
                     "api/user"
                 ],
                 "description": "change password",
-                "operationId": "UserController.changePW",
+                "operationId": "EnterpriseController.changePW",
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "userInfo",
-                        "description": "用户信息(需要的是用户ID，新密码）",
-                        "required": true,
+                        "name": "enterpriseInfo",
+                        "description": "用户信息(需要的是用户ID,原密码,新密码）",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/true"
                         }
                     }
                 ],
@@ -756,8 +761,8 @@
                     "404": {
                         "description": "数据库无此用户"
                     },
-                    "406": {
-                        "description": "更新密码失败"
+                    "500": {
+                        "description": "数据库更新密码失败"
                     }
                 }
             }
@@ -784,7 +789,7 @@
                     "200": {
                         "description": "\"OK\"",
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Enterprise"
                         }
                     },
                     "400": {
@@ -805,7 +810,7 @@
                     "api/user"
                 ],
                 "description": "商家登陆",
-                "operationId": "UserController.Login",
+                "operationId": "EnterpriseController.Login",
                 "parameters": [
                     {
                         "in": "body",
@@ -838,11 +843,11 @@
                     "api/user"
                 ],
                 "description": "显示所有优惠政策",
-                "operationId": "UserController.",
+                "operationId": "UserController.show all card type",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "eid",
+                        "name": "id",
                         "description": "商家ID",
                         "required": true,
                         "type": "string"
@@ -853,7 +858,7 @@
                         "description": ""
                     },
                     "404": {
-                        "description": "Fail to read"
+                        "description": "Fail to read enterpriseId"
                     }
                 }
             }
@@ -947,6 +952,10 @@
                 "Enterprise": {
                     "type": "string"
                 },
+                "ID": {
+                    "type": "integer",
+                    "format": "int64"
+                },
                 "State": {
                     "type": "string"
                 }
@@ -956,6 +965,9 @@
             "title": "Enterprise",
             "type": "object",
             "properties": {
+                "Addr": {
+                    "type": "string"
+                },
                 "HelpMsg": {
                     "type": "string"
                 },
@@ -963,22 +975,17 @@
                     "type": "string"
                 },
                 "IsLocal": {
-                    "type": "string"
+                    "type": "boolean"
                 },
                 "LicenseId": {
-                    "type": "string"
-                },
-                "ManagerId": {
                     "type": "string"
                 },
                 "Name": {
                     "type": "string"
                 },
-                "Password": {
-                    "type": "string"
-                },
                 "RegisterNum": {
-                    "type": "string"
+                    "type": "integer",
+                    "format": "int64"
                 },
                 "Type": {
                     "type": "string"
