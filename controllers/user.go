@@ -49,12 +49,8 @@ func (c *UserController) GetAllCard() {
 		return
 	}
 	var Response struct {
-		Status int	`json:"status"`
-		Msg	string `json:"msg"`
 		Data []models.Card	`json:"data"`
 	}
-	Response.Status = 200
-	Response.Msg = "success"
 	Response.Data = cardList
 	//使用json格式传输所有信息
 	c.Data["json"] = Response
