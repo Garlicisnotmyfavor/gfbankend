@@ -2,12 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	util "github.com/gfbankend/utils"
 	"fmt"
-
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	util "github.com/gfbankend/utils"
 	//util "github.com/gfbankend/utils"
 	//"io/ioutil"
 	//"path"
@@ -49,11 +48,18 @@ func (c *UserController) GetAllCard() {
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
+	var Response struct {
+		Status int	`json:"status"`
+		Msg	string `json:"msg"`
+		Data []models.Card	`json:"data"`
+	}
+	Response.Status = 200
+	Response.Msg = "success"
+	Response.Data = cardList
 	//使用json格式传输所有信息
-	c.Data["json"] = cardList
+	c.Data["json"] = Response
 	//发送json
 	c.ServeJSON()
-	c.Ctx.ResponseWriter.WriteHeader(200) //成功读取所有卡片
 }
 
 //得到头像
