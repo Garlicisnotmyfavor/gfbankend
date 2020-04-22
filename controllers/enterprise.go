@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"encoding/json"
-	_"fmt"
+	_ "fmt"
 	"github.com/astaxie/beego"
-	_ "github.com/pkg/errors"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	_ "github.com/pkg/errors"
 	//util "github.com/gfbankend/utils"
 	//"strconv"
 	//"strings"
