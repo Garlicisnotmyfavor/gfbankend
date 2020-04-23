@@ -48,12 +48,12 @@ func (c *UserController) GetAllCard() {
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
-	var Response struct {
-		Data []models.Card	`json:"data"`
-	}
-	Response.Data = cardList
+	//var Response struct {
+	//	Data []models.Card	`json:"data"`
+	//}
+	//Response.Data = cardList
 	//使用json格式传输所有信息
-	c.Data["json"] = Response
+	c.Data["json"] = cardList
 	//发送json
 	c.ServeJSON()
 }
