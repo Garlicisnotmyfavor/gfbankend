@@ -322,8 +322,8 @@ func (c *UserController) LoginWithCookie() {
 		c.Ctx.SetCookie("remember", "", -1)
 	}
 	// 自动获取cookie后经过信息检验登录成功,需重新设置该客户端中sessionid对应session
-	c.SetSession("userInfo", user)
 	c.Data["json"] = user
+	c.SetSession("userInfo", user)
 	c.ServeJSON()
 }
 
