@@ -59,27 +59,57 @@ func testData(){
 	container := []Card{
 		Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333002",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330015",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330016",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330017",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330018",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330019",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"1234567903330020",State:"Cambera",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333003",State:"Beijing",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333004",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333021",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333022",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333023",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333024",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333025",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333026",State:"Chengdu",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333005",State:"Guangzhou",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333006",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
-		Card{CardId:"123456790333007",State:"Hangzhou",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333027",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333028",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333029",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333030",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333031",State:"Foshan",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333032",State:"Hangzhou",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333008",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
-		Card{CardId:"123456790333009",State:"Shandong",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333033",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333034",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333035",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333036",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333037",State:"Shanghai",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333038",State:"Shandong",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333010",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
-		Card{CardId:"123456790333011",State:"Mianyang",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333039",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333040",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333041",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333042",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333043",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333044",State:"Xian",City:"San Jose",CardType:"RechargeDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333045",State:"Mianyang",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333012",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333046",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333047",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333048",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333049",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333050",State:"Changchun",City:"San Jose",CardType:"IntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333013",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
 		Card{CardId:"123456790333014",State:"Tokyo",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333051",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333052",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333053",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333054",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
+		Card{CardId:"123456790333055",State:"Nanjing",City:"San Jose",CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",ExpireTime:time.Now()},
 	}
-	// testCardData4 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData5 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Integrate",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData6 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData7 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Discount",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData8 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData9 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"Recharge",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData10 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()}
-	// testCardData11 := Card{CardId:"123456790333001",State:"California",City:"San Jose",CardType:"RechargeIntegral",Enterprise:"starbucks",ExpireTime:time.Now()}
 	testEnterpriseData1 := Enterprise{Id:"001",Name:"starbucks"}
 	testEnterpriseData2 := Enterprise{Id:"002",Name:"subway"}
 	o := orm.NewOrm()
