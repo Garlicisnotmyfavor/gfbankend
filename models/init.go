@@ -114,5 +114,8 @@ func testData(){
 	o := orm.NewOrm()
 	_, _ = o.Insert(&testEnterpriseData1)
 	_, _ = o.Insert(&testEnterpriseData2)
-	_, _ = o.InsertMulti(len(container), container)
+	for i:=0 ;i < len(container); i++ {
+		_,_ = o.Insert(&container[i])
+	}
+	fmt.Println(n)
 }
