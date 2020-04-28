@@ -117,5 +117,4 @@ func testData(){
 	for i:=0 ;i < len(container); i++ {
 		_,_ = o.Insert(&container[i])
 	}
-	fmt.Println(n)
 }
