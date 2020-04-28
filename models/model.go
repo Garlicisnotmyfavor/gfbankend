@@ -66,8 +66,8 @@ type User struct {
 	Tel        string `orm:"default('null')"`
 	Mail       string `orm:"default('null')"`
 	Password   string `valid:"Required"`
-	LoginMonth string `valid:"max(2)" `                      //注册月份
-	LoginYear  string `valid:"max(4)" `                      //注册年份
+	LoginMonth string `valid:"max(2)" orm:"default('null')"`                      //注册月份
+	LoginYear  string `valid:"max(4)" orm:"default('null')"`                      //注册年份
 	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
 }
 
