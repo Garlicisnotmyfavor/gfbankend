@@ -45,7 +45,7 @@ func init() {
 	//testData()
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
-	testData()
+	//testData()
 }
 
 func testData(){
