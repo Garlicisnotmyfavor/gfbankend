@@ -13,78 +13,78 @@ import (
 //结构体首字母要大写，小写的成员转化为json数据时会直接被忽略
 
 type Card struct {
-	CardId string `orm:"pk;size(16);default('null')" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
+	CardId string `orm:"pk;size(16);" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
 	// UserId      *User     `orm:"rel(fk)"`
-	UserId     string    `orm:"size(13);default('null')"`   //UserId是依据时间生成的，因为CardId中不包含UserId
-	CardType   string    `valid:"Required" orm:"default('null')"` //卡的类型
-	Enterprise string    `valid:"Required" orm:"default('null')"`
-	State      string    `valid:"Required" orm:"default('null')"`
-	City       string    `valid:"Required" orm:"default('null')"`
-	Money      int       `orm:"default(0)"`
-	Score      int       `orm:"default(0)"`
-	CouponsNum int       `orm:"default(0)"` //每一种种类的数量，数量与数量之间用空格隔开
-	Coupons    string    `orm:"default('null')"` //描述优惠的方法
-	ExpireTime time.Time `valid:"Required"`
+	UserId     string    `orm:"size(13);"`   //UserId是依据时间生成的，因为CardId中不包含UserId
+	CardType   string    `valid:"Required"` //卡的类型
+	Enterprise string    `valid:"Required"`
+	State      string    `valid:"Required"`
+	City       string    `valid:"Required"`
+	Money      int       
+	Score      int       
+	CouponsNum int     
+	Coupons    string    
+	ExpireTime time.Time `orm:"null"`
 	DelTime    time.Time `orm:"null"`
-	CardOrder  int       `valid:"Required" orm:"default(0)"` //该商家合作以来发布的第N条卡片
-	FactoryNum int       `valid:"Required" orm:"default(0)"`
-	BatchNum   int       `valid:"Required" orm:"default(0)"`
-	SerialNum  int       `valid:"Required" orm:"default(0)"`
+	CardOrder  int       `valid:"Required"` //该商家合作以来发布的第N条卡片
+	FactoryNum int       `valid:"Required"`
+	BatchNum   int       `valid:"Required"`
+	SerialNum  int       `valid:"Required"`
 }
 
 type CardDemo struct {
-	ID         int    `orm:"pk;auto;default(0)"`
-	CardType   string `valid:"Required" orm:"default('null')"`
-	Enterprise string `valid:"Required" orm:"default('null')"`
-	State      string `valid:"Required" orm:"default('null')"`
-	City       string `valid:"Required" orm:"default('null')"`
-	Coupons    string `orm:"null;default('null')"`
+	ID         int    `orm:"pk;auto;"`
+	CardType   string `valid:"Required"`
+	Enterprise string `valid:"Required"`
+	State      string `valid:"Required"`
+	City       string `valid:"Required"`
+	Coupons    string `orm:"null"`
 }
 
 type Enterprise struct {
-	Id          string `orm:"unique;default('null')"`
-	Addr        string `orm:"column(addr);default('null')"`
+	Id          string `orm:"unique"`
+	Addr        string `orm:"column(addr)"`
 	IsLocal     bool   `orm:"column(is_local)"`
-	Type        string `orm:"default('null')"`
-	RegisterNum int64  `orm:"column(register_num);default(0)"`
-	Name        string `orm:"pk;default('null')"`
-	HelpMsg     string `orm:"column(help_msg);default('null')"`
-	Website     string `orm:"default('null')"`
-	LicenseId   string `orm:"default('null')"`
+	Type        string 
+	RegisterNum int64  `orm:"column(register_num)"`
+	Name        string `orm:"pk"`
+	HelpMsg     string `orm:"column(help_msg)"`
+	Website     string 
+	LicenseId   string 
 }
 
 type Manager struct {
-	Name       string `orm:"default('null')"`//管理员名称
+	Name       string //管理员名称
 	ID         string `orm:"pk;column(id)"` //身份证号(保证唯一）
-	Enterprise string `orm:"default('null')"`//与企业关联, n..1关系
-	Phone      string `orm:"default('null')"`//手机号，登录用
-	Password   string `orm:"default('null')"`
+	Enterprise string //与企业关联, n..1关系
+	Phone      string //手机号，登录用
+	Password   string 
 }
 
 type User struct {
-	Id         string `orm:"pk;size(13);default('null')" valid:"Required"`
-	Tel        string `orm:"default('null')"`
-	Mail       string `orm:"default('null')"`
+	Id         string `orm:"pk;size(13)" valid:"Required"`
+	Tel        string 
+	Mail       string 
 	Password   string `valid:"Required"`
-	LoginMonth string `valid:"max(2)" orm:"default('null')"`                      //注册月份
-	LoginYear  string `valid:"max(4)" orm:"default('null')"`                      //注册年份
-	LoginNum   int    `valid:"MaxSize(6)" orm:"default(1)" ` //该月份所注册的第几个用户
+	LoginMonth string `valid:"max(2)"`                      //注册月份
+	LoginYear  string `valid:"max(4)"`                      //注册年份
+	LoginNum   int    `valid:"MaxSize(6)"` //该月份所注册的第几个用户
 }
 
 type Count struct {
-	Time string `valid:"max(7)" orm:"pk;default('null')"`
-	Num  int    `orm:"default(1)"`
+	Time string `valid:"max(7)" orm:"pk;"`
+	Num  int    
 }
 
 type EnterpriseCount struct {
-	Flag int `orm:"pk;default(1)"`
-	Num  int `orm:"default(0)"`
+	Flag int `orm:"pk;"`
+	Num  int 
 }
 
 type CardLog struct {
-	CardId  string	`orm:"pk;default('null')"`
+	CardId  string	`orm:"pk"`
 	Date    time.Time 
-	Operate string `orm:"default('null')"`//操作描述
+	Operate string //操作描述
 }
 
 //type DelCard struct {

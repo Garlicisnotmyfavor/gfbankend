@@ -154,8 +154,20 @@ func (c *CardController) AddCard() {
 	card.CardId = addinfo.CardID
 	//用创建的新卡号查询是否在数据库中存在
 	if err := o.Read(&card); err != nil {
-		models.Log.Error("not exist error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
+		// models.Log.Error("not exist error: ", err)
+		// c.Ctx.ResponseWriter.WriteHeader(404) //卡片不存在
+		card.Enterprise = addinfo.Enterprise
+		card.CardType = "Integrate"
+		card.UserId = userId
+		card.State = "empty"
+		card.City = "empty"
+		if _,err := o.Insert(&card); err!= nil {
+			models.Log.Error("insert database error: %s",err)
+			c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+			return
+		}
+		c.Data["json"] = card
+		c.ServeJSON()
 		return
 	}
 	if len(card.UserId) != 0 {
