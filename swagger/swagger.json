@@ -645,11 +645,11 @@
                 "parameters": [
                     {
                         "in": "body",
-                        "name": "userInfo",
-                        "description": "用户信息(需要的是用户ID，邮件）",
+                        "name": "enterpriseInfo",
+                        "description": "用户信息(需要的是用户ID，Phone）",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.User"
+                            "$ref": "#/definitions/models.Enterprise"
                         }
                     }
                 ],
@@ -661,7 +661,10 @@
                         "description": "解析body失败"
                     },
                     "404": {
-                        "description": "数据库无此用户"
+                        "description": "ID错误"
+                    },
+                    "405": {
+                        "description": "Phone错误"
                     }
                 }
             }
@@ -778,7 +781,7 @@
                     {
                         "in": "body",
                         "name": "EnterPriseInfo",
-                        "description": "注册信息",
+                        "description": "注册信息(商家名称name+营业执照号码license_id+地址Addr+商家类型type+是否为本地is_local+管理人名称manager_name+管理人身份证manager_id+手机号码phone+密码password",
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/models.Enterprise"
@@ -793,13 +796,10 @@
                         }
                     },
                     "400": {
-                        "description": "解析body错误"
-                    },
-                    "403": {
-                        "description": "数据库插入错误"
+                        "description": "信息有误"
                     },
                     "406": {
-                        "description": "账号信息格式有误"
+                        "description": "数据库加入错误"
                     }
                 }
             }
