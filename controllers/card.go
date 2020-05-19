@@ -7,9 +7,6 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
-
-	//"strconv"
-	//"strings"
 	"time"
 )
 

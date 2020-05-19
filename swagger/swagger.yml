@@ -251,6 +251,197 @@ paths:
           description: 插入数据库错误，返回值：错误信息{"msg":xxx}
         "406":
           description: 信息有误，详见返回值：错误信息{"msg":xxx}
+  /api/user/enterprise/{id}:
+    get:
+      tags:
+      - api/user
+      description: 显示所有优惠政策
+      operationId: UserController.show all card type
+      parameters:
+      - in: path
+        name: id
+        description: 商家ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: ""
+        "404":
+          description: Fail to read enterpriseId
+  /api/user/enterprise/NewCard:
+    put:
+      tags:
+      - api/user
+      description: 发布新的卡片
+      operationId: UserController.NewPassword
+      parameters:
+      - in: body
+        name: cardInfo
+        description: 用户类型,数量
+        required: true
+        schema:
+          $ref: '#/definitions/models.CardDemo'
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
+  /api/user/enterprise/enroll:
+    post:
+      tags:
+      - api/user
+      description: 商家注册
+      operationId: UserController.Register
+      parameters:
+      - in: body
+        name: EnterPriseInfo
+        description: 注册信息(商家名称name+营业执照号码license_id+地址Addr+商家类型type+是否为本地is_local+管理人名称manager_name+管理人身份证manager_id+手机号码phone+密码password
+        required: true
+        schema:
+          $ref: '#/definitions/models.Enterprise'
+      responses:
+        "200":
+          description: '"OK"'
+          schema:
+            $ref: '#/definitions/models.Enterprise'
+        "400":
+          description: 信息有误
+        "406":
+          description: 数据库加入错误
+  /api/user/enterprise/forgetpw:
+    post:
+      tags:
+      - api/user
+      description: Forget password
+      operationId: UserController.ForgetPW
+      parameters:
+      - in: body
+        name: enterpriseInfo
+        description: 用户信息(需要的是用户ID，Phone）
+        required: true
+        schema:
+          $ref: '#/definitions/models.Enterprise'
+      responses:
+        "200":
+          description: successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: ID错误
+        "405":
+          description: Phone错误
+  /api/user/enterprise/forgetpw/new:
+    put:
+      tags:
+      - api/user
+      description: 通过前面忘记密码的过程后，设置新的密码
+      operationId: UserController.NewPassword
+      parameters:
+      - in: body
+        name: enterpriseInfo
+        description: 用户信息(需要的是用户ID，新密码）
+        required: true
+        schema:
+          $ref: '#/definitions/models.Enterprise'
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
+  /api/user/enterprise/infomodify:
+    put:
+      tags:
+      - api/user
+      description: 修改注册的商家注册信息
+      operationId: UserController.enterprise information modify
+      parameters:
+      - in: body
+        name: enterpriseInfo
+        description: 重新提交的商家注册信息
+        required: true
+        schema:
+          $ref: '#/definitions/models.Enterprise'
+      responses:
+        "200":
+          description: Update成功
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此商铺
+        "406":
+          description: 更新商铺信息失败
+  /api/user/enterprise/login:
+    put:
+      tags:
+      - api/user
+      description: 商家登陆
+      operationId: EnterpriseController.Login
+      parameters:
+      - in: body
+        name: enterpriseInfo
+        description: account(string)+password(string)+accountType(string)为mail或者phone
+        schema:
+          $ref: '#/definitions/true'
+      responses:
+        "200":
+          description: Register successfully
+          schema:
+            $ref: '#/definitions/models.User'
+        "400":
+          description: 信息内容或格式有误
+        "406":
+          description: 数据库查询报错，可能用户所填账号或密码错误
+  /api/user/enterprise/newdemo:
+    put:
+      tags:
+      - api/user
+      description: 发布新的优惠政策
+      operationId: UserController.NewPassword
+      parameters:
+      - in: body
+        name: userInfo
+        description: 用户信息(需要的是用户ID，新密码）
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
+  /api/user/enterprise/password:
+    put:
+      tags:
+      - api/user
+      description: change password
+      operationId: EnterpriseController.changePW
+      parameters:
+      - in: body
+        name: enterpriseInfo
+        description: 用户信息(需要的是用户ID,原密码,新密码）
+        schema:
+          $ref: '#/definitions/true'
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "500":
+          description: 数据库更新密码失败
   /api/user/forgetPw:
     post:
       tags:
@@ -372,197 +563,6 @@ paths:
           description: 解析body失败
         "500":
           description: 发送邮件失败
-  /api/userEnterprise/ForgetPW/New:
-    put:
-      tags:
-      - api/user
-      description: 通过前面忘记密码的过程后，设置新的密码
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID，新密码）
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
-  /api/userEnterprise/NewCard:
-    put:
-      tags:
-      - api/user
-      description: 发布新的卡片
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: cardInfo
-        description: 用户类型,数量
-        required: true
-        schema:
-          $ref: '#/definitions/models.CardDemo'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
-  /api/userEnterprise/forgetPw:
-    post:
-      tags:
-      - api/user
-      description: Forget password
-      operationId: UserController.ForgetPW
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID，Phone）
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: ID错误
-        "405":
-          description: Phone错误
-  /api/userEnterprise/infomodify:
-    put:
-      tags:
-      - api/user
-      description: 修改注册的商家注册信息
-      operationId: UserController.enterprise information modify
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 重新提交的商家注册信息
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: Update成功
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此商铺
-        "406":
-          description: 更新商铺信息失败
-  /api/userEnterprise/newdemo:
-    put:
-      tags:
-      - api/user
-      description: 发布新的优惠政策
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: userInfo
-        description: 用户信息(需要的是用户ID，新密码）
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
-  /api/userEnterprise/password:
-    put:
-      tags:
-      - api/user
-      description: change password
-      operationId: EnterpriseController.changePW
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID,原密码,新密码）
-        schema:
-          $ref: '#/definitions/true'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "500":
-          description: 数据库更新密码失败
-  /api/userenterprise/{id}:
-    get:
-      tags:
-      - api/user
-      description: 显示所有优惠政策
-      operationId: UserController.show all card type
-      parameters:
-      - in: path
-        name: id
-        description: 商家ID
-        required: true
-        type: string
-      responses:
-        "200":
-          description: ""
-        "404":
-          description: Fail to read enterpriseId
-  /api/userenterprise/enroll:
-    post:
-      tags:
-      - api/user
-      description: 商家注册
-      operationId: UserController.Register
-      parameters:
-      - in: body
-        name: EnterPriseInfo
-        description: 注册信息(商家名称name+营业执照号码license_id+地址Addr+商家类型type+是否为本地is_local+管理人名称manager_name+管理人身份证manager_id+手机号码phone+密码password
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: '"OK"'
-          schema:
-            $ref: '#/definitions/models.Enterprise'
-        "400":
-          description: 信息有误
-        "406":
-          description: 数据库加入错误
-  /api/userenterprise/login:
-    put:
-      tags:
-      - api/user
-      description: 商家登陆
-      operationId: EnterpriseController.Login
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: account(string)+password(string)+accountType(string)为mail或者phone
-        schema:
-          $ref: '#/definitions/true'
-      responses:
-        "200":
-          description: Register successfully
-          schema:
-            $ref: '#/definitions/models.User'
-        "400":
-          description: 信息内容或格式有误
-        "406":
-          description: 数据库查询报错，可能用户所填账号或密码错误
 definitions:
   /:
     title: /

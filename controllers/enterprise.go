@@ -7,10 +7,6 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
-	//util "github.com/gfbankend/utils"
-	//"strconv"
-	//"strings"
-	//"time"
 )
 
 type EnterpriseController struct {
@@ -23,7 +19,7 @@ type EnterpriseController struct {
 // @Param id	path	string	true 商家ID
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
-// @router enterprise/:id [get]
+// @router /enterprise/:id [get]
 func (c *UserController) AllCarddemo() {
 	//查看session的操作
 	//if c.GetSession("userInfo") == nil {
@@ -59,7 +55,7 @@ func (c *UserController) AllCarddemo() {
 // @Success 200 {object} models.Enterprise "OK"
 // @Failure 400 信息有误
 // @Failure 406 数据库加入错误
-// @router enterprise/enroll [post]
+// @router /enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
 	var Request struct {
 		// Enterprise Info
@@ -130,15 +126,15 @@ func (c *UserController) EnterpriseEnroll() {
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
-// @router enterprise/login [put]
+// @router /enterprise/login [put]
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
 	manager := models.Manager{}
 	body := c.Ctx.Input.RequestBody
 	var eInfo struct {
-		Account    string
-		Password   string
-		Remember   bool
+		Account    string	`json:"account"`
+		Password   string	`json:"password"`
+		Remember   bool		`json:"remember"`
 	}
 	if err := json.Unmarshal(body,&eInfo); err != nil {
 		models.Log.Error("Unmarshal error: ",err)
@@ -159,9 +155,14 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.SetSecureCookie("miller", "password", eInfo.Password)
 		c.Ctx.SetCookie("remember", "true")
 	}
+	// 设置Access-Control-Allow-Origin: * 允许跨域，暂定 "*" （不安全）
+	originHeader := c.Ctx.Input.Header("Origin")
+	if len(originHeader) != 0 {
+		c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
+		c.Ctx.Output.Header("Access-Control-Allow-Credentials", "true")
+	}
 	c.SetSession("managerInfo", manager) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
-
 }
 
 // @author: zyj
@@ -172,7 +173,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 500 数据库更新密码失败
-// @router Enterprise/password [put]
+// @router /enterprise/password [put]
 func (c *EnterpriseController) EnterpriseChangePW() {
 	if c.GetSession("managerInfo") == nil {
 		models.Log.Error("no login")
@@ -222,7 +223,7 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @Failure 400 解析body失败
 // @Failure 404 ID错误
 // @Failure 405 Phone错误
-// @router Enterprise/forgetPw [post]
+// @router /enterprise/forgetpw [post]
 func (c *UserController) EnterpriseForgetPW() {
 	var Request struct {
 		ID string
@@ -253,7 +254,7 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router Enterprise/ForgetPW/New [put]
+// @router /enterprise/forgetpw/new [put]
 func (c *UserController) EnterpriseNewPW() {
 	body := c.Ctx.Input.RequestBody
 	var Request struct {
@@ -290,7 +291,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
-// @router Enterprise/infomodify [put]
+// @router /enterprise/infomodify [put]
 func (c *UserController) EnterpriseInfomodify() {
 	body := c.Ctx.Input.RequestBody
 	var enterprise models.Enterprise
@@ -322,7 +323,7 @@ func (c *UserController) EnterpriseInfomodify() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router Enterprise/newdemo [put]
+// @router /enterprise/newdemo [put]
 func (c *UserController) EnterpriseNewDemo() {
 
 }
@@ -335,7 +336,7 @@ func (c *UserController) EnterpriseNewDemo() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router Enterprise/NewCard [put]
+// @router /enterprise/NewCard [put]
 func (c *UserController) EnterpriseNewCard() {
 
 }

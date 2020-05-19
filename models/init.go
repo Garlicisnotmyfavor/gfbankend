@@ -8,7 +8,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"os"
 	"time"
-	//"github.com/gfbankend/models"
 )
 
 var Log *logs.BeeLogger = logs.NewLogger(10000) //定义日志Log，因为需要在整个project用到，所以需要定义为全局
@@ -111,6 +110,8 @@ func testData(){
 	}
 	testEnterpriseData1 := Enterprise{Id:"001",Name:"starbucks",Addr:"empty",IsLocal:false,Type:"empty",HelpMsg:"empty",Website:"empty",LicenseId:"empty"}
 	testEnterpriseData2 := Enterprise{Id:"002",Name:"subway",Addr:"empty",IsLocal:false,Type:"empty",HelpMsg:"empty",Website:"empty",LicenseId:"empty"}
+
+	ecount := EnterpriseCount{Flag: 1, Num: 0}
 	o := orm.NewOrm()
 	o.Insert(&testUserData1)
 	o.Insert(&testUserData2)
@@ -119,8 +120,11 @@ func testData(){
 	o.Insert(&testCardData1)
 	o.Insert(&testCardData2)
 	o.Insert(&testCardData3)
+
 	_, _ = o.Insert(&testEnterpriseData1)
 	_, _ = o.Insert(&testEnterpriseData2)
+
+	_,_ = o.Insert(&ecount)
 	for i:=0 ;i < len(container); i++ {
 		_,_ = o.Insert(&container[i])
 	}
