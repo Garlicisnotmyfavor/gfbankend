@@ -387,7 +387,7 @@ paths:
       parameters:
       - in: body
         name: enterpriseInfo
-        description: account(string)+password(string)+accountType(string)为mail或者phone
+        description: account(string)+password(string)+remember(bool)
         schema:
           $ref: '#/definitions/true'
       responses:
