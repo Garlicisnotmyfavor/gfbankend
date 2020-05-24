@@ -156,19 +156,16 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.SetCookie("remember", "true")
 	}
 	// originHeader := c.Ctx.Input.Header("Origin")
-	c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
+	// c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 	c.SetSession("managerInfo", manager) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
 }
 // @author: zyj
-// @Title Login
-// @Description 商家登陆
-// @Param enterpriseInfo body true account(string)+password(string)+accountType(string)为mail或者phone
-// @Success 200 {object} models.User Register successfully
-// @Failure 406 数据库查询报错，可能用户所填账号或密码错误
-// @Failure 400 信息内容或格式有误
+// @Title Check
+// @Description Check across
+// @Success 200
 // @router /enterprise/login [options]
-func (c *EnterpriseController) checkAcross() {
+func (c *EnterpriseController) CheckAcross() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 // @author: zyj
