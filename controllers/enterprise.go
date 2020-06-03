@@ -131,6 +131,7 @@ func (c *UserController) EnterpriseEnroll() {
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
 // @router enterprise/login [put]
+// 要返回管理员管理的企业的信息
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
 	manager := models.Manager{}
@@ -282,6 +283,8 @@ func (c *UserController) EnterpriseNewPW() {
 	c.ServeJSON()
 }
 
+// zyj
+// ***************
 // @author:zjn
 // @Title enterprise information modify
 // @Description  修改注册的商家注册信息
@@ -291,6 +294,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
 // @router Enterprise/infomodify [put]
+// 加上修改管理员信息
 func (c *UserController) EnterpriseInfomodify() {
 	body := c.Ctx.Input.RequestBody
 	var enterprise models.Enterprise
@@ -314,6 +318,7 @@ func (c *UserController) EnterpriseInfomodify() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
+// zyj
 // @author:
 // @Title NewPassword
 // @Description  发布新的优惠政策
@@ -327,15 +332,81 @@ func (c *UserController) EnterpriseNewDemo() {
 
 }
 
-// @author:
-// @Title NewPassword
-// @Description  发布新的卡片
-// @Param  cardInfo body models.CardDemo true 用户类型,数量
-// @Success 200 Update successfully
-// @Failure 404 数据库无此用户
-// @Failure 400 解析body失败
-// @Failure 406 更新密码失败
-// @router Enterprise/NewCard [put]
-func (c *UserController) EnterpriseNewCard() {
+// // @author:
+// // @Title NewPassword
+// // @Description  发布新的卡片
+// // @Param  cardInfo body models.CardDemo true 用户类型,数量
+// // @Success 200 Update successfully
+// // @Failure 404 数据库无此用户
+// // @Failure 400 解析body失败
+// // @Failure 406 更新密码失败
+// // @router Enterprise/NewCard [put]
+// // 前端给予活动的标题、卡片的类型、活动的内容、展示在卡片详细信息页面的背景图、活动描述，有效期，后端增加CardDemo
+// func (c *UserController) EnterpriseNewCard() {
+
+// }
+
+// @author: zjn
+// @Title addUser
+// @Description  商家增加一个某张已发售卡片的用户
+// @Param  
+// @Success 
+// @Failure 
+// @router 
+func (c *UserController) addUser() {
 
 }
+
+// @author: zjn
+// @Title deleteUser
+// @Description  商家删除一个某张已发售卡片的用户
+// @Param  
+// @Success 
+// @Failure 
+// @router 
+func (c *UserController) deleteUser() {
+
+}
+
+// @author: zjn
+// @Title readUser
+// @Description  商家查询某张已发售卡片的用户
+// @Param  
+// @Success 
+// @Failure 
+// @router 
+// 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
+func (c *UserController) readUser() {
+
+}
+
+// ml
+// @Title readActivity
+// @Description  查询活动
+// @Param 
+// @Success 200 
+// @Failure 
+// @router 
+// 前端给卡的类型，后端返回相应卡类型的CardDemo
+func (c *UserController) readActivity() {
+
+}
+
+// ml
+// @author:
+// @Title readAllActivities
+// @Description  查看所有优惠活动
+// @Param  
+// @Success 
+// @Failure 
+// @router 
+// 返回所有cardDemo
+func (c *UserController) readAllActivities() {
+
+}
+
+
+
+
+
+

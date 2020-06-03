@@ -195,6 +195,20 @@ func (c *CardController) AddCard() {
 	c.ServeJSON()
 }
 
+// lj
+// @Title getCard
+// @Description 领取新的卡片
+// @Param 
+// @Success 200 
+// @Failure 
+// @router
+// 用户领取某种类型的卡片，前端给卡号，卡的类型，企业名称
+func (c *CardController) getCard() {
+
+}
+
+
+
 //修改卡片的id和公司名--我们认为不需要这个
 //ml
 //@Title ModifyCardInfo
