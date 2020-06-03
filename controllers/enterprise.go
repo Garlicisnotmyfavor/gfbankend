@@ -7,10 +7,6 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
-	//util "github.com/gfbankend/utils"
-	//"strconv"
-	//"strings"
-	//"time"
 )
 
 type EnterpriseController struct {
@@ -23,7 +19,7 @@ type EnterpriseController struct {
 // @Param id	path	string	true 商家ID
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
-// @router enterprise/:id [get]
+// @router /enterprise/:id [get]
 func (c *UserController) AllCarddemo() {
 	//查看session的操作
 	//if c.GetSession("userInfo") == nil {
@@ -59,7 +55,7 @@ func (c *UserController) AllCarddemo() {
 // @Success 200 {object} models.Enterprise "OK"
 // @Failure 400 信息有误
 // @Failure 406 数据库加入错误
-// @router enterprise/enroll [post]
+// @router /enterprise/enroll [post]
 func (c *UserController) EnterpriseEnroll() {
 	var Request struct {
 		// Enterprise Info
@@ -126,20 +122,24 @@ func (c *UserController) EnterpriseEnroll() {
 // @author: zyj
 // @Title Login
 // @Description 商家登陆
-// @Param enterpriseInfo body true account(string)+password(string)+accountType(string)为mail或者phone
+// @Param enterpriseInfo body true account(string)+password(string)+remember(bool)
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
+<<<<<<< HEAD
 // @router enterprise/login [put]
 // 要返回管理员管理的企业的信息
+=======
+// @router /enterprise/login [put]
+>>>>>>> 332ce9c0f8bde99c7c32c53b63c925e1b5e7eec8
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
 	manager := models.Manager{}
 	body := c.Ctx.Input.RequestBody
 	var eInfo struct {
-		Account    string
-		Password   string
-		Remember   bool
+		Account    string	`json:"account"`
+		Password   string	`json:"password"`
+		Remember   bool		`json:"remember"`
 	}
 	if err := json.Unmarshal(body,&eInfo); err != nil {
 		models.Log.Error("Unmarshal error: ",err)
@@ -160,11 +160,19 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.SetSecureCookie("miller", "password", eInfo.Password)
 		c.Ctx.SetCookie("remember", "true")
 	}
+	// originHeader := c.Ctx.Input.Header("Origin")
+	// c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 	c.SetSession("managerInfo", manager) // 登录成功，设置session
 	c.ServeJSON()                  // 传用户对象给前端
-
 }
-
+// @author: zyj
+// @Title Check
+// @Description Check across
+// @Success 200
+// @router /enterprise/login [options]
+func (c *EnterpriseController) CheckAcross() {
+	c.Ctx.ResponseWriter.WriteHeader(200)
+}
 // @author: zyj
 // @Title changePW
 // @Description change password
@@ -173,7 +181,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 500 数据库更新密码失败
-// @router Enterprise/password [put]
+// @router /enterprise/password [put]
 func (c *EnterpriseController) EnterpriseChangePW() {
 	if c.GetSession("managerInfo") == nil {
 		models.Log.Error("no login")
@@ -223,7 +231,7 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @Failure 400 解析body失败
 // @Failure 404 ID错误
 // @Failure 405 Phone错误
-// @router Enterprise/forgetPw [post]
+// @router /enterprise/forgetpw [post]
 func (c *UserController) EnterpriseForgetPW() {
 	var Request struct {
 		ID string
@@ -254,7 +262,7 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router Enterprise/ForgetPW/New [put]
+// @router /enterprise/forgetpw/new [put]
 func (c *UserController) EnterpriseNewPW() {
 	body := c.Ctx.Input.RequestBody
 	var Request struct {
@@ -293,8 +301,12 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
+<<<<<<< HEAD
 // @router Enterprise/infomodify [put]
 // 加上修改管理员信息
+=======
+// @router /enterprise/infomodify [put]
+>>>>>>> 332ce9c0f8bde99c7c32c53b63c925e1b5e7eec8
 func (c *UserController) EnterpriseInfomodify() {
 	body := c.Ctx.Input.RequestBody
 	var enterprise models.Enterprise
@@ -327,7 +339,7 @@ func (c *UserController) EnterpriseInfomodify() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router Enterprise/newdemo [put]
+// @router /enterprise/newdemo [put]
 func (c *UserController) EnterpriseNewDemo() {
 
 }
