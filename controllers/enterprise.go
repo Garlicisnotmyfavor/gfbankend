@@ -20,7 +20,7 @@ type EnterpriseController struct {
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
 // @router /enterprise/:id [get]
-func (c *UserController) AllCarddemo() {
+func (c *UserController) AllCardDemo() {
 	//查看session的操作
 	//if c.GetSession("userInfo") == nil {
 	//	models.Log.Error("no login")
@@ -111,7 +111,7 @@ func (c *UserController) EnterpriseEnroll() {
 	}
 	var Response struct {
 		Enterprise models.Enterprise `json:"enterprise"`
-		Manager models.Manager `json:"manager"`
+		Manager    models.Manager    `json:"manager"`
 	}
 	Response.Manager = manager
 	Response.Enterprise = enterprise
@@ -126,25 +126,25 @@ func (c *UserController) EnterpriseEnroll() {
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
-// @router enterprise/login [put]
+// @router /enterprise/login [put]
 // 要返回管理员管理的企业的信息
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
 	manager := models.Manager{}
 	body := c.Ctx.Input.RequestBody
 	var eInfo struct {
-		Account    string	`json:"account"`
-		Password   string	`json:"password"`
-		Remember   bool		`json:"remember"`
+		Account  string `json:"account"`
+		Password string `json:"password"`
+		Remember bool   `json:"remember"`
 	}
-	if err := json.Unmarshal(body,&eInfo); err != nil {
-		models.Log.Error("Unmarshal error: ",err)
+	if err := json.Unmarshal(body, &eInfo); err != nil {
+		models.Log.Error("Unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
 	manager.ID = eInfo.Account
 	manager.Password = eInfo.Password
-	if err:= o.Read(&manager,"id","password");err!=nil{
+	if err := o.Read(&manager, "id", "password"); err != nil {
 		models.Log.Error("login error: auth fail")
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
@@ -159,8 +159,9 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	// originHeader := c.Ctx.Input.Header("Origin")
 	// c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 	c.SetSession("managerInfo", manager) // 登录成功，设置session
-	c.ServeJSON()                  // 传用户对象给前端
+	c.ServeJSON()                        // 传用户对象给前端
 }
+
 // @author: zyj
 // @Title Check
 // @Description Check across
@@ -169,6 +170,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 func (c *EnterpriseController) CheckAcross() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
+
 // @author: zyj
 // @Title changePW
 // @Description change password
@@ -185,19 +187,19 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 		return
 	}
 	var manager struct {
-		Id          string
-		OldPassword string
-		NewPassword string
+		Id          string `json:"id"`
+		OldPassword string `json:"old_password"`
+		NewPassword string `json:"new_password"`
 	}
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body,&manager); err!= nil{
+	if err := json.Unmarshal(body, &manager); err != nil {
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
 	o := orm.NewOrm()
-	man := models.Manager{ID:manager.Id}
-	if err := o.Read(&man);err!=nil{
+	man := models.Manager{ID: manager.Id}
+	if err := o.Read(&man); err != nil {
 		models.Log.Error("read error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
 		return
@@ -227,19 +229,19 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @Failure 400 解析body失败
 // @Failure 404 ID错误
 // @Failure 405 Phone错误
-// @router /enterprise/forgetpw [post]
+// @router /enterprise/password [post]
 func (c *UserController) EnterpriseForgetPW() {
 	var Request struct {
-		ID string
-		Phone string
+		ID    string	`json:"id"`
+		Phone string	`json:"phone"`
 	}
 	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body,&Request); err!= nil {
+	if err := json.Unmarshal(body, &Request); err != nil {
 		models.Log.Error("unmarshal error: ", err)
 		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
 		return
 	}
-	manager := models.Manager{ID: Request.ID, Phone:Request.Phone}
+	manager := models.Manager{ID: Request.ID, Phone: Request.Phone}
 	o := orm.NewOrm()
 	if err := o.Read(&manager); err != nil {
 		models.Log.Error("NewPW: fail to read", err)
@@ -258,12 +260,12 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router /enterprise/forgetpw/new [put]
+// @router /enterprise/password/new [put]
 func (c *UserController) EnterpriseNewPW() {
 	body := c.Ctx.Input.RequestBody
 	var Request struct {
-		Phone string
-		Password string
+		Phone    string `json:"phone"`
+		Password string `json:"password"`
 	}
 	if err := json.Unmarshal(body, &Request); err != nil {
 		models.Log.Error("unmarshal error: ", err)
@@ -278,7 +280,7 @@ func (c *UserController) EnterpriseNewPW() {
 		return
 	}
 	manager.Password = Request.Password
-	if _,err := o.Update(&manager); err != nil {
+	if _, err := o.Update(&manager); err != nil {
 		models.Log.Error("NewPW: fail to update", err)
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
@@ -297,9 +299,9 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
-// @router Enterprise/infomodify [put]
+// @router /enterprise/info [put]
 // 加上修改管理员信息
-func (c *UserController) EnterpriseInfomodify() {
+func (c *UserController) EnterpriseInfoModify() {
 	body := c.Ctx.Input.RequestBody
 	var enterprise models.Enterprise
 	var newenterprise models.Enterprise
@@ -331,7 +333,7 @@ func (c *UserController) EnterpriseInfomodify() {
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
-// @router /enterprise/newdemo [put]
+// @router /enterprise/card [put]
 func (c *UserController) EnterpriseNewDemo() {
 
 }
@@ -344,7 +346,7 @@ func (c *UserController) EnterpriseNewDemo() {
 // // @Failure 404 数据库无此用户
 // // @Failure 400 解析body失败
 // // @Failure 406 更新密码失败
-// // @router Enterprise/NewCard [put]
+// // @router /enterprise/card [put]
 // // 前端给予活动的标题、卡片的类型、活动的内容、展示在卡片详细信息页面的背景图、活动描述，有效期，后端增加CardDemo
 // func (c *UserController) EnterpriseNewCard() {
 
@@ -357,7 +359,7 @@ func (c *UserController) EnterpriseNewDemo() {
 // @Success 
 // @Failure 
 // @router 
-func (c *UserController) addUser() {
+func (c *UserController) AddUser() {
 
 }
 
@@ -368,7 +370,7 @@ func (c *UserController) addUser() {
 // @Success 
 // @Failure 
 // @router 
-func (c *UserController) deleteUser() {
+func (c *UserController) DeleteUser() {
 
 }
 
@@ -380,37 +382,68 @@ func (c *UserController) deleteUser() {
 // @Failure 
 // @router 
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
-func (c *UserController) readUser() {
+func (c *UserController) ReadUser() {
 
 }
 
 // ml
 // @Title readActivity
 // @Description  查询活动
-// @Param 
+// @Param enterprise body string true 企业名称
+// @Param card_type body string true 卡片类型
 // @Success 200 
-// @Failure 
-// @router 
-// 前端给卡的类型，后端返回相应卡类型的CardDemo
-func (c *UserController) readActivity() {
-
+// @Failure 400 请求格式出错
+// @Failure 503 读取数据库发生错误（服务器端可能有问题）
+// @router /enterprise/activity [put]
+func (c *UserController) ReadActivity() {
+	body := c.Ctx.Input.RequestBody
+	// 通过商家、卡片类型查询相关活动
+	var Req struct {
+		Enterprise string `json:"enterprise"`
+		CardType   string `json:"card_type"`
+	}
+	if err := json.Unmarshal(body, &Req); err != nil {
+		models.Log.Error("readActivity unmarshall error:", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	var Activities []models.CardDemo
+	qt := orm.NewOrm().QueryTable("card_demo")
+	cond := orm.NewCondition()
+	//  查询企业名称和类型都匹配的数据
+	cond1 := cond.And("enterprise__iexact", Req.Enterprise).And("card_type__iexact", Req.CardType)
+	if _, err := qt.SetCond(cond1).All(&Activities);
+		err != nil {
+		models.Log.Error("readActivity query error:", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	// 设置回复
+	var Resp struct {
+		Activity interface{} `json:"activity"`
+	}
+	Resp.Activity = Activities
+	c.Data["json"] = Resp
+	c.ServeJSON()
 }
 
-// ml
-// @author:
+// @author:ml
 // @Title readAllActivities
 // @Description  查看所有优惠活动
-// @Param  
-// @Success 
-// @Failure 
-// @router 
+// @Success 200 请求成功，返回所以活动
+// @Failure 503 读取数据库出错(可能服务器端数据库出错)
+// @router /enterprise/activity [get]
 // 返回所有cardDemo
-func (c *UserController) readAllActivities() {
-
+func (c *UserController) ReadAllActivities() {
+	var Resp struct {
+		Activities	[]models.CardDemo	`json:"activities"`
+	}
+	qt := orm.NewOrm().QueryTable("card_demo")
+	if _, err := qt.All(&Resp.Activities); err != nil {
+		models.Log.Error("ReadAllActivities query error:",err);
+		c.Ctx.ResponseWriter.WriteHeader(503)
+		return
+	}
+	c.Data["json"] = Resp
+	c.ServeJSON()
 }
-
-
-
-
-
-
