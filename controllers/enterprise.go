@@ -126,12 +126,8 @@ func (c *UserController) EnterpriseEnroll() {
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
-<<<<<<< HEAD
 // @router enterprise/login [put]
 // 要返回管理员管理的企业的信息
-=======
-// @router /enterprise/login [put]
->>>>>>> 332ce9c0f8bde99c7c32c53b63c925e1b5e7eec8
 func (c *EnterpriseController) EnterpriseLogin() {
 	o := orm.NewOrm()
 	manager := models.Manager{}
@@ -301,12 +297,8 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
-<<<<<<< HEAD
 // @router Enterprise/infomodify [put]
 // 加上修改管理员信息
-=======
-// @router /enterprise/infomodify [put]
->>>>>>> 332ce9c0f8bde99c7c32c53b63c925e1b5e7eec8
 func (c *UserController) EnterpriseInfomodify() {
 	body := c.Ctx.Input.RequestBody
 	var enterprise models.Enterprise
