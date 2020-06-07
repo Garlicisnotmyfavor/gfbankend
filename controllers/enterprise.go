@@ -7,6 +7,7 @@ import (
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
+	"os"
 )
 
 type EnterpriseController struct {
@@ -20,7 +21,7 @@ type EnterpriseController struct {
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
 // @router /enterprise/:id [get]
-func (c *UserController) AllCardDemo() {
+func (c *EnterpriseController) AllCardDemo() {
 	//查看session的操作
 	//if c.GetSession("userInfo") == nil {
 	//	models.Log.Error("no login")
@@ -56,7 +57,7 @@ func (c *UserController) AllCardDemo() {
 // @Failure 400 信息有误
 // @Failure 406 数据库加入错误
 // @router /enterprise/enroll [post]
-func (c *UserController) EnterpriseEnroll() {
+func (c *EnterpriseController) EnterpriseEnroll() {
 	var Request struct {
 		// Enterprise Info
 		Name      string `json:"name"`
@@ -167,9 +168,9 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @Description Check across
 // @Success 200
 // @router /enterprise/login [options]
-func (c *EnterpriseController) CheckAcross() {
-	c.Ctx.ResponseWriter.WriteHeader(200)
-}
+//func (c *EnterpriseController) CheckAcross() {
+//	c.Ctx.ResponseWriter.WriteHeader(200)
+//}
 
 // @author: zyj
 // @Title changePW
@@ -261,7 +262,7 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
 // @router /enterprise/password/new [put]
-func (c *UserController) EnterpriseNewPW() {
+func (c *EnterpriseController) EnterpriseNewPW() {
 	body := c.Ctx.Input.RequestBody
 	var Request struct {
 		Phone    string `json:"phone"`
@@ -294,30 +295,57 @@ func (c *UserController) EnterpriseNewPW() {
 // @author:zjn
 // @Title enterprise information modify
 // @Description  修改注册的商家注册信息
-// @Param enterpriseInfo body models.Enterprise true 重新提交的商家注册信息
-// @Success 200 Update成功
+// @Param enterpriseInfo body  重新提交的商家注册信息,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+// @Success 200 Update Successfully
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
 // @Failure 406 更新商铺信息失败
-// @router /enterprise/info [put]
+// @Failure 407 创建base64文件失败
+// @Failure 408 关闭base64文件失败
+// @router /enterprise/modifyInfo [put]
 // 加上修改管理员信息
-func (c *UserController) EnterpriseInfoModify() {
+func (c *EnterpriseController) EnterpriseInfoModify() {
 	body := c.Ctx.Input.RequestBody
-	var enterprise models.Enterprise
-	var newenterprise models.Enterprise
-	if err := json.Unmarshal(body, &enterprise); err != nil {
-		models.Log.Error("Enterprise enroll: wrong json")
+	var newInfo struct {
+		Enterprise models.Enterprise `json:"enterprise"`
+		Manager    models.Manager    `json:"manager"`
+		Base64     string            `json:"base64"`
+	}
+	if err := json.Unmarshal(body, &newInfo); err != nil {
+		models.Log.Error("wrong json")
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
+	enterprise := newInfo.Enterprise
+	enterpriseId := newInfo.Enterprise.Id
+	manager := newInfo.Manager
+	base64 := newInfo.Base64
+	path := "../static/base64/" + enterpriseId + ".txt"
+	if f,err := os.Create(path); err != nil {
+		models.Log.Error(" fail to create the file",err)
+		c.Ctx.ResponseWriter.WriteHeader(407)
+		return
+	} else {
+		content := []byte(base64)
+		if _,err := f.Write(content); err != nil {
+			models.Log.Error(" fail to write base64 to the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(407)
+			return
+		}
+		if err := f.Close() ; err != nil {
+			models.Log.Error(" fail to close the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(408)
+			return
+		}
+	}
 	o := orm.NewOrm()
-	if err := o.Read(&newenterprise); err != nil {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到对于商铺的信息
+	if _, err := o.Update(&enterprise); err != nil {
+		models.Log.Error(" fail to update enterprise",err)
+		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	if _, err := o.Update(&enterprise); err != nil {
-		models.Log.Error("Enterprise enroll: fail to update")
+	if _, err := o.Update(&manager); err != nil {
+		models.Log.Error(" fail to update manager")
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
@@ -326,16 +354,87 @@ func (c *UserController) EnterpriseInfoModify() {
 
 // zyj
 // @author:
-// @Title NewPassword
-// @Description  发布新的优惠政策
-// @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
-// @Success 200 Update successfully
-// @Failure 404 数据库无此用户
+// @Title return the enterprise information
+// @Description  返回商家具体信息以及管理员信息 打包在一个json内，分别用enterprise和managerList两个key取得
+// @Param enterpriseId 商家ID
+// @Success 200 Return Successfully
+// @Failure 404 数据库无此商家
+// @Failure 404 读取管理员失败
 // @Failure 400 解析body失败
-// @Failure 406 更新密码失败
-// @router /enterprise/card [put]
-func (c *UserController) EnterpriseNewDemo() {
+// @router /enterprise/:id [get]
+func (c *EnterpriseController) EnterpriseInfo(){
+	eid := c.Ctx.Input.Param(":id")
+	var enterprise models.Enterprise
+	enterprise.Id = eid
+	o := orm.NewOrm()
+	if err := o.Read(enterprise); err != nil {
+		models.Log.Error("read enterprise error ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
+		return
+	}
+	var managerList []models.Manager
+	qt := o.QueryTable("manager")
+	_, err := qt.Filter("enterprise__exact", eid).All(&managerList)
+	if err != nil {
+		models.Log.Error("read manager error", err) //读取用户卡片信息失败
+		c.Ctx.ResponseWriter.WriteHeader(405)
+		return
+	}
+	var ret struct{
+		Enterprise models.Enterprise `json:"enterprise"`
+		ManagerList []models.Manager `json:"managerList"`
+	}
+	ret.Enterprise = enterprise
+	ret.ManagerList = managerList
+	c.Data["json"] = ret
+	c.ServeJSON()
+}
 
+// zyj
+// @author:
+// @Title put New Card
+// @Description  发布新的卡片
+// @Param  cardInfo body 卡片基本信息
+// @Success 200 put successfully
+// @Failure 400 解析body失败
+// @Failure 405 插入数据失败
+// @router /enterprise/card [put]
+func (c *EnterpriseController) EnterpriseNewDemo() {
+	body := c.Ctx.Input.RequestBody
+	var cardInfo struct {
+		CardDemo   models.CardDemo   `json:"cardDemo"`
+		Base64     string            `json:"backgroundBase64"`
+	}
+	if err := json.Unmarshal(body, &cardInfo); err != nil {
+		models.Log.Error("wrong json")
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	o := orm.NewOrm()
+	if _,err := o.Insert(&cardInfo.CardDemo); err!= nil {
+		models.Log.Error("insert database error: %s",err)
+		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+		return
+	}
+	path := "../static/base64/" + string(cardInfo.CardDemo.ID) + ".txt"
+	if f,err := os.Create(path); err != nil {
+		models.Log.Error(" fail to create the file",err)
+		c.Ctx.ResponseWriter.WriteHeader(407)
+		return
+	} else {
+		content := []byte(cardInfo.Base64)
+		if _,err := f.Write(content); err != nil {
+			models.Log.Error(" fail to write base64 to the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(407)
+			return
+		}
+		if err := f.Close() ; err != nil {
+			models.Log.Error(" fail to close the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(408)
+			return
+		}
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // // @author:
@@ -359,7 +458,7 @@ func (c *UserController) EnterpriseNewDemo() {
 // @Success 
 // @Failure 
 // @router 
-func (c *UserController) AddUser() {
+func (c *EnterpriseController) AddUser() {
 
 }
 
@@ -370,7 +469,7 @@ func (c *UserController) AddUser() {
 // @Success 
 // @Failure 
 // @router 
-func (c *UserController) DeleteUser() {
+func (c *EnterpriseController) DeleteUser() {
 
 }
 
@@ -382,7 +481,7 @@ func (c *UserController) DeleteUser() {
 // @Failure 
 // @router 
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
-func (c *UserController) ReadUser() {
+func (c *EnterpriseController) ReadUser() {
 
 }
 
@@ -440,7 +539,7 @@ func (c *UserController) ReadAllActivities() {
 	}
 	qt := orm.NewOrm().QueryTable("card_demo")
 	if _, err := qt.All(&Resp.Activities); err != nil {
-		models.Log.Error("ReadAllActivities query error:",err);
+		models.Log.Error("ReadAllActivities query error:",err)
 		c.Ctx.ResponseWriter.WriteHeader(503)
 		return
 	}

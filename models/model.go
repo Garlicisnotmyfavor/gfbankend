@@ -41,7 +41,6 @@ type CardDemo struct {
 	State      string `valid:"Required"`
 	City       string `valid:"Required"`
 	Coupons    string `orm:"null"`
-	Background string `orm:"null"`
 	Describe   string `orm:"null"`
 	ExpireTime time.Time `orm:"null"`
 }
