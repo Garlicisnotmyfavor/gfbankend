@@ -37,7 +37,7 @@ func (c *CardController) Get_cardidinfo() {
 // @Failure 400	查询不到对应的卡
 // @Failure 401	没处于登录状态，无权限
 // @Failure 404	查询不到对应的公司
-// @router  /card/:id	[get]
+// @router /card/:id [get]
 func (c *CardController) GetCardIDInfo() {
 	sess := c.GetSession("userInfo")
 	// 由cookie 得不到session说明没登录，无权限
