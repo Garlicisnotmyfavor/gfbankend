@@ -166,9 +166,11 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @Description Check across
 // @Success 200
 // @router /enterprise/login [options]
-func (c *EnterpriseController) CheckAcross() {
-	c.Ctx.ResponseWriter.WriteHeader(200)
-}
+//func (c *EnterpriseController) CheckAcross() {
+//	c.Ctx.ResponseWriter.WriteHeader(200)
+//}
+
+
 // @author: zyj
 // @Title changePW
 // @Description change password
