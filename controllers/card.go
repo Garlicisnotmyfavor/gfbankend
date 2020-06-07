@@ -195,13 +195,55 @@ func (c *CardController) AddCard() {
 // lj
 // @Title getCard
 // @Description 领取新的卡片
-// @Param 
+// @Param 将卡片的信息与用户ID相关联
 // @Success 200 
-// @Failure 
-// @router
+// @Failure 400 解析Json出错
+// @Failure 401	没处于登录状态，无权限
+// @Failure 403	卡片已经被其他用户领取
+// @Failure 405	数据库更新失败
+// @router  /card/get [put]
 // 用户领取某种类型的卡片，前端给卡号，卡的类型，企业名称
 func (c *CardController) GetCard() {
-
+	sess := c.GetSession("userInfo")
+	// 由cookie 得不到session说明没登录，无权限
+	if sess == nil {
+		models.Log.Error("not login: ")
+		c.Ctx.ResponseWriter.WriteHeader(401)
+		return
+	}
+	user := sess.(models.User)
+	userId := user.Id
+	//定义卡的信息结构体
+	var CardInfo struct {
+		CardID     string
+		Enterprise string
+		CardType   string
+	}
+	body := c.Ctx.Input.RequestBody
+	//解析body
+	if err := json.Unmarshal(body, &CardInfo); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	o := orm.NewOrm()
+	card := models.Card{}
+	if len(card.UserId) != 0 {
+		models.Log.Error("card already bind")
+		c.Ctx.ResponseWriter.WriteHeader(403) //卡片已经被其他用户领取
+		return
+	}
+	//将用户ID与card信息相关联
+	card.UserId = userId
+	if _, err := o.Update(&card); err != nil {
+		models.Log.Error("update database error")
+		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200) //成功
+	//传回这个卡片的具体信息
+	c.Data["json"] = card
+	c.ServeJSON()
 }
 
 
