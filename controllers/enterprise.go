@@ -539,7 +539,7 @@ func (c *UserController) ReadAllActivities() {
 	}
 	qt := orm.NewOrm().QueryTable("card_demo")
 	if _, err := qt.All(&Resp.Activities); err != nil {
-		models.Log.Error("ReadAllActivities query error:",err);
+		models.Log.Error("ReadAllActivities query error:",err)
 		c.Ctx.ResponseWriter.WriteHeader(503)
 		return
 	}
