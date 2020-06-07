@@ -195,7 +195,9 @@ func (c *CardController) AddCard() {
 // lj
 // @Title getCard
 // @Description 领取新的卡片
-// @Param 将卡片的信息与用户ID相关联
+// @Param CardID body string true 卡号
+// @Param Enterprise body string true 公司名称
+// @Param CardType body string true 卡片类型
 // @Success 200 
 // @Failure 400 解析Json出错
 // @Failure 401	没处于登录状态，无权限
