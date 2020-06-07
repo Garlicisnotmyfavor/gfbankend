@@ -21,7 +21,7 @@ type EnterpriseController struct {
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
 // @router /enterprise/:id [get]
-func (c *UserController) AllCardDemo() {
+func (c *EnterpriseController) AllCardDemo() {
 	//查看session的操作
 	//if c.GetSession("userInfo") == nil {
 	//	models.Log.Error("no login")
@@ -57,7 +57,7 @@ func (c *UserController) AllCardDemo() {
 // @Failure 400 信息有误
 // @Failure 406 数据库加入错误
 // @router /enterprise/enroll [post]
-func (c *UserController) EnterpriseEnroll() {
+func (c *EnterpriseController) EnterpriseEnroll() {
 	var Request struct {
 		// Enterprise Info
 		Name      string `json:"name"`
@@ -262,7 +262,7 @@ func (c *UserController) EnterpriseForgetPW() {
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
 // @router /enterprise/password/new [put]
-func (c *UserController) EnterpriseNewPW() {
+func (c *EnterpriseController) EnterpriseNewPW() {
 	body := c.Ctx.Input.RequestBody
 	var Request struct {
 		Phone    string `json:"phone"`
@@ -304,7 +304,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @Failure 408 关闭base64文件失败
 // @router /enterprise/modifyInfo [put]
 // 加上修改管理员信息
-func (c *UserController) EnterpriseInfoModify() {
+func (c *EnterpriseController) EnterpriseInfoModify() {
 	body := c.Ctx.Input.RequestBody
 	var newInfo struct {
 		Enterprise models.Enterprise `json:"enterprise"`
@@ -362,7 +362,7 @@ func (c *UserController) EnterpriseInfoModify() {
 // @Failure 404 读取管理员失败
 // @Failure 400 解析body失败
 // @router /enterprise/:id [get]
-func (c *UserController) EnterpriseInfo(){
+func (c *EnterpriseController) EnterpriseInfo(){
 	eid := c.Ctx.Input.Param(":id")
 	var enterprise models.Enterprise
 	enterprise.Id = eid
@@ -400,7 +400,7 @@ func (c *UserController) EnterpriseInfo(){
 // @Failure 400 解析body失败
 // @Failure 405 插入数据失败
 // @router /enterprise/card [put]
-func (c *UserController) EnterpriseNewDemo() {
+func (c *EnterpriseController) EnterpriseNewDemo() {
 	body := c.Ctx.Input.RequestBody
 	var cardInfo struct {
 		CardDemo   models.CardDemo   `json:"cardDemo"`
@@ -476,7 +476,7 @@ func (c *UserController) DeleteUser() {
 // @Success 
 // @Failure 
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
-func (c *UserController) ReadUser() {
+func (c *EnterpriseController) ReadUser() {
 
 }
 
