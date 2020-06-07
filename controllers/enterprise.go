@@ -455,10 +455,8 @@ func (c *UserController) EnterpriseNewDemo() {
 // @author: zjn
 // @Title addUser
 // @Description  商家增加一个某张已发售卡片的用户
-// @Param  
 // @Success 
 // @Failure 
-// @router 
 func (c *UserController) AddUser() {
 
 }
@@ -466,21 +464,17 @@ func (c *UserController) AddUser() {
 // @author: zjn
 // @Title deleteUser
 // @Description  商家删除一个某张已发售卡片的用户
-// @Param  
 // @Success 
 // @Failure 
-// @router 
 func (c *UserController) DeleteUser() {
 
 }
 
 // @author: zjn
 // @Title readUser
-// @Description  商家查询某张已发售卡片的用户
-// @Param  
+// @Description  商家查询某张已发售卡片的用户  
 // @Success 
 // @Failure 
-// @router 
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
 func (c *UserController) ReadUser() {
 
