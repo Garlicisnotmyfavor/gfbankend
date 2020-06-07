@@ -200,7 +200,7 @@ func (c *CardController) AddCard() {
 // @Failure 
 // @router
 // 用户领取某种类型的卡片，前端给卡号，卡的类型，企业名称
-func (c *CardController) getCard() {
+func (c *CardController) GetCard() {
 
 }
 
@@ -455,7 +455,7 @@ func (c *CardController) Delete() {
 //@Failure 400 解析Json失败
 //@Failure 401 没有登录
 //@Failure 404 卡不存在
-//@router  /card/:id/CardLog [get]
+//@router  /card/:id/cardLog [get]
 func (c *CardController) CardLog() {
 	sess := c.GetSession("userInfo")
 	// 由cookie 得不到session说明没登录，无权限
