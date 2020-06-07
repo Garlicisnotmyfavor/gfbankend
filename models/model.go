@@ -26,11 +26,13 @@ type Card struct {
 	Coupons    string    
 	ExpireTime time.Time `orm:"null"`
 	DelTime    time.Time `orm:"null"`
+	StartTime  time.Time `orm:"null"`
 	CardOrder  int       `valid:"Required"` //该商家合作以来发布的第N条卡片
 	FactoryNum int       `valid:"Required"`
 	BatchNum   int       `valid:"Required"`
 	SerialNum  int       `valid:"Required"`
 }
+
 
 type CardDemo struct {
 	ID         int    `orm:"pk;auto;"`
@@ -39,6 +41,8 @@ type CardDemo struct {
 	State      string `valid:"Required"`
 	City       string `valid:"Required"`
 	Coupons    string `orm:"null"`
+	Describe   string `orm:"null"`
+	ExpireTime time.Time `orm:"null"`
 }
 
 type Enterprise struct {

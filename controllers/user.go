@@ -2,7 +2,7 @@ package controllers
 
 import (
 	"encoding/json"
-	"fmt"
+	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
@@ -511,72 +511,17 @@ func (c *UserController) ForgetPW() {
 // 	c.Ctx.ResponseWriter.WriteHeader(200)
 // }
 
-// @Title NewPassword
-// @Description  通过前面忘记密码的过程后，设置新的密码
+
+
+
+// @Title readEnterpriseActivity
+// @Description  查看商家活动
 // @Param userInfo body models.User true 用户信息(需要的是用户ID，新密码）
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
 // @Failure 406 更新密码失败
 // @router /forgetPw/New [post]
-func (c *UserController) NewPW() {
-	var userInfo struct{
-		Id string
-		NewPassword string
-		Verify string
-	}
-	body := c.Ctx.Input.RequestBody
-	if err := json.Unmarshal(body, &userInfo); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400) //解析json错误
-		return
-	}
-	sess := c.GetSession("verify")
-	if sess == nil {
-		models.Log.Error("set new password without being verified")
-		var response struct {
-			Msg string `json:"msg"`
-		}
-		response.Msg = "no verification"
-		c.Data["json"] = response
-		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(406) //没有点击验证码
-		return
-	}
-	vCode := sess.(string)
-	fmt.Println(vCode,userInfo.Verify)
-	if vCode != userInfo.Verify {
-		models.Log.Error("verify fail")
-		var response struct {
-			Msg string `json:"msg"`
-		}
-		response.Msg = "wrong verify code"
-		c.Data["json"] = response
-		c.ServeJSON()
-		c.Ctx.ResponseWriter.WriteHeader(403) //没有点击验证码
-		return
-	}
-	o := orm.NewOrm()
-	usr := models.User{Id: userInfo.Id}
-	//fmt.Println(usr)
-	// 查询记录
-	if err := o.Read(&usr); err != nil {
-		models.Log.Error("read error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的用户
-		return
-	}
-	//查询成功，更新密码
-	usr.Password = userInfo.NewPassword
-	if _, err := o.Update(&usr, "password"); err != nil {
-		models.Log.Error("update error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(500) // 更新数据失败
-		return
-	}
-	c.DelSession("verify")
-	//根据旧的userInfo删除旧session
-	c.DelSession("userInfo")
-	c.Ctx.ResponseWriter.WriteHeader(200) // 更新成功
-}
 
 //// @Title Feedback
 //// @Description send feedback mail
