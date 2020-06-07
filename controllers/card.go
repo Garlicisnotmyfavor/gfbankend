@@ -111,7 +111,7 @@ func (c *CardController) GetCardIDInfo() {
 //zjn
 //@Title AddCard
 //@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
-//@Param	id	body	\	true	原本的卡号cardid+企业enterprise
+//@Param	id	body	/	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
@@ -195,7 +195,9 @@ func (c *CardController) AddCard() {
 // lj
 // @Title getCard
 // @Description 领取新的卡片
-// @Param 将卡片的信息与用户ID相关联
+// @Param card_id body string true 卡号
+// @Param enterprise body string true 企业名称
+// @Param card_type body string true 类型
 // @Success 200 
 // @Failure 400 解析Json出错
 // @Failure 401	没处于登录状态，无权限
@@ -215,9 +217,9 @@ func (c *CardController) GetCard() {
 	userId := user.Id
 	//定义卡的信息结构体
 	var CardInfo struct {
-		CardID     string
-		Enterprise string
-		CardType   string
+		CardID     string	`json:"card_id"`
+		Enterprise string	`json:"enterprise"`
+		CardType   string 	`json:"card_type"`
 	}
 	body := c.Ctx.Input.RequestBody
 	//解析body

@@ -17,7 +17,7 @@ type EnterpriseController struct {
 // @author: zjn
 // @Title show all card type
 // @Description 显示所有优惠政策
-// @Param id	path	string	true 商家ID
+// @Param id path string true 商家ID
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
 // @router /enterprise/:id [get]
@@ -123,7 +123,7 @@ func (c *UserController) EnterpriseEnroll() {
 // @author: zyj
 // @Title Login
 // @Description 商家登陆
-// @Param enterpriseInfo body true account(string)+password(string)+remember(bool)
+// @Param enterpriseInfo body / true account(string)+password(string)+remember(bool)
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -175,7 +175,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 // @author: zyj
 // @Title changePW
 // @Description change password
-// @Param enterpriseInfo body  true 用户信息(需要的是用户ID,原密码,新密码）
+// @Param enterpriseInfo body / true 用户信息(需要的是用户ID,原密码,新密码）
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
@@ -295,7 +295,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @author:zjn
 // @Title enterprise information modify
 // @Description  修改注册的商家注册信息
-// @Param enterpriseInfo body  重新提交的商家注册信息,body内部包含两个部分信息,一个为manager信息,一个为enterprise信息
+// @Param enterpriseInfo body / 重新提交的商家注册信息,body内部包含两个部分信息,一个为manager信息,一个为enterprise信息
 // @Success 200 Update Successfully
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
