@@ -295,7 +295,7 @@ func (c *UserController) EnterpriseNewPW() {
 // @author:zjn
 // @Title enterprise information modify
 // @Description  修改注册的商家注册信息
-// @Param enterpriseInfo body  重新提交的商家注册信息,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+// @Param enterpriseInfo body  重新提交的商家注册信息,body内部包含两个部分信息,一个为manager信息,一个为enterprise信息
 // @Success 200 Update Successfully
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
@@ -356,7 +356,7 @@ func (c *UserController) EnterpriseInfoModify() {
 // @author:
 // @Title return the enterprise information
 // @Description  返回商家具体信息以及管理员信息 打包在一个json内，分别用enterprise和managerList两个key取得
-// @Param enterpriseId 商家ID
+// @Param enterpriseId path string true 商家ID
 // @Success 200 Return Successfully
 // @Failure 404 数据库无此商家
 // @Failure 404 读取管理员失败
@@ -394,7 +394,8 @@ func (c *UserController) EnterpriseInfo(){
 // @author:
 // @Title put New Card
 // @Description  发布新的卡片
-// @Param  cardInfo body 卡片基本信息
+// @Param  cardDemo body models.CardDemo true 卡片基本信息
+// @Param  backgroundBase64 body string true Base64Code
 // @Success 200 put successfully
 // @Failure 400 解析body失败
 // @Failure 405 插入数据失败
