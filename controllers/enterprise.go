@@ -17,7 +17,7 @@ type EnterpriseController struct {
 // @author: zjn
 // @Title show all card type
 // @Description 显示所有优惠政策
-// @Param id	path	string	true 商家ID
+// @Param  id path string true 商家ID
 // @Success 200  
 // @Failure 404 Fail to read enterpriseId
 // @router /enterprise/:id [get]
@@ -123,7 +123,9 @@ func (c *EnterpriseController) EnterpriseEnroll() {
 // @author: zyj
 // @Title Login
 // @Description 商家登陆
-// @Param enterpriseInfo body true account(string)+password(string)+remember(bool)
+// @Param  account body string true 帐号
+// @Param  password body string true 密码
+// @Param  remember body bool true 帐号
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -163,19 +165,13 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	c.ServeJSON()                        // 传用户对象给前端
 }
 
-// @author: zyj
-// @Title Check
-// @Description Check across
-// @Success 200
-// @router /enterprise/login [options]
-//func (c *EnterpriseController) CheckAcross() {
-//	c.Ctx.ResponseWriter.WriteHeader(200)
-//}
 
 // @author: zyj
 // @Title changePW
 // @Description change password
-// @Param enterpriseInfo body  true 用户信息(需要的是用户ID,原密码,新密码）
+// @Param id body string true  管理员id
+// @Param old_password body string true 旧密码
+// @Param new_password body string true 新密码
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
@@ -225,7 +221,8 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @author: lj
 // @Title ForgetPW
 // @Description Forget password
-// @Param enterpriseInfo body models.Enterprise true 用户信息(需要的是用户ID，Phone）
+// @Param id body string true 企业管理员id
+// @Param phone body string true 企业管理员手机号
 // @Success 200 successfully
 // @Failure 400 解析body失败
 // @Failure 404 ID错误
@@ -256,7 +253,8 @@ func (c *UserController) EnterpriseForgetPW() {
 // @author: ml
 // @Title NewPassword
 // @Description  通过前面忘记密码的过程后，设置新的密码
-// @Param enterpriseInfo body models.Enterprise true 用户信息(需要的是用户ID，新密码）
+// @Param phone body string true 用户手机
+// @Param password body string true 用户密码
 // @Success 200 Update successfully
 // @Failure 404 数据库无此用户
 // @Failure 400 解析body失败
@@ -290,12 +288,12 @@ func (c *EnterpriseController) EnterpriseNewPW() {
 	c.ServeJSON()
 }
 
-// zyj
-// ***************
 // @author:zjn
 // @Title enterprise information modify
-// @Description  修改注册的商家注册信息
-// @Param enterpriseInfo body  重新提交的商家注册信息,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+// @Description  修改注册的商家注册信息  ,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+// @Param enterprise body models.enterprise true  重新提交的商家注册信息
+// @Param Manager body models.Manager true  重新提交的管理员信息
+// @Param base64 body string true  商家店面图片的base64编码
 // @Success 200 Update Successfully
 // @Failure 404 数据库无此商铺
 // @Failure 400 解析body失败
@@ -352,11 +350,10 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
-// zyj
-// @author:
+// @author: zyj
 // @Title return the enterprise information
-// @Description  返回商家具体信息以及管理员信息 打包在一个json内，分别用enterprise和managerList两个key取得
-// @Param enterpriseId 商家ID
+// @Description  返回商家信息和商家所有的管理员信息
+// @Param enterpriseId path string true 商家ID
 // @Success 200 Return Successfully
 // @Failure 404 数据库无此商家
 // @Failure 404 读取管理员失败
@@ -390,11 +387,11 @@ func (c *EnterpriseController) EnterpriseInfo(){
 	c.ServeJSON()
 }
 
-// zyj
-// @author:
-// @Title put New Card
+// @author:zyj
+// @Title enterprise release a New Card
 // @Description  发布新的卡片
-// @Param  cardInfo body 卡片基本信息
+// @Param  CardDemo body models.CardDemo true 卡片类型
+// @Param  Base64 body string true 背景图片的base64编码
 // @Success 200 put successfully
 // @Failure 400 解析body失败
 // @Failure 405 插入数据失败
@@ -437,53 +434,41 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
-// // @author:
-// // @Title NewPassword
-// // @Description  发布新的卡片
-// // @Param  cardInfo body models.CardDemo true 用户类型,数量
-// // @Success 200 Update successfully
-// // @Failure 404 数据库无此用户
-// // @Failure 400 解析body失败
-// // @Failure 406 更新密码失败
-// // @router /enterprise/card [put]
-// // 前端给予活动的标题、卡片的类型、活动的内容、展示在卡片详细信息页面的背景图、活动描述，有效期，后端增加CardDemo
-// func (c *UserController) EnterpriseNewCard() {
 
-// }
 
-// @author: zjn
-// @Title addUser
-// @Description  商家增加一个某张已发售卡片的用户
-// @Param  
-// @Success 
-// @Failure 
-// @router 
-func (c *EnterpriseController) AddUser() {
-
-}
-
-// @author: zjn
-// @Title deleteUser
-// @Description  商家删除一个某张已发售卡片的用户
-// @Param  
-// @Success 
-// @Failure 
-// @router 
-func (c *EnterpriseController) DeleteUser() {
-
-}
-
-// @author: zjn
-// @Title readUser
-// @Description  商家查询某张已发售卡片的用户
-// @Param  
-// @Success 
-// @Failure 
-// @router 
-// 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
-func (c *EnterpriseController) ReadUser() {
-
-}
+//// @author: zjn
+//// @Title addUser
+//// @Description  商家增加一个某张已发售卡片的用户
+//// @Param
+//// @Success
+//// @Failure
+//// @router
+//func (c *EnterpriseController) AddUser() {
+//
+//}
+//
+//// @author: zjn
+//// @Title deleteUser
+//// @Description  商家删除一个某张已发售卡片的用户
+//// @Param
+//// @Success
+//// @Failure
+//// @router
+//func (c *EnterpriseController) DeleteUser() {
+//
+//}
+//
+//// @author: zjn
+//// @Title readUser
+//// @Description  商家查询某张已发售卡片的用户
+//// @Param
+//// @Success
+//// @Failure
+//// @router
+//// 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
+//func (c *EnterpriseController) ReadUser() {
+//
+//}
 
 // ml
 // @Title readActivity

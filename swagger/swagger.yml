@@ -51,7 +51,7 @@ paths:
           description: 没处于登录状态，无权限
         "404":
           description: 查询不到对应的公司
-  /api/user/card/{id}/CardLog:
+  /api/user/card/{id}/cardLog:
     get:
       tags:
       - api/user
@@ -213,6 +213,45 @@ paths:
           description: 数据不匹配
         "403":
           description: 绑定的卡片不存在
+  /api/user/card/get:
+    put:
+      tags:
+      - api/user
+      description: 领取新的卡片
+      operationId: CardController.getCard
+      parameters:
+      - in: body
+        name: CardID
+        description: 卡号
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: Enterprise
+        description: 公司名称
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: CardType
+        description: 卡片类型
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: 解析Json出错
+        "401":
+          description: 没处于登录状态，无权限
+        "403":
+          description: 卡片已经被其他用户领取
+        "405":
+          description: 数据库更新失败
   /api/user/card/getnewcard:
     post:
       tags:
@@ -255,47 +294,92 @@ paths:
     get:
       tags:
       - api/user
-      description: 显示所有优惠政策
-      operationId: UserController.show all card type
+      description: 返回商家信息和商家所有的管理员信息
+      operationId: EnterpriseController.return the enterprise information
       parameters:
       - in: path
-        name: id
+        name: enterpriseId
         description: 商家ID
         required: true
         type: string
       responses:
         "200":
-          description: ""
+          description: Return Successfully
+        "400":
+          description: 解析body失败
         "404":
-          description: Fail to read enterpriseId
-  /api/user/enterprise/NewCard:
+          description: 读取管理员失败
+  /api/user/enterprise/activity:
+    get:
+      tags:
+      - api/user
+      description: 查看所有优惠活动
+      operationId: UserController.readAllActivities
+      responses:
+        "200":
+          description: 请求成功，返回所以活动
+        "503":
+          description: 读取数据库出错(可能服务器端数据库出错)
+    put:
+      tags:
+      - api/user
+      description: 查询活动
+      operationId: UserController.readActivity
+      parameters:
+      - in: body
+        name: enterprise
+        description: 企业名称
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: card_type
+        description: 卡片类型
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: 请求格式出错
+        "503":
+          description: 读取数据库发生错误（服务器端可能有问题）
+  /api/user/enterprise/card:
     put:
       tags:
       - api/user
       description: 发布新的卡片
-      operationId: UserController.NewPassword
+      operationId: EnterpriseController.enterprise release a New Card
       parameters:
       - in: body
-        name: cardInfo
-        description: 用户类型,数量
+        name: CardDemo
+        description: 卡片类型
         required: true
         schema:
           $ref: '#/definitions/models.CardDemo'
+      - in: body
+        name: Base64
+        description: 背景图片的base64编码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
-          description: Update successfully
+          description: put successfully
         "400":
           description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
+        "405":
+          description: 插入数据失败
   /api/user/enterprise/enroll:
     post:
       tags:
       - api/user
       description: 商家注册
-      operationId: UserController.Register
+      operationId: EnterpriseController.Register
       parameters:
       - in: body
         name: EnterPriseInfo
@@ -312,72 +396,6 @@ paths:
           description: 信息有误
         "406":
           description: 数据库加入错误
-  /api/user/enterprise/forgetpw:
-    post:
-      tags:
-      - api/user
-      description: Forget password
-      operationId: UserController.ForgetPW
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID，Phone）
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: ID错误
-        "405":
-          description: Phone错误
-  /api/user/enterprise/forgetpw/new:
-    put:
-      tags:
-      - api/user
-      description: 通过前面忘记密码的过程后，设置新的密码
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID，新密码）
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
-  /api/user/enterprise/infomodify:
-    put:
-      tags:
-      - api/user
-      description: 修改注册的商家注册信息
-      operationId: UserController.enterprise information modify
-      parameters:
-      - in: body
-        name: enterpriseInfo
-        description: 重新提交的商家注册信息
-        required: true
-        schema:
-          $ref: '#/definitions/models.Enterprise'
-      responses:
-        "200":
-          description: Update成功
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此商铺
-        "406":
-          description: 更新商铺信息失败
   /api/user/enterprise/login:
     put:
       tags:
@@ -386,10 +404,26 @@ paths:
       operationId: EnterpriseController.Login
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: account(string)+password(string)+remember(bool)
+        name: account
+        description: 帐号
+        required: true
         schema:
-          $ref: '#/definitions/true'
+          type: string
+        type: string
+      - in: body
+        name: password
+        description: 密码
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: remember
+        description: 帐号
+        required: true
+        schema:
+          type: boolean
+        type: boolean
       responses:
         "200":
           description: Register successfully
@@ -399,36 +433,45 @@ paths:
           description: 信息内容或格式有误
         "406":
           description: 数据库查询报错，可能用户所填账号或密码错误
-    options:
-      tags:
-      - api/user
-      description: Check across
-      operationId: EnterpriseController.Check
-      responses:
-        "200":
-          description: ""
-  /api/user/enterprise/newdemo:
+  /api/user/enterprise/modifyInfo:
     put:
       tags:
       - api/user
-      description: 发布新的优惠政策
-      operationId: UserController.NewPassword
+      description: 修改注册的商家注册信息  ,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+      operationId: EnterpriseController.enterprise information modify
       parameters:
       - in: body
-        name: userInfo
-        description: 用户信息(需要的是用户ID，新密码）
+        name: enterprise
+        description: 重新提交的商家注册信息
         required: true
         schema:
-          $ref: '#/definitions/models.User'
+          $ref: '#/definitions/models.enterprise'
+      - in: body
+        name: Manager
+        description: 重新提交的管理员信息
+        required: true
+        schema:
+          $ref: '#/definitions/models.Manager'
+      - in: body
+        name: base64
+        description: 商家店面图片的base64编码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
-          description: Update successfully
+          description: Update Successfully
         "400":
           description: 解析body失败
         "404":
-          description: 数据库无此用户
+          description: 数据库无此商铺
         "406":
-          description: 更新密码失败
+          description: 更新商铺信息失败
+        "407":
+          description: 创建base64文件失败
+        "408":
+          description: 关闭base64文件失败
   /api/user/enterprise/password:
     put:
       tags:
@@ -437,10 +480,26 @@ paths:
       operationId: EnterpriseController.changePW
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID,原密码,新密码）
+        name: id
+        description: 管理员id
+        required: true
         schema:
-          $ref: '#/definitions/true'
+          type: string
+        type: string
+      - in: body
+        name: old_password
+        description: 旧密码
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: new_password
+        description: 新密码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
           description: Update successfully
@@ -450,6 +509,36 @@ paths:
           description: 数据库无此用户
         "500":
           description: 数据库更新密码失败
+  /api/user/enterprise/password/new:
+    put:
+      tags:
+      - api/user
+      description: 通过前面忘记密码的过程后，设置新的密码
+      operationId: EnterpriseController.NewPassword
+      parameters:
+      - in: body
+        name: phone
+        description: 用户手机
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: password
+        description: 用户密码
+        required: true
+        schema:
+          type: string
+        type: string
+      responses:
+        "200":
+          description: Update successfully
+        "400":
+          description: 解析body失败
+        "404":
+          description: 数据库无此用户
+        "406":
+          description: 更新密码失败
   /api/user/forgetPw:
     post:
       tags:
@@ -470,28 +559,6 @@ paths:
           description: 解析body失败
         "404":
           description: 数据库无此用户
-  /api/user/forgetPw/New:
-    post:
-      tags:
-      - api/user
-      description: 通过前面忘记密码的过程后，设置新的密码
-      operationId: UserController.NewPassword
-      parameters:
-      - in: body
-        name: userInfo
-        description: 用户信息(需要的是用户ID，新密码）
-        required: true
-        schema:
-          $ref: '#/definitions/models.User'
-      responses:
-        "200":
-          description: Update successfully
-        "400":
-          description: 解析body失败
-        "404":
-          description: 数据库无此用户
-        "406":
-          description: 更新密码失败
   /api/user/login:
     get:
       tags:
@@ -619,6 +686,9 @@ definitions:
       SerialNum:
         type: integer
         format: int64
+      StartTime:
+        type: string
+        format: datetime
       State:
         type: string
       UserId:
@@ -633,8 +703,13 @@ definitions:
         type: string
       Coupons:
         type: string
+      Describe:
+        type: string
       Enterprise:
         type: string
+      ExpireTime:
+        type: string
+        format: datetime
       ID:
         type: integer
         format: int64
@@ -663,6 +738,20 @@ definitions:
         type: string
       Website:
         type: string
+  models.Manager:
+    title: Manager
+    type: object
+    properties:
+      Enterprise:
+        type: string
+      ID:
+        type: string
+      Name:
+        type: string
+      Password:
+        type: string
+      Phone:
+        type: string
   models.User:
     title: User
     type: object
@@ -682,6 +771,6 @@ definitions:
         type: string
       Tel:
         type: string
-  "true":
-    title: "true"
+  models.enterprise:
+    title: enterprise
     type: object
