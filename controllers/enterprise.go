@@ -459,39 +459,112 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 
 
 
-//// @author: zjn
-//// @Title addUser
-//// @Description  商家增加一个某张已发售卡片的用户
-//// @Param
-//// @Success
-//// @Failure
-//// @router
-//func (c *EnterpriseController) AddUser() {
-//
-//}
-//
-//// @author: zjn
-//// @Title deleteUser
-//// @Description  商家删除一个某张已发售卡片的用户
-//// @Param
-//// @Success
-//// @Failure
-//// @router
-//func (c *EnterpriseController) DeleteUser() {
-//
-//}
-//
-//// @author: zjn
-//// @Title readUser
-//// @Description  商家查询某张已发售卡片的用户
-//// @Param
-//// @Success
-//// @Failure
-//// @router
-//// 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
-//func (c *EnterpriseController) ReadUser() {
-//
-//}
+// @author: zjn
+// @Title addUser
+// @Description  商家增加一个某张已发售卡片的用户
+// @param CardId 	 body	string	true	
+// @param UserId     body	string	true	     
+// @param CardType   body	string	true	根据界面现在的carddemo确定    
+// @param Enterprise body	string	true	     
+// @param State      body	string	true	     
+// @param City       body	string	true
+// @param City       ExpireTime time.Time	true
+// @param City       Coupons    string	true	  
+// @Success 200 成功
+// @Failure 400 解析失败
+// @Failure 405 数据库更新失败
+// @router /enterprise/card/add [put]
+func (c *EnterpriseController) AddUser() {
+	body := c.Ctx.Input.RequestBody
+	var addcarduser struct {
+		CardId 	   string  
+	 	UserId     string     
+		CardType   string     
+		Enterprise string     
+		State      string     
+		City       string   
+		ExpireTime time.Time
+		Coupons    string  
+	}
+	if err := json.Unmarshal(body, &addcarduser); err != nil {
+		models.Log.Error("unmarshal error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(400)
+		return
+	}
+	o := orm.NewOrm()
+	card := models.Card{}
+	card.CardId = addcarduser.CardId
+	card.UserId = addcarduser.UserId
+	card.CardType = addcarduser.CardType
+	card.Enterprise = addcarduser.Enterprise
+	card.State = addcarduser.State
+	card.City = addcarduser.City
+	card.ExpireTime = addcarduser.ExpireTime
+	card.Coupons = addcarduser.Coupons
+	card.StartTime = time.Now()
+	
+	if _,err := o.Insert(&card); err!= nil {
+		models.Log.Error("insert database error: %s",err)
+		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
+		return
+	}
+	c.Data["json"] = card
+	c.ServeJSON()
+	return
+}
+
+// @author: zjn
+// @Title deleteUser
+// @Description  商家删除一个某张已发售卡片的用户
+// @Param  id query string true 卡号
+// @Success 200
+// @Failure 404 查找不到该卡片
+// @router /enterprise/card/delete/:id [get]
+func (c *EnterpriseController) DeleteUser() {
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	card := models.Card{CardId: id}
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("can't find card: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到 
+		return
+	}
+	card.DelTime = time.Now()
+	if _, err := o.Update(&card); err != nil {
+		models.Log.Error("can't update card: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到 
+		return
+	}
+	c.Ctx.ResponseWriter.WriteHeader(200)
+	c.Data["json"] = card
+	c.ServeJSON()
+	return
+}
+
+// @author: zjn
+// @Title readUser
+// @Description  商家查询某张已发售卡片的用户
+// @Param	id query string true 卡demo的id
+// @Success 200
+// @Failure 404 找不到卡片
+// @router	/enterprise/card/search/:id [get]
+// 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
+func (c *EnterpriseController) ReadUser() {
+	CardType := c.Ctx.Input.Param(":id")
+	var read struct {
+		alldemocard	[]models.Card
+	}
+	qt := orm.NewOrm().QueryTable("card")
+	cond := orm.NewCondition()
+	cond1 := cond.And("card_type__iexact", CardType)
+	if _, err := qt.SetCond(cond1).All(&read.adddemocard); err != nil {
+		models.Log.Error("ReadAllcard of this demo error:",err)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+		return
+	}
+	c.Data["json"] = read
+	c.ServeJSON()
+}
 
 // ml
 // @Title readActivity
