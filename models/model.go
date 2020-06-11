@@ -35,7 +35,7 @@ type Card struct {
 
 
 type CardDemo struct {
-	ID         int    `orm:"pk;auto;"`
+	Id         int    `orm:"pk;auto;"`
 	CardType   string `valid:"Required"`
 	Enterprise string `valid:"Required"`
 	State      string `valid:"Required"`
@@ -239,7 +239,7 @@ func (enterprise *Enterprise) EnterpriseParse() error {
 	} else if enterprise.Type == "store" {
 		enterprise.Id += "3"
 	}
-	enterprise.Id += strconv.Itoa(int(enterprise.RegisterNum))
+	enterprise.Id += fmt.Sprintf("%03d", enterprise.RegisterNum);
 	return nil
 }
 

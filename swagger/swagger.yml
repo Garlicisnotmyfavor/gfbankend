@@ -213,7 +213,7 @@ paths:
           description: 数据不匹配
         "403":
           description: 绑定的卡片不存在
-  /api/user/card/get:
+  /api/user/card/get/{demoId}:
     put:
       tags:
       - api/user
@@ -221,22 +221,22 @@ paths:
       operationId: CardController.getCard
       parameters:
       - in: body
-        name: card_id
+        name: CardID
         description: 卡号
         required: true
         schema:
           type: string
         type: string
       - in: body
-        name: enterprise
-        description: 企业名称
+        name: Enterprise
+        description: 公司名称
         required: true
         schema:
           type: string
         type: string
       - in: body
-        name: card_type
-        description: 类型
+        name: CardType
+        description: 卡片类型
         required: true
         schema:
           type: string
@@ -294,21 +294,19 @@ paths:
     get:
       tags:
       - api/user
-      description: 返回商家具体信息以及管理员信息 打包在一个json内，分别用enterprise和managerList两个key取得
-      operationId: UserController.return the enterprise information
+      description: 显示所有优惠政策
+      operationId: EnterpriseController.show all card type
       parameters:
       - in: path
-        name: enterpriseId
+        name: id
         description: 商家ID
         required: true
         type: string
       responses:
         "200":
-          description: Return Successfully
-        "400":
-          description: 解析body失败
+          description: ""
         "404":
-          description: 读取管理员失败
+          description: Fail to read enterpriseId
   /api/user/enterprise/activity:
     get:
       tags:
@@ -352,17 +350,17 @@ paths:
       tags:
       - api/user
       description: 发布新的卡片
-      operationId: UserController.put New Card
+      operationId: EnterpriseController.enterprise release a New Card
       parameters:
       - in: body
-        name: cardDemo
-        description: 卡片基本信息
+        name: CardDemo
+        description: 卡片类型
         required: true
         schema:
           $ref: '#/definitions/models.CardDemo'
       - in: body
-        name: backgroundBase64
-        description: Base64Code
+        name: Base64
+        description: 背景图片的base64编码
         required: true
         schema:
           type: string
@@ -379,7 +377,7 @@ paths:
       tags:
       - api/user
       description: 商家注册
-      operationId: UserController.Register
+      operationId: EnterpriseController.Register
       parameters:
       - in: body
         name: EnterPriseInfo
@@ -396,6 +394,29 @@ paths:
           description: 信息有误
         "406":
           description: 数据库加入错误
+  /api/user/enterprise/info/{id}:
+    get:
+      tags:
+      - api/user
+      description: 返回商家信息和商家所有的管理员信息
+      operationId: EnterpriseController.return the enterprise information
+      parameters:
+      - in: path
+        name: enterpriseId
+        description: 商家ID
+        required: true
+        type: string
+      responses:
+        "200":
+          description: Return Successfully
+        "404":
+          description: 数据库无此商家
+        "405":
+          description: 读取管理员失败
+        "406":
+          description: 读取文件base64失败
+        "407":
+          description: 打开文件base64失败
   /api/user/enterprise/login:
     put:
       tags:
@@ -404,11 +425,26 @@ paths:
       operationId: EnterpriseController.Login
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: account(string)+password(string)+remember(bool)
+        name: account
+        description: 帐号
         required: true
         schema:
-          $ref: '#/definitions//'
+          type: string
+        type: string
+      - in: body
+        name: password
+        description: 密码
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: remember
+        description: 帐号
+        required: true
+        schema:
+          type: boolean
+        type: boolean
       responses:
         "200":
           description: Register successfully
@@ -422,14 +458,28 @@ paths:
     put:
       tags:
       - api/user
-      description: 修改注册的商家注册信息
-      operationId: UserController.enterprise information modify
+      description: 修改注册的商家注册信息  ,body内部包含两个部分信息，一个为manager信息，一个为enterprise信息
+      operationId: EnterpriseController.enterprise information modify
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: 重新提交的商家注册信息,body内部包含两个部分信息,一个为manager信息,一个为enterprise信息
+        name: enterprise
+        description: 重新提交的商家注册信息
+        required: true
         schema:
-          $ref: '#/definitions//'
+          $ref: '#/definitions/models.enterprise'
+      - in: body
+        name: Manager
+        description: 重新提交的管理员信息
+        required: true
+        schema:
+          $ref: '#/definitions/models.Manager'
+      - in: body
+        name: base64
+        description: 商家店面图片的base64编码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
           description: Update Successfully
@@ -451,11 +501,26 @@ paths:
       operationId: EnterpriseController.changePW
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID,原密码,新密码）
+        name: id
+        description: 管理员id
         required: true
         schema:
-          $ref: '#/definitions//'
+          type: string
+        type: string
+      - in: body
+        name: old_password
+        description: 旧密码
+        required: true
+        schema:
+          type: string
+        type: string
+      - in: body
+        name: new_password
+        description: 新密码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
           description: Update successfully
@@ -470,14 +535,22 @@ paths:
       tags:
       - api/user
       description: 通过前面忘记密码的过程后，设置新的密码
-      operationId: UserController.NewPassword
+      operationId: EnterpriseController.NewPassword
       parameters:
       - in: body
-        name: enterpriseInfo
-        description: 用户信息(需要的是用户ID，新密码）
+        name: phone
+        description: 用户手机
         required: true
         schema:
-          $ref: '#/definitions/models.Enterprise'
+          type: string
+        type: string
+      - in: body
+        name: password
+        description: 用户密码
+        required: true
+        schema:
+          type: string
+        type: string
       responses:
         "200":
           description: Update successfully
@@ -658,7 +731,7 @@ definitions:
       ExpireTime:
         type: string
         format: datetime
-      ID:
+      Id:
         type: integer
         format: int64
       State:
@@ -686,6 +759,20 @@ definitions:
         type: string
       Website:
         type: string
+  models.Manager:
+    title: Manager
+    type: object
+    properties:
+      Enterprise:
+        type: string
+      ID:
+        type: string
+      Name:
+        type: string
+      Password:
+        type: string
+      Phone:
+        type: string
   models.User:
     title: User
     type: object
@@ -705,3 +792,6 @@ definitions:
         type: string
       Tel:
         type: string
+  models.enterprise:
+    title: enterprise
+    type: object
