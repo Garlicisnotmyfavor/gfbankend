@@ -542,6 +542,41 @@
                 }
             }
         },
+        "/api/user/enterprise/info/{id}": {
+            "get": {
+                "tags": [
+                    "api/user"
+                ],
+                "description": "返回商家信息和商家所有的管理员信息",
+                "operationId": "EnterpriseController.return the enterprise information",
+                "parameters": [
+                    {
+                        "in": "path",
+                        "name": "enterpriseId",
+                        "description": "商家ID",
+                        "required": true,
+                        "type": "string"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return Successfully"
+                    },
+                    "404": {
+                        "description": "数据库无此商家"
+                    },
+                    "405": {
+                        "description": "读取管理员失败"
+                    },
+                    "406": {
+                        "description": "读取文件base64失败"
+                    },
+                    "407": {
+                        "description": "打开文件base64失败"
+                    }
+                }
+            }
+        },
         "/api/user/enterprise/login": {
             "put": {
                 "tags": [
@@ -761,12 +796,12 @@
                 "tags": [
                     "api/user"
                 ],
-                "description": "返回商家信息和商家所有的管理员信息",
-                "operationId": "EnterpriseController.return the enterprise information",
+                "description": "显示所有优惠政策",
+                "operationId": "EnterpriseController.show all card type",
                 "parameters": [
                     {
                         "in": "path",
-                        "name": "enterpriseId",
+                        "name": "id",
                         "description": "商家ID",
                         "required": true,
                         "type": "string"
@@ -774,13 +809,10 @@
                 ],
                 "responses": {
                     "200": {
-                        "description": "Return Successfully"
-                    },
-                    "400": {
-                        "description": "解析body失败"
+                        "description": ""
                     },
                     "404": {
-                        "description": "读取管理员失败"
+                        "description": "Fail to read enterpriseId"
                     }
                 }
             }

@@ -2,12 +2,15 @@ package controllers
 
 import (
 	"encoding/json"
+	"fmt"
 	_ "fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
 	_ "github.com/pkg/errors"
+	"io/ioutil"
 	"os"
+	"strconv"
 )
 
 type EnterpriseController struct {
@@ -34,7 +37,7 @@ func (c *EnterpriseController) AllCardDemo() {
 	var carddemoList []models.CardDemo
 	//使用orm接口查询相关信息
 	o := orm.NewOrm()
-	qt := o.QueryTable("carddemo")
+	qt := o.QueryTable("card_demo")
 	//取出carddemo表中所有信息，放入carddemoList中
 	_, err := qt.Filter("enterprise__exact", id).All(&carddemoList)
 	if err != nil || len(carddemoList) == 0 {
@@ -246,8 +249,7 @@ func (c *UserController) EnterpriseForgetPW() {
 		c.Ctx.ResponseWriter.WriteHeader(404) //查找不到对应的ID
 		return
 	}
-	c.Data["json"] = manager
-	c.ServeJSON()
+	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
 // @author: ml
@@ -273,7 +275,7 @@ func (c *EnterpriseController) EnterpriseNewPW() {
 	}
 	manager := models.Manager{Phone: Request.Phone}
 	o := orm.NewOrm()
-	if err := o.Read(manager, "phone"); err != nil {
+	if err := o.Read(&manager, "phone"); err != nil {
 		models.Log.Error("NewPW: fail to read", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
@@ -306,7 +308,7 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 	body := c.Ctx.Input.RequestBody
 	var newInfo struct {
 		Enterprise models.Enterprise `json:"enterprise"`
-		Manager    models.Manager    `json:"manager"`
+		Managers    []models.Manager    `json:"managers"`
 		Base64     string            `json:"base64"`
 	}
 	if err := json.Unmarshal(body, &newInfo); err != nil {
@@ -316,9 +318,8 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 	}
 	enterprise := newInfo.Enterprise
 	enterpriseId := newInfo.Enterprise.Id
-	manager := newInfo.Manager
 	base64 := newInfo.Base64
-	path := "../static/base64/" + enterpriseId + ".txt"
+	path := "static/base64/" + enterpriseId + ".txt"
 	if f,err := os.Create(path); err != nil {
 		models.Log.Error(" fail to create the file",err)
 		c.Ctx.ResponseWriter.WriteHeader(407)
@@ -342,10 +343,12 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	if _, err := o.Update(&manager); err != nil {
-		models.Log.Error(" fail to update manager")
-		c.Ctx.ResponseWriter.WriteHeader(406)
-		return
+	for _,v := range newInfo.Managers{
+		if _, err := o.Update(&v); err != nil {
+			models.Log.Error(" fail to update manager")
+			c.Ctx.ResponseWriter.WriteHeader(406)
+			return
+		}
 	}
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
@@ -356,22 +359,27 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 // @Param enterpriseId path string true 商家ID
 // @Success 200 Return Successfully
 // @Failure 404 数据库无此商家
-// @Failure 404 读取管理员失败
-// @Failure 400 解析body失败
-// @router /enterprise/:id [get]
+// @Failure 405 读取管理员失败
+// @Failure 406 读取文件base64失败
+// @Failure 407 打开文件base64失败
+// @router /enterprise/info/:id [get]
 func (c *EnterpriseController) EnterpriseInfo(){
 	eid := c.Ctx.Input.Param(":id")
 	var enterprise models.Enterprise
 	enterprise.Id = eid
 	o := orm.NewOrm()
-	if err := o.Read(enterprise); err != nil {
+	if err := o.Read(&enterprise,"Id"); err != nil {
 		models.Log.Error("read enterprise error ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
 	var managerList []models.Manager
 	qt := o.QueryTable("manager")
-	_, err := qt.Filter("enterprise__exact", eid).All(&managerList)
+	_, err := qt.Filter("enterprise__exact", enterprise.Name).All(&managerList)
+	for i,_ := range managerList {
+		managerList[i].Password = ""
+	}
+	fmt.Println(managerList)
 	if err != nil {
 		models.Log.Error("read manager error", err) //读取用户卡片信息失败
 		c.Ctx.ResponseWriter.WriteHeader(405)
@@ -380,6 +388,21 @@ func (c *EnterpriseController) EnterpriseInfo(){
 	var ret struct{
 		Enterprise models.Enterprise `json:"enterprise"`
 		ManagerList []models.Manager `json:"managerList"`
+		Base64 	string               `json:"base64"`
+	}
+	path := "static/base64/" + enterprise.Id + ".txt"
+	if f,err := os.Open(path); err == nil {
+		if bytes,err := ioutil.ReadAll(f) ; err == nil {
+			ret.Base64 = string(bytes)
+		} else {
+			models.Log.Error("read file error", err) //读取文件失败
+			c.Ctx.ResponseWriter.WriteHeader(406)
+			return
+		}
+	} else {
+		models.Log.Error("open file error", err) //读取文件失败
+		c.Ctx.ResponseWriter.WriteHeader(407)
+		return
 	}
 	ret.Enterprise = enterprise
 	ret.ManagerList = managerList
@@ -413,7 +436,7 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
 	}
-	path := "../static/base64/" + string(cardInfo.CardDemo.ID) + ".txt"
+	path := "static/base64/" + strconv.Itoa(cardInfo.CardDemo.Id) + ".txt"
 	if f,err := os.Create(path); err != nil {
 		models.Log.Error(" fail to create the file",err)
 		c.Ctx.ResponseWriter.WriteHeader(407)

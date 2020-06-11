@@ -6,8 +6,11 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	"github.com/gfbankend/utils"
 	_ "github.com/pkg/errors"
+	"strconv"
 	"time"
+	_ "unsafe"
 )
 
 type CardController struct {
@@ -192,6 +195,7 @@ func (c *CardController) AddCard() {
 	c.ServeJSON()
 }
 
+
 // lj
 // @Title getCard
 // @Description 领取新的卡片
@@ -203,7 +207,7 @@ func (c *CardController) AddCard() {
 // @Failure 401	没处于登录状态，无权限
 // @Failure 403	卡片已经被其他用户领取
 // @Failure 405	数据库更新失败
-// @router  /card/get [put]
+// @router  /card/get/:demoId [put]
 // 用户领取某种类型的卡片，前端给卡号，卡的类型，企业名称
 func (c *CardController) GetCard() {
 	sess := c.GetSession("userInfo")
@@ -213,32 +217,48 @@ func (c *CardController) GetCard() {
 		c.Ctx.ResponseWriter.WriteHeader(401)
 		return
 	}
+	demoId := c.Ctx.Input.Param(":demoId")
 	user := sess.(models.User)
 	userId := user.Id
-	//定义卡的信息结构体
-	var CardInfo struct {
-		CardID     string
-		Enterprise string
-		CardType   string
-	}
-	body := c.Ctx.Input.RequestBody
-	//解析body
-	if err := json.Unmarshal(body, &CardInfo); err != nil {
-		models.Log.Error("unmarshal error: ", err)
-		c.Ctx.ResponseWriter.WriteHeader(400)
+	////定义卡的信息结构体
+	//var CardInfo struct {
+	//	CardDemoId string `json:"cardDemoId"`
+	//}
+	//body := c.Ctx.Input.RequestBody
+	////解析body
+	//if err := json.Unmarshal(body, &CardInfo); err != nil {
+	//	models.Log.Error("unmarshal error: ", err)
+	//	c.Ctx.ResponseWriter.WriteHeader(400)
+	//	return
+	//}
+	o := orm.NewOrm()
+	var demo models.CardDemo
+	var card models.Card
+	if ID,err := strconv.Atoi(demoId); err==nil {
+		demo.Id = ID
+	} else {
+		models.Log.Error("atoi error: ")
+		c.Ctx.ResponseWriter.WriteHeader(402)
 		return
 	}
-	o := orm.NewOrm()
-	card := models.Card{}
-	if len(card.UserId) != 0 {
-		models.Log.Error("card already bind")
-		c.Ctx.ResponseWriter.WriteHeader(403) //卡片已经被其他用户领取
+	if err := o.Read(&demo); err != nil {
+		models.Log.Error("sql read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
 	}
 	//将用户ID与card信息相关联
 	card.UserId = userId
-	if _, err := o.Update(&card); err != nil {
-		models.Log.Error("update database error")
+	card.Coupons = demo.Coupons
+	card.Enterprise = demo.Enterprise
+	for {
+		id := util.RandStr(13)
+		if err := o.Read(&models.Card{CardId: id}) ; err != nil {
+			card.CardId = id
+			break
+		}
+	}
+	if _, err := o.Insert(&card); err != nil {
+		models.Log.Error("insert card error")
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
 	}

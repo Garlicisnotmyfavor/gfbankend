@@ -30,6 +30,21 @@ func GetRandCode() []byte {
 }
 
 /*
+*@function:得到n位长随机字符串
+*@return {string} 随机字符串
+ */
+func RandStr(n int) string {
+	number := []byte{0, 1, 2, 3, 4, 5, 6, 7, 8, 9}
+	rand.Seed(time.Now().Unix())
+	var sb strings.Builder
+	size := len(number)
+	for i := 0; i < n; i++ {
+		_, _ = fmt.Fprintf(&sb, "%d", number[rand.Intn(size)])
+	}
+	return sb.String()
+}
+
+/*
 *@function:发msg给target邮箱
 *@param {目标邮箱email(string), 信息msg([]byte)}
 *@return {error}err
