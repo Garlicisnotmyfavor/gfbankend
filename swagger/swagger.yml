@@ -30,7 +30,7 @@ paths:
           description: 没登录，无权限
         "404":
           description: Fail to read
-  "/api/user/card/{id\t[get]}":
+  /api/user/card/{id}:
     get:
       tags:
       - api/user
