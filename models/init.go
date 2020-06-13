@@ -41,6 +41,9 @@ func init() {
 	orm.RegisterModel(new(Count))
 	orm.RegisterModel(new(Manager))
 	orm.RegisterModel(new(EnterpriseCount))
+	orm.RegisterModel(new(CardLog))
+	orm.RegisterModel(new(CardDemo))
+
 	orm.Debug = true
 	_ = orm.RunSyncdb("default", false, true)
 	testData()
