@@ -11,6 +11,7 @@ import (
 	"io/ioutil"
 	"os"
 	"strconv"
+	"time"
 )
 
 type EnterpriseController struct {
@@ -457,26 +458,6 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
-
-// }
-
-// @author: zjn
-// @Title addUser
-// @Description  商家增加一个某张已发售卡片的用户
-// @Success 
-// @Failure 
-func (c *UserController) AddUser() {
-
-}
-
-// @author: zjn
-// @Title deleteUser
-// @Description  商家删除一个某张已发售卡片的用户
-// @Success 
-// @Failure 
-func (c *UserController) DeleteUser() {
-}
-
 // @author: zjn
 // @Title addUser
 // @Description  商家增加一个某张已发售卡片的用户
@@ -569,18 +550,18 @@ func (c *EnterpriseController) DeleteUser() {
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
 func (c *EnterpriseController) ReadUser() {
 	CardType := c.Ctx.Input.Param(":id")
-	var read struct {
-		alldemocard	[]models.Card
+	var Read struct {
+		AllCardDemo	[]models.Card	`json:"all_card_demo"`
 	}
 	qt := orm.NewOrm().QueryTable("card")
 	cond := orm.NewCondition()
 	cond1 := cond.And("card_type__iexact", CardType)
-	if _, err := qt.SetCond(cond1).All(&read.adddemocard); err != nil {
+	if _, err := qt.SetCond(cond1).All(&Read.AllCardDemo); err != nil {
 		models.Log.Error("ReadAllcard of this demo error:",err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
-	c.Data["json"] = read
+	c.Data["json"] = Read
 	c.ServeJSON()
 }
 
