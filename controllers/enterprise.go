@@ -127,9 +127,9 @@ func (c *EnterpriseController) EnterpriseEnroll() {
 // @author: zyj
 // @Title Login
 // @Description 商家登陆
-// @Param  account body string true 帐号
+// @Param  phone body string true 手机号
 // @Param  password body string true 密码
-// @Param  remember body bool true 帐号
+// @Param  remember body bool true 记住帐号
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误
@@ -140,7 +140,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	manager := models.Manager{}
 	body := c.Ctx.Input.RequestBody
 	var eInfo struct {
-		Account  string `json:"account"`
+		Phone  string `json:"phone"`
 		Password string `json:"password"`
 		Remember bool   `json:"remember"`
 	}
@@ -149,9 +149,9 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
-	manager.ID = eInfo.Account
+	manager.Phone= eInfo.Phone
 	manager.Password = eInfo.Password
-	if err := o.Read(&manager, "id", "password"); err != nil {
+	if err := o.Read(&manager, "phone", "password"); err != nil {
 		models.Log.Error("login error: auth fail")
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
@@ -159,7 +159,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	c.Data["json"] = manager
 	// 如果需要记住账号密码
 	if eInfo.Remember == true {
-		c.Ctx.SetSecureCookie("miller", "account", eInfo.Account)
+		c.Ctx.SetSecureCookie("miller", "account", eInfo.Phone)
 		c.Ctx.SetSecureCookie("miller", "password", eInfo.Password)
 		c.Ctx.SetCookie("remember", "true")
 	}
