@@ -199,9 +199,7 @@ func (c *CardController) AddCard() {
 // lj
 // @Title getCard
 // @Description 领取新的卡片
-// @Param CardID body string true 卡号
-// @Param Enterprise body string true 公司名称
-// @Param CardType body string true 卡片类型
+// @Param demoId path int true
 // @Success 200 
 // @Failure 400 解析Json出错
 // @Failure 401	没处于登录状态，无权限
@@ -220,17 +218,6 @@ func (c *CardController) GetCard() {
 	demoId := c.Ctx.Input.Param(":demoId")
 	user := sess.(models.User)
 	userId := user.Id
-	////定义卡的信息结构体
-	//var CardInfo struct {
-	//	CardDemoId string `json:"cardDemoId"`
-	//}
-	//body := c.Ctx.Input.RequestBody
-	////解析body
-	//if err := json.Unmarshal(body, &CardInfo); err != nil {
-	//	models.Log.Error("unmarshal error: ", err)
-	//	c.Ctx.ResponseWriter.WriteHeader(400)
-	//	return
-	//}
 	o := orm.NewOrm()
 	var demo models.CardDemo
 	var card models.Card
@@ -250,6 +237,8 @@ func (c *CardController) GetCard() {
 	card.UserId = userId
 	card.Coupons = demo.Coupons
 	card.Enterprise = demo.Enterprise
+	card.CardType = demo.CardType
+	// to get new card_id
 	for {
 		id := util.RandStr(13)
 		if err := o.Read(&models.Card{CardId: id}) ; err != nil {
@@ -257,6 +246,7 @@ func (c *CardController) GetCard() {
 			break
 		}
 	}
+	// insert new card into db
 	if _, err := o.Insert(&card); err != nil {
 		models.Log.Error("insert card error")
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
