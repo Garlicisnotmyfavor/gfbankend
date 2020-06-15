@@ -460,14 +460,14 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 // @author: zjn
 // @Title addUser
 // @Description  商家增加一个某张已发售卡片的用户
-// @param CardId 	 body	string	true	
-// @param UserId     body	string	true	     
-// @param CardType   body	string	true	根据界面现在的carddemo确定    
-// @param Enterprise body	string	true	     
-// @param State      body	string	true	     
-// @param City       body	string	true
-// @param City       ExpireTime time.Time	true
-// @param City       Coupons    string	true	  
+// @param card_id 	 body	string	true
+// @param user_id     body	string	true
+// @param card_type   body	string	true	根据界面现在的carddemo确定
+// @param enterprise body	string	true
+// @param state      body	string	true
+// @param city       body	string	true
+// @param expire_time       ExpireTime time.Time	true
+// @param coupons       Coupons    string	true
 // @Success 200 成功
 // @Failure 400 解析失败
 // @Failure 405 数据库更新失败
