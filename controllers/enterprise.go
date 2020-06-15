@@ -169,7 +169,6 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	c.ServeJSON()                        // 传用户对象给前端
 }
 
-
 // @author: zyj
 // @Title changePW
 // @Description change password
@@ -234,8 +233,8 @@ func (c *EnterpriseController) EnterpriseChangePW() {
 // @router /enterprise/password [post]
 func (c *UserController) EnterpriseForgetPW() {
 	var Request struct {
-		ID    string	`json:"id"`
-		Phone string	`json:"phone"`
+		ID    string `json:"id"`
+		Phone string `json:"phone"`
 	}
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &Request); err != nil {
@@ -309,7 +308,7 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 	body := c.Ctx.Input.RequestBody
 	var newInfo struct {
 		Enterprise models.Enterprise `json:"enterprise"`
-		Managers    []models.Manager    `json:"managers"`
+		Managers   []models.Manager  `json:"managers"`
 		Base64     string            `json:"base64"`
 	}
 	if err := json.Unmarshal(body, &newInfo); err != nil {
@@ -321,30 +320,30 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 	enterpriseId := newInfo.Enterprise.Id
 	base64 := newInfo.Base64
 	path := "static/base64/" + enterpriseId + ".txt"
-	if f,err := os.Create(path); err != nil {
-		models.Log.Error(" fail to create the file",err)
+	if f, err := os.Create(path); err != nil {
+		models.Log.Error(" fail to create the file", err)
 		c.Ctx.ResponseWriter.WriteHeader(407)
 		return
 	} else {
 		content := []byte(base64)
-		if _,err := f.Write(content); err != nil {
-			models.Log.Error(" fail to write base64 to the file",err)
+		if _, err := f.Write(content); err != nil {
+			models.Log.Error(" fail to write base64 to the file", err)
 			c.Ctx.ResponseWriter.WriteHeader(407)
 			return
 		}
-		if err := f.Close() ; err != nil {
-			models.Log.Error(" fail to close the file",err)
+		if err := f.Close(); err != nil {
+			models.Log.Error(" fail to close the file", err)
 			c.Ctx.ResponseWriter.WriteHeader(408)
 			return
 		}
 	}
 	o := orm.NewOrm()
 	if _, err := o.Update(&enterprise); err != nil {
-		models.Log.Error(" fail to update enterprise",err)
+		models.Log.Error(" fail to update enterprise", err)
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	for _,v := range newInfo.Managers{
+	for _, v := range newInfo.Managers {
 		if _, err := o.Update(&v); err != nil {
 			models.Log.Error(" fail to update manager")
 			c.Ctx.ResponseWriter.WriteHeader(406)
@@ -364,12 +363,12 @@ func (c *EnterpriseController) EnterpriseInfoModify() {
 // @Failure 406 读取文件base64失败
 // @Failure 407 打开文件base64失败
 // @router /enterprise/info/:id [get]
-func (c *EnterpriseController) EnterpriseInfo(){
+func (c *EnterpriseController) EnterpriseInfo() {
 	eid := c.Ctx.Input.Param(":id")
 	var enterprise models.Enterprise
 	enterprise.Id = eid
 	o := orm.NewOrm()
-	if err := o.Read(&enterprise,"Id"); err != nil {
+	if err := o.Read(&enterprise, "Id"); err != nil {
 		models.Log.Error("read enterprise error ", err)
 		c.Ctx.ResponseWriter.WriteHeader(404)
 		return
@@ -377,7 +376,7 @@ func (c *EnterpriseController) EnterpriseInfo(){
 	var managerList []models.Manager
 	qt := o.QueryTable("manager")
 	_, err := qt.Filter("enterprise__exact", enterprise.Name).All(&managerList)
-	for i,_ := range managerList {
+	for i, _ := range managerList {
 		managerList[i].Password = ""
 	}
 	fmt.Println(managerList)
@@ -386,14 +385,14 @@ func (c *EnterpriseController) EnterpriseInfo(){
 		c.Ctx.ResponseWriter.WriteHeader(405)
 		return
 	}
-	var ret struct{
-		Enterprise models.Enterprise `json:"enterprise"`
-		ManagerList []models.Manager `json:"managerList"`
-		Base64 	string               `json:"base64"`
+	var ret struct {
+		Enterprise  models.Enterprise `json:"enterprise"`
+		ManagerList []models.Manager  `json:"managerList"`
+		Base64      string            `json:"base64"`
 	}
 	path := "static/base64/" + enterprise.Id + ".txt"
-	if f,err := os.Open(path); err == nil {
-		if bytes,err := ioutil.ReadAll(f) ; err == nil {
+	if f, err := os.Open(path); err == nil {
+		if bytes, err := ioutil.ReadAll(f); err == nil {
 			ret.Base64 = string(bytes)
 		} else {
 			models.Log.Error("read file error", err) //读取文件失败
@@ -423,8 +422,8 @@ func (c *EnterpriseController) EnterpriseInfo(){
 func (c *EnterpriseController) EnterpriseNewDemo() {
 	body := c.Ctx.Input.RequestBody
 	var cardInfo struct {
-		CardDemo   models.CardDemo   `json:"cardDemo"`
-		Base64     string            `json:"backgroundBase64"`
+		CardDemo models.CardDemo `json:"cardDemo"`
+		Base64   string          `json:"backgroundBase64"`
 	}
 	if err := json.Unmarshal(body, &cardInfo); err != nil {
 		models.Log.Error("wrong json")
@@ -432,25 +431,25 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 		return
 	}
 	o := orm.NewOrm()
-	if _,err := o.Insert(&cardInfo.CardDemo); err!= nil {
-		models.Log.Error("insert database error: %s",err)
+	if _, err := o.Insert(&cardInfo.CardDemo); err != nil {
+		models.Log.Error("insert database error: %s", err)
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
 	}
 	path := "static/base64/" + strconv.Itoa(cardInfo.CardDemo.Id) + ".txt"
-	if f,err := os.Create(path); err != nil {
-		models.Log.Error(" fail to create the file",err)
+	if f, err := os.Create(path); err != nil {
+		models.Log.Error(" fail to create the file", err)
 		c.Ctx.ResponseWriter.WriteHeader(407)
 		return
 	} else {
 		content := []byte(cardInfo.Base64)
-		if _,err := f.Write(content); err != nil {
-			models.Log.Error(" fail to write base64 to the file",err)
+		if _, err := f.Write(content); err != nil {
+			models.Log.Error(" fail to write base64 to the file", err)
 			c.Ctx.ResponseWriter.WriteHeader(407)
 			return
 		}
-		if err := f.Close() ; err != nil {
-			models.Log.Error(" fail to close the file",err)
+		if err := f.Close(); err != nil {
+			models.Log.Error(" fail to close the file", err)
 			c.Ctx.ResponseWriter.WriteHeader(408)
 			return
 		}
@@ -476,14 +475,14 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 func (c *EnterpriseController) AddUser() {
 	body := c.Ctx.Input.RequestBody
 	var addcarduser struct {
-		CardId 	   string  
-	 	UserId     string     
-		CardType   string     
-		Enterprise string     
-		State      string     
-		City       string   
-		ExpireTime time.Time
-		Coupons    string  
+		CardId     string    `json:"card_id"`
+		UserId     string    `json:"user_id"`
+		CardType   string    `json:"card_type"`
+		Enterprise string    `json:"enterprise"`
+		State      string    `json:"state"`
+		City       string    `json:"city"`
+		ExpireTime time.Time `json:"expire_time"`
+		Coupons    string    `json:"coupons"`
 	}
 	if err := json.Unmarshal(body, &addcarduser); err != nil {
 		models.Log.Error("unmarshal error: ", err)
@@ -501,9 +500,9 @@ func (c *EnterpriseController) AddUser() {
 	card.ExpireTime = addcarduser.ExpireTime
 	card.Coupons = addcarduser.Coupons
 	card.StartTime = time.Now()
-	
-	if _,err := o.Insert(&card); err!= nil {
-		models.Log.Error("insert database error: %s",err)
+
+	if _, err := o.Insert(&card); err != nil {
+		models.Log.Error("insert database error: %s", err)
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
 	}
@@ -551,13 +550,13 @@ func (c *EnterpriseController) DeleteUser() {
 func (c *EnterpriseController) ReadUser() {
 	CardType := c.Ctx.Input.Param(":id")
 	var Read struct {
-		AllCardDemo	[]models.Card	`json:"all_card_demo"`
+		AllCardDemo []models.Card `json:"all_card_demo"`
 	}
 	qt := orm.NewOrm().QueryTable("card")
 	cond := orm.NewCondition()
 	cond1 := cond.And("card_type__iexact", CardType)
 	if _, err := qt.SetCond(cond1).All(&Read.AllCardDemo); err != nil {
-		models.Log.Error("ReadAllcard of this demo error:",err)
+		models.Log.Error("ReadAllcard of this demo error:", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
 		return
 	}
@@ -615,11 +614,11 @@ func (c *UserController) ReadActivity() {
 // 返回所有cardDemo
 func (c *UserController) ReadAllActivities() {
 	var Resp struct {
-		Activities	[]models.CardDemo	`json:"activities"`
+		Activities []models.CardDemo `json:"activities"`
 	}
 	qt := orm.NewOrm().QueryTable("card_demo")
 	if _, err := qt.All(&Resp.Activities); err != nil {
-		models.Log.Error("ReadAllActivities query error:",err)
+		models.Log.Error("ReadAllActivities query error:", err)
 		c.Ctx.ResponseWriter.WriteHeader(503)
 		return
 	}
