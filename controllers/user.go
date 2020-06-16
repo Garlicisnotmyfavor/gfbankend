@@ -326,7 +326,7 @@ func (c *UserController) LoginWithCookie() {
 
 // @Title Login
 // @Description 登录，返回中由名为bsessionID的cookie，用于查用户是否已登录如果点击了自动登录（即remember为true）还会返回名为account，password，accounttype以及remember的cookie
-// @Param	userInfo	body	/	true account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool)
+// @Param userInfo body / true account(string)+password(string)+accounttype(string)为mail或者phone+remember(是否记住密码bool)
 // @Success 200 {object} models.User Register successfully
 // @Failure 406 数据库查询报错，可能用户所填账号或密码错误
 // @Failure 400 信息内容或格式有误

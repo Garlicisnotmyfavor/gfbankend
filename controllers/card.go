@@ -40,7 +40,7 @@ func (c *CardController) Get_cardidinfo() {
 // @Failure 400	查询不到对应的卡
 // @Failure 401	没处于登录状态，无权限
 // @Failure 404	查询不到对应的公司
-// @router  /card/:id	[get]
+// @router /card/:id [get]
 func (c *CardController) GetCardIDInfo() {
 	sess := c.GetSession("userInfo")
 	// 由cookie 得不到session说明没登录，无权限
@@ -114,7 +114,7 @@ func (c *CardController) GetCardIDInfo() {
 //zjn
 //@Title AddCard
 //@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
-//@Param	id	body	\	true	原本的卡号cardid+企业enterprise
+//@Param	id	body	/	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
 //@Failure 403	绑定的卡片不存在
 //@Failure 400	解析错误
@@ -199,9 +199,7 @@ func (c *CardController) AddCard() {
 // lj
 // @Title getCard
 // @Description 领取新的卡片
-// @Param CardID body string true 卡号
-// @Param Enterprise body string true 公司名称
-// @Param CardType body string true 卡片类型
+// @Param demoId path int true
 // @Success 200 
 // @Failure 400 解析Json出错
 // @Failure 401	没处于登录状态，无权限
@@ -220,17 +218,6 @@ func (c *CardController) GetCard() {
 	demoId := c.Ctx.Input.Param(":demoId")
 	user := sess.(models.User)
 	userId := user.Id
-	////定义卡的信息结构体
-	//var CardInfo struct {
-	//	CardDemoId string `json:"cardDemoId"`
-	//}
-	//body := c.Ctx.Input.RequestBody
-	////解析body
-	//if err := json.Unmarshal(body, &CardInfo); err != nil {
-	//	models.Log.Error("unmarshal error: ", err)
-	//	c.Ctx.ResponseWriter.WriteHeader(400)
-	//	return
-	//}
 	o := orm.NewOrm()
 	var demo models.CardDemo
 	var card models.Card
@@ -250,6 +237,8 @@ func (c *CardController) GetCard() {
 	card.UserId = userId
 	card.Coupons = demo.Coupons
 	card.Enterprise = demo.Enterprise
+	card.CardType = demo.CardType
+	// to get new card_id
 	for {
 		id := util.RandStr(13)
 		if err := o.Read(&models.Card{CardId: id}) ; err != nil {
@@ -257,6 +246,7 @@ func (c *CardController) GetCard() {
 			break
 		}
 	}
+	// insert new card into db
 	if _, err := o.Insert(&card); err != nil {
 		models.Log.Error("insert card error")
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败

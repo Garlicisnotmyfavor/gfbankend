@@ -29,7 +29,7 @@
                         "description": "原本的卡号cardid+企业enterprise",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/\\"
+                            "$ref": "#/definitions//"
                         }
                     }
                 ],
@@ -55,7 +55,7 @@
                 }
             }
         },
-        "/api/user/card/get": {
+        "/api/user/card/get/{demoId}": {
             "put": {
                 "tags": [
                     "api/user"
@@ -138,7 +138,7 @@
                 }
             }
         },
-        "/api/user/card/{id\t[get]}": {
+        "/api/user/card/{id}": {
             "get": {
                 "tags": [
                     "api/user"
@@ -1098,7 +1098,7 @@
                     "type": "string",
                     "format": "datetime"
                 },
-                "ID": {
+                "Id": {
                     "type": "integer",
                     "format": "int64"
                 },

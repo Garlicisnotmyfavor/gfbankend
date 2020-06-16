@@ -30,7 +30,7 @@ paths:
           description: 没登录，无权限
         "404":
           description: Fail to read
-  "/api/user/card/{id\t[get]}":
+  /api/user/card/{id}:
     get:
       tags:
       - api/user
@@ -199,7 +199,7 @@ paths:
         description: 原本的卡号cardid+企业enterprise
         required: true
         schema:
-          $ref: '#/definitions/\'
+          $ref: '#/definitions//'
       responses:
         "200":
           description: 返回绑定的卡的大致信息
@@ -213,7 +213,7 @@ paths:
           description: 数据不匹配
         "403":
           description: 绑定的卡片不存在
-  /api/user/card/get:
+  /api/user/card/get/{demoId}:
     put:
       tags:
       - api/user
@@ -731,7 +731,7 @@ definitions:
       ExpireTime:
         type: string
         format: datetime
-      ID:
+      Id:
         type: integer
         format: int64
       State:
