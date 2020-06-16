@@ -74,12 +74,31 @@ func (c *EnterpriseController) EnterpriseEnroll() {
 		ManagerID   string `json:"manager_id"`
 		Phone       string `json:"phone"`
 		Password    string `json:"password"`
+		LicenseBase64 string `json:"backgroundBase64"`
 	}
 	body := c.Ctx.Input.RequestBody
 	if err := json.Unmarshal(body, &Request); err != nil {
 		models.Log.Error("Enterprise enroll: wrong json")
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
+	}
+	path := "static/base64/" + Request.Name + "-license" + ".txt"
+	if f,err := os.Create(path); err != nil {
+		models.Log.Error(" fail to create the file",err)
+		c.Ctx.ResponseWriter.WriteHeader(407)
+		return
+	} else {
+		content := []byte(Request.LicenseBase64)
+		if _,err := f.Write(content); err != nil {
+			models.Log.Error(" fail to write base64 to the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(407)
+			return
+		}
+		if err := f.Close() ; err != nil {
+			models.Log.Error(" fail to close the file",err)
+			c.Ctx.ResponseWriter.WriteHeader(408)
+			return
+		}
 	}
 	enterprise := models.Enterprise{
 		Name:      Request.Name,
