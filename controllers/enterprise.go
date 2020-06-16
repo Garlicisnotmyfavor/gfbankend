@@ -615,7 +615,7 @@ func (c *EnterpriseController) ReadActivity() {
 // @Failure 503 读取数据库出错(可能服务器端数据库出错)
 // @router /enterprise/getAll [get]
 // 返回所有企业信息
-func (c *EnterpriseController) readAllEnteprise() {
+func (c *EnterpriseController) readAllEnterprise() {
 	var Resp struct {
 		Enterprise	[]models.Enterprise `json:"enterprise"`
 	}
