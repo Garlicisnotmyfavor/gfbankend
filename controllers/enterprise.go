@@ -376,7 +376,7 @@ func (c *EnterpriseController) EnterpriseInfo(){
 	var managerList []models.Manager
 	qt := o.QueryTable("manager")
 	_, err := qt.Filter("enterprise__exact", enterprise.Name).All(&managerList)
-	for i,_ := range managerList {
+	for i := range managerList {
 		managerList[i].Password = ""
 	}
 	fmt.Println(managerList)
