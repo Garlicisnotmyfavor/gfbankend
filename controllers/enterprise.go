@@ -554,3 +554,24 @@ func (c *UserController) ReadAllActivities() {
 	c.Data["json"] = Resp
 	c.ServeJSON()
 }
+
+// @author:zyj
+// @Title readAllEnterprise
+// @Description  返回所有企业的信息
+// @Success 200 请求成功，返回所以企业
+// @Failure 503 读取数据库出错(可能服务器端数据库出错)
+// @router /enterprise/getAll [get]
+// 返回所有企业信息
+func (c *UserController) readAllEnterprise() {
+	var Resp struct {
+		Enterprise	[]models.Enterprise `json:"enterprise"`
+	}
+	qt := orm.NewOrm().QueryTable("enterprise")
+	if _, err := qt.All(&Resp.Enterprise); err != nil {
+		models.Log.Error("readAllEnterprise query error:",err)
+		c.Ctx.ResponseWriter.WriteHeader(503)
+		return
+	}
+	c.Data["json"] = Resp
+	c.ServeJSON()
+}
