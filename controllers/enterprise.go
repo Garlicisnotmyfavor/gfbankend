@@ -576,7 +576,7 @@ func (c *EnterpriseController) ReadUser() {
 // @Failure 400 请求格式出错
 // @Failure 503 读取数据库发生错误（服务器端可能有问题）
 // @router /enterprise/activity [put]
-func (c *UserController) ReadActivity() {
+func (c *EnterpriseController) ReadActivity() {
 	body := c.Ctx.Input.RequestBody
 	// 通过商家、卡片类型查询相关活动
 	var Req struct {
@@ -608,20 +608,20 @@ func (c *UserController) ReadActivity() {
 	c.ServeJSON()
 }
 
-// @author:ml
-// @Title readAllActivities
-// @Description  查看所有优惠活动
+// @author:zyj
+// @Title readAllEnterprise
+// @Description  查看所有企业
 // @Success 200 请求成功，返回所以活动
 // @Failure 503 读取数据库出错(可能服务器端数据库出错)
-// @router /enterprise/activity [get]
-// 返回所有cardDemo
-func (c *UserController) ReadAllActivities() {
+// @router /enterprise/getAll [get]
+// 返回所有企业信息
+func (c *EnterpriseController) readAllEnteprise() {
 	var Resp struct {
-		Activities	[]models.CardDemo	`json:"activities"`
+		Enterprise	[]models.Enterprise `json:"enterprise"`
 	}
-	qt := orm.NewOrm().QueryTable("card_demo")
-	if _, err := qt.All(&Resp.Activities); err != nil {
-		models.Log.Error("ReadAllActivities query error:",err)
+	qt := orm.NewOrm().QueryTable("enterprise")
+	if _, err := qt.All(&Resp.Enterprise); err != nil {
+		models.Log.Error("readAllEnterprise query error:",err)
 		c.Ctx.ResponseWriter.WriteHeader(503)
 		return
 	}
