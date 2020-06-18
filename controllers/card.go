@@ -116,7 +116,7 @@ func (c *CardController) GetCardIDInfo() {
 //@Description 将这个user的id和卡绑定,由cookie获取sessionid从而得到当前用户ID
 //@Param	id	body	/	true	原本的卡号cardid+企业enterprise
 //@Success 200	{object} models.Card 	返回绑定的卡的大致信息
-//@Failure 403	绑定的卡片不存在
+//@Failure 403	卡片已被绑定
 //@Failure 400	解析错误
 //@Failure 401	没处于登录状态，无权限
 //@Failure 402	数据不匹配
@@ -543,16 +543,63 @@ func (c *CardController) CardLog() {
 	return
 }
 
-//author: zyj
-//@Title  获取虚拟卡片
-//@Description
-//@Param id query string true 卡号
-//@Success 200
-//@Failure
-//@router  /card/getnewcard [post]
-func (c *CardController) GetNewCard() {
-
-}
+////author: zyj
+////@Title  增加使用次数
+////@Description
+////@Param cardId path string true 需要操作次数的卡的id
+////@Success 200
+////@Failure 400 解析Json失败
+////@Failure 500 无法找到该卡片
+////@router  /card/addUseTimes/:id [put]
+//func (c *CardController) addUseTimes() {
+//	id := c.Ctx.Input.Param(":id")
+//	o := orm.NewOrm()
+//	card := models.Card{CardId:id}
+//	if err := o.Read(&card); err != nil {
+//		models.Log.Error("read error: ", err)
+//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+//		return
+//	}
+//	card.UseTimes += 1
+//	_, err1 := o.Update(card)
+//	if err1 != nil {
+//		models.Log.Error("update error: ", err1)
+//		c.Ctx.ResponseWriter.WriteHeader(500)
+//	}
+//	c.Data["json"] = card
+//	c.ServeJSON()
+//	return
+//}
+//
+////author: zyj
+////@Title  增加使用次数
+////@Description
+////@Param cardId path string true 需要操作次数的卡的id
+////@Success 200
+////@Failure 400 解析Json失败
+////@Failure 500 无法找到该卡片
+////@router  /card/minusUseTimes/:id [put]
+//func (c *CardController) minusUseTimes() {
+//	id := c.Ctx.Input.Param(":id")
+//	o := orm.NewOrm()
+//	card := models.Card{CardId:id}
+//	if err := o.Read(&card); err != nil {
+//		models.Log.Error("read error: ", err)
+//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+//		return
+//	}
+//	if card.UseTimes>0 {
+//		card.UseTimes -= 1
+//	}
+//	_, err1 := o.Update(card)
+//	if err1 != nil {
+//		models.Log.Error("update error: ", err1)
+//		c.Ctx.ResponseWriter.WriteHeader(500)
+//	}
+//	c.Data["json"] = card
+//	c.ServeJSON()
+//	return
+//}
 
 // func isIdInUsers(id string) bool {
 // 	o := orm.NewOrm()

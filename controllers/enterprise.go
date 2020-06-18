@@ -3,10 +3,11 @@ package controllers
 import (
 	"encoding/json"
 	"fmt"
-	_ "fmt"
+	_"fmt"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
+	util "github.com/gfbankend/utils"
 	_ "github.com/pkg/errors"
 	"io/ioutil"
 	"os"
@@ -396,7 +397,7 @@ func (c *EnterpriseController) EnterpriseInfo(){
 	var managerList []models.Manager
 	qt := o.QueryTable("manager")
 	_, err := qt.Filter("enterprise__exact", enterprise.Name).All(&managerList)
-	for i,_ := range managerList {
+	for i := range managerList {
 		managerList[i].Password = ""
 	}
 	fmt.Println(managerList)
@@ -497,14 +498,8 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 func (c *EnterpriseController) AddUser() {
 	body := c.Ctx.Input.RequestBody
 	var addcarduser struct {
-		CardId     string    `json:"card_id"`
-		UserId     string    `json:"user_id"`
-		CardType   string    `json:"card_type"`
-		Enterprise string    `json:"enterprise"`
-		State      string    `json:"state"`
-		City       string    `json:"city"`
-		ExpireTime time.Time `json:"expire_time"`
-		Coupons    string    `json:"coupons"`
+		TypeId   int   `json:"typeId"`
+		UserId 	 string   `json:"userId"`
 	}
 	if err := json.Unmarshal(body, &addcarduser); err != nil {
 		models.Log.Error("unmarshal error: ", err)
@@ -513,16 +508,9 @@ func (c *EnterpriseController) AddUser() {
 	}
 	o := orm.NewOrm()
 	card := models.Card{}
-	card.CardId = addcarduser.CardId
+	card.TypeId = addcarduser.TypeId
 	card.UserId = addcarduser.UserId
-	card.CardType = addcarduser.CardType
-	card.Enterprise = addcarduser.Enterprise
-	card.State = addcarduser.State
-	card.City = addcarduser.City
-	card.ExpireTime = addcarduser.ExpireTime
-	card.Coupons = addcarduser.Coupons
-	card.StartTime = time.Now()
-
+	card.CardId = util.RandStr(13)
 	if _, err := o.Insert(&card); err != nil {
 		models.Log.Error("insert database error: %s", err)
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
@@ -570,13 +558,13 @@ func (c *EnterpriseController) DeleteUser() {
 // @router	/enterprise/card/search/:id [get]
 // 前端给卡的类型，后端根据卡的类型到card表单里面找该种卡的所有userId，积分，以及拥有卡的时间
 func (c *EnterpriseController) ReadUser() {
-	CardType := c.Ctx.Input.Param(":id")
+	typeId := c.Ctx.Input.Param(":id")
 	var Read struct {
 		AllCardDemo []models.Card `json:"all_card_demo"`
 	}
 	qt := orm.NewOrm().QueryTable("card")
 	cond := orm.NewCondition()
-	cond1 := cond.And("card_type__iexact", CardType)
+	cond1 := cond.And("type_id__iexact", typeId)
 	if _, err := qt.SetCond(cond1).All(&Read.AllCardDemo); err != nil {
 		models.Log.Error("ReadAllcard of this demo error:", err)
 		c.Ctx.ResponseWriter.WriteHeader(500)
@@ -628,7 +616,7 @@ func (c *EnterpriseController) ReadActivity() {
 }
 
 // @author:zyj
-// @Title readAllEnterprise
+// @Title ReadAllEnterprise
 // @Description  查看所有企业
 // @Success 200 请求成功，返回所以活动
 // @Failure 503 读取数据库出错(可能服务器端数据库出错)

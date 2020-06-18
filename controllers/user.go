@@ -6,7 +6,7 @@ import (
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
 	"github.com/gfbankend/models"
-	util "github.com/gfbankend/utils"
+	"github.com/gfbankend/utils"
 )
 
 type UserController struct {

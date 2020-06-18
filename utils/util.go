@@ -74,10 +74,15 @@ func SendEmail(target string, rCode []byte) error {
 }
 
 /*
-*@function:生成cardid
-*@param {}
-*@return {error}err
+*@function:进行时间加减
+*@param {基准时间(time.Time)，需要加减的时间(string)}
+*@return {t}time.Time
  */
- func GetCardid() {
-	 
- }
+func CalTime(t time.Time, timeStr string) time.Time {
+	timePart, err := time.ParseDuration(timeStr)
+	if err != nil {
+		fmt.Println(err)
+		return t
+	}
+	return t.Add(timePart)
+}

@@ -14,13 +14,14 @@ import (
 
 type Card struct {
 	CardId string `orm:"pk;size(16);" valid:"Required;Length(16)"` //CardId 编码暂时按照上学期的编码
-	// UserId      *User     `orm:"rel(fk)"`
+	//UserId      *User     `orm:"rel(fk)"`
 	UserId     string    `orm:"size(13);"`   //UserId是依据时间生成的，因为CardId中不包含UserId
 	CardType   string    `valid:"Required"` //卡的类型
+	TypeId     int       `valid:"Required"`
 	Enterprise string    `valid:"Required"`
 	State      string    `valid:"Required"`
 	City       string    `valid:"Required"`
-	Money      int       
+	Money      int
 	Score      int       
 	CouponsNum int     
 	Coupons    string    
@@ -31,6 +32,8 @@ type Card struct {
 	FactoryNum int       `valid:"Required"`
 	BatchNum   int       `valid:"Required"`
 	SerialNum  int       `valid:"Required"`
+	UseTimes   int 		 `valid:"Required"`
+	DiscountTimes int 	 `valid:"Required"`
 }
 
 

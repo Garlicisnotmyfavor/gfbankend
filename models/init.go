@@ -49,6 +49,20 @@ func init() {
 	testData()
 }
 
+/*
+*@function:进行时间加减
+*@param {基准时间(time.Time)，需要加减的时间(string)}
+*@return {t}time.Time
+ */
+func CalTime(t time.Time, timeStr string) time.Time {
+	timePart, err := time.ParseDuration(timeStr)
+	if err != nil {
+		fmt.Println(err)
+		return t
+	}
+	return t.Add(timePart)
+}
+
 func testData() {
 	testUserData1 := User{Id: "2018091620000", Tel: "13925678240", Mail: "123456@qq.com", Password: "123456789", LoginNum: 0, LoginYear: "2020", LoginMonth: "1"}
 	testCardData1 := Card{CardId: "123456790123456", UserId: "2018091620000", State: "California", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty"}
@@ -58,58 +72,42 @@ func testData() {
 	testCardData3 := Card{CardId: "123456790333000", UserId: "2018091620002", State: "California", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty"}
 	testUserData4 := User{Id: "2018091620020", Tel: "13778788240", Mail: "78902166@qq.com", Password: "33235323", LoginNum: 20, LoginYear: "2020", LoginMonth: "1"}
 	container := []Card{
-		Card{CardId: "123456790333001", State: "California", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333002", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330015", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330016", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330017", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330018", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330019", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "1234567903330020", State: "Cambera", City: "San Jose", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333003", State: "Beijing", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333004", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333021", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333022", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333023", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333024", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333025", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333026", State: "Chengdu", City: "San Jose", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333005", State: "Guangzhou", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333006", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333027", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333028", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333029", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333030", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333031", State: "Foshan", City: "San Jose", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333032", State: "Hangzhou", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333008", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333033", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333034", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333035", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333036", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333037", State: "Shanghai", City: "San Jose", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333038", State: "Shandong", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333010", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333039", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333040", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333041", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333042", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333043", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333044", State: "Xian", City: "San Jose", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333045", State: "Mianyang", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333012", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333046", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333047", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333048", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333049", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333050", State: "Changchun", City: "San Jose", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333013", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333014", State: "Tokyo", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333051", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333052", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333053", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333054", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
-		Card{CardId: "123456790333055", State: "Nanjing", City: "San Jose", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(), Coupons: "empty", UserId: "empty"},
+		{CardId: "123456790333001", State: "A", City: "S", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), StartTime: time.Now(), Coupons: "per 100 score to get a free cup of coffee", Score: 12, UserId: "2018091620000", TypeId: 1},
+		{CardId: "123456790333002", State: "B", City: "S", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(), StartTime: time.Now(), Coupons: "per 100 score to get a free cup of coffee", Score: 13, UserId: "2018091620001", TypeId: 1},
+		{CardId: "123456790333003", State: "C", City: "S", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "per 100 score to get a free cup of coffee",Score:14, UserId: "2018091620002",TypeId:1},
+		{CardId: "123456790333004", State: "D", City: "S", CardType: "Integrate", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "per 100 score to get a free cup of coffee",Score:15, UserId: "2018091620020",TypeId:1}, //积分卡
+		{CardId: "123456790333005", State: "E", City: "S", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:1, UserId: "empty",TypeId:2,DiscountTimes: 5},
+		{CardId: "123456790333006", State: "F", City: "S", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:2, UserId: "empty",TypeId:2,DiscountTimes: 5},
+		{CardId: "123456790333007", State: "G", City: "S", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:2, UserId: "empty",TypeId:2,DiscountTimes: 5},
+		{CardId: "123456790333008", State: "H", City: "S", CardType: "Discount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:2, UserId: "empty",TypeId:2,DiscountTimes: 5},
+		{CardId: "123456790333009", State: "I", City: "S", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Money:33, UserId: "empty",TypeId:3},
+		{CardId: "123456790333010", State: "J", City: "S", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Money:34, UserId: "empty",TypeId:3},
+		{CardId: "123456790333011", State: "K", City: "S", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Money:35, UserId: "empty",TypeId:3},
+		{CardId: "123456790333012", State: "L", City: "S", CardType: "Recharge", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Money:36, UserId: "empty",TypeId:3},
+		{CardId: "123456790333013", State: "M", City: "S", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Score:12,Money:36, UserId: "empty",TypeId:4},
+		{CardId: "123456790333014", State: "N", City: "S", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Score:14,Money:37, UserId: "empty",TypeId:4},
+		{CardId: "123456790333015", State: "O", City: "S", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Score:15,Money:39, UserId: "empty",TypeId:4},
+		{CardId: "123456790333016", State: "P", City: "S", CardType: "RechargeIntegral", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "empty",Score:16,Money:38, UserId: "empty",TypeId:4},
+		{CardId: "123456790333017", State: "Q", City: "S", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:1,Money:36, UserId: "empty",TypeId:5,DiscountTimes: 5},
+		{CardId: "123456790333018", State: "R", City: "S", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:2,Money:37, UserId: "empty",TypeId:5,DiscountTimes: 5},
+		{CardId: "123456790333019", State: "S", City: "S", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:3,Money:38, UserId: "empty",TypeId:5,DiscountTimes: 5},
+		{CardId: "123456790333020", State: "T", City: "S", CardType: "RechargeDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",CouponsNum:4,Money:39, UserId: "empty",TypeId:5,DiscountTimes: 5},
+		{CardId: "123456790333021", State: "U", City: "S", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",Score:12,CouponsNum:1, UserId: "empty",TypeId:6,DiscountTimes: 5},
+		{CardId: "123456790333022", State: "V", City: "S", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",Score:12,CouponsNum:1, UserId: "empty",TypeId:6,DiscountTimes: 5},
+		{CardId: "123456790333023", State: "W", City: "S", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",Score:12,CouponsNum:1, UserId: "empty",TypeId:6,DiscountTimes: 5},
+		{CardId: "123456790333024", State: "X", City: "S", CardType: "IntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars",Score:12,CouponsNum:1, UserId: "empty",TypeId:6,DiscountTimes: 5},
+		{CardId: "123456790333026", State: "Z", City: "S", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars;per 100 score to get a free cup of coffee",Score:13,CouponsNum:2, UserId: "empty",TypeId:7,DiscountTimes: 5},
+		{CardId: "123456790333027", State: "AB", City: "S", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars;per 100 score to get a free cup of coffee",Score:14,CouponsNum:3, UserId: "empty",TypeId:7,DiscountTimes: 5},
+		{CardId: "123456790333028", State: "AC", City: "S", CardType: "RechargeIntegralDiscount", Enterprise: "starbucks", ExpireTime: time.Now(),StartTime: time.Now(), Coupons: "90% discount while having 5 stars;per 100 score to get a free cup of coffee",Score:15,CouponsNum:4, UserId: "empty",TypeId:7,DiscountTimes: 5},
+	}
+	demo := []CardDemo{
+		{Id: 1,CardType:"Integrate",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"per 100 score to get a free cup of coffee",Describe: "go to get a starbucks integrate card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 2,CardType:"Discount",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"90% discount while having 5 stars",Describe: "go to get a starbucks discount card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 3,CardType:"Recharge",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"empty",Describe: "go to get a starbucks Recharge card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 4,CardType:"RechargeIntegral",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"per 100 score to get a free cup of coffee",Describe: "go to get a starbucks RechargeIntegral card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 5,CardType:"RechargeDiscount",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"90% discount while having 5 stars",Describe: "go to get a starbucks RechargeDiscount card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 6,CardType:"IntegralDiscount",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"90% discount while having 5 stars;per 100 score to get a free cup of coffee",Describe: "go to get a starbucks IntegralDiscount card!",ExpireTime: CalTime(time.Now(),"720h")},
+		{Id: 7,CardType:"RechargeIntegralDiscount",Enterprise:"starbucks",State:"empty",City: "empty",Coupons:"90% discount while having 5 stars;per 100 score to get a free cup of coffee",Describe: "go to get a starbucks RechargeIntegralDiscount card!",ExpireTime: CalTime(time.Now(),"720h")},
 	}
 	testEnterpriseData1 := Enterprise{Id: "001", Name: "starbucks", Addr: "empty", IsLocal: false, Type: "empty", HelpMsg: "empty", Website: "empty", LicenseId: "empty"}
 	testEnterpriseData2 := Enterprise{Id: "002", Name: "subway", Addr: "empty", IsLocal: false, Type: "empty", HelpMsg: "empty", Website: "empty", LicenseId: "empty"}
@@ -130,5 +128,8 @@ func testData() {
 	_, _ = o.Insert(&ecount)
 	for i := 0; i < len(container); i++ {
 		_, _ = o.Insert(&container[i])
+	}
+	for i := 0; i < len(demo); i++ {
+		_, _ = o.Insert(&demo[i])
 	}
 }
