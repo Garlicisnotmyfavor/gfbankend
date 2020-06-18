@@ -111,7 +111,7 @@ func testData() {
 	}
 	testEnterpriseData1 := Enterprise{Id: "001", Name: "starbucks", Addr: "empty", IsLocal: false, Type: "empty", HelpMsg: "empty", Website: "empty", LicenseId: "empty"}
 	testEnterpriseData2 := Enterprise{Id: "002", Name: "subway", Addr: "empty", IsLocal: false, Type: "empty", HelpMsg: "empty", Website: "empty", LicenseId: "empty"}
-
+	enterprise := Enterprise{Id: "13002", Name: "starbucks"}
 	ecount := EnterpriseCount{Flag: 1, Num: 0}
 	o := orm.NewOrm()
 	o.Insert(&testUserData1)
@@ -121,6 +121,7 @@ func testData() {
 	o.Insert(&testCardData1)
 	o.Insert(&testCardData2)
 	o.Insert(&testCardData3)
+	o.Insert(&enterprise)
 
 	_, _ = o.Insert(&testEnterpriseData1)
 	_, _ = o.Insert(&testEnterpriseData2)

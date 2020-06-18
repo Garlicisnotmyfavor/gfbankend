@@ -478,19 +478,11 @@ func (c *EnterpriseController) EnterpriseNewDemo() {
 	c.Ctx.ResponseWriter.WriteHeader(200)
 }
 
-
-
 // @author: zjn
 // @Title addUser
 // @Description  商家增加一个某张已发售卡片的用户
-// @Param card_id body string true
-// @Param user_id body string true
-// @Param card_type body string true
-// @Param enterprise body string true
-// @Param state body string true
-// @Param city body	string true
-// @Param expire_time body string true
-// @Param coupons body string true
+// @Param typeId body int true
+// @Param userId body string true
 // @Success 200 成功
 // @Failure 400 解析失败
 // @Failure 405 数据库更新失败
@@ -622,7 +614,7 @@ func (c *EnterpriseController) ReadActivity() {
 // @Failure 503 读取数据库出错(可能服务器端数据库出错)
 // @router /enterprise/getAll [get]
 // 返回所有企业信息
-func (c *EnterpriseController) readAllEnterprise() {
+func (c *EnterpriseController) ReadAllEnterprise() {
 	var Resp struct {
 		Enterprise	[]models.Enterprise `json:"enterprise"`
 	}

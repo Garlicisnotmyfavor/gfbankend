@@ -543,63 +543,63 @@ func (c *CardController) CardLog() {
 	return
 }
 
-////author: zyj
-////@Title  增加使用次数
-////@Description
-////@Param cardId path string true 需要操作次数的卡的id
-////@Success 200
-////@Failure 400 解析Json失败
-////@Failure 500 无法找到该卡片
-////@router  /card/addUseTimes/:id [put]
-//func (c *CardController) addUseTimes() {
-//	id := c.Ctx.Input.Param(":id")
-//	o := orm.NewOrm()
-//	card := models.Card{CardId:id}
-//	if err := o.Read(&card); err != nil {
-//		models.Log.Error("read error: ", err)
-//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
-//		return
-//	}
-//	card.UseTimes += 1
-//	_, err1 := o.Update(card)
-//	if err1 != nil {
-//		models.Log.Error("update error: ", err1)
-//		c.Ctx.ResponseWriter.WriteHeader(500)
-//	}
-//	c.Data["json"] = card
-//	c.ServeJSON()
-//	return
-//}
-//
-////author: zyj
-////@Title  增加使用次数
-////@Description
-////@Param cardId path string true 需要操作次数的卡的id
-////@Success 200
-////@Failure 400 解析Json失败
-////@Failure 500 无法找到该卡片
-////@router  /card/minusUseTimes/:id [put]
-//func (c *CardController) minusUseTimes() {
-//	id := c.Ctx.Input.Param(":id")
-//	o := orm.NewOrm()
-//	card := models.Card{CardId:id}
-//	if err := o.Read(&card); err != nil {
-//		models.Log.Error("read error: ", err)
-//		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
-//		return
-//	}
-//	if card.UseTimes>0 {
-//		card.UseTimes -= 1
-//	}
-//	_, err1 := o.Update(card)
-//	if err1 != nil {
-//		models.Log.Error("update error: ", err1)
-//		c.Ctx.ResponseWriter.WriteHeader(500)
-//	}
-//	c.Data["json"] = card
-//	c.ServeJSON()
-//	return
-//}
+//author: zyj
+//@Title  增加使用次数
+//@Description
+//@Param cardId path string true 需要操作次数的卡的id
+//@Success 200
+//@Failure 400 解析Json失败
+//@Failure 500 无法找到该卡片
+//@router  /card/addUseTimes/:id [put]
+func (c *CardController) AddUseTimes() {
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	card := models.Card{CardId:id}
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
+	}
+	card.UseTimes += 1
+	_, err1 := o.Update(&card)
+	if err1 != nil {
+		models.Log.Error("update error: ", err1)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+	}
+	c.Data["json"] = card
+	c.ServeJSON()
+	return
+}
+
+//author: zyj
+//@Title  增加使用次数
+//@Description
+//@Param cardId path string true 需要操作次数的卡的id
+//@Success 200
+//@Failure 400 解析Json失败
+//@Failure 500 无法找到该卡片
+//@router  /card/minusUseTimes/:id [put]
+func (c *CardController) MinusUseTimes() {
+	id := c.Ctx.Input.Param(":id")
+	o := orm.NewOrm()
+	card := models.Card{CardId:id}
+	if err := o.Read(&card); err != nil {
+		models.Log.Error("read error: ", err)
+		c.Ctx.ResponseWriter.WriteHeader(404) // 查不到id对应的卡
+		return
+	}
+	if card.UseTimes>0 {
+		card.UseTimes -= 1
+	}
+	_, err1 := o.Update(&card)
+	if err1 != nil {
+		models.Log.Error("update error: ", err1)
+		c.Ctx.ResponseWriter.WriteHeader(500)
+	}
+	c.Data["json"] = card
+	c.ServeJSON()
+	return
+}
 
 // func isIdInUsers(id string) bool {
 // 	o := orm.NewOrm()
