@@ -627,6 +627,65 @@ func (c *EnterpriseController) ReadActivity() {
 	c.ServeJSON()
 }
 
+// ml
+// @Title readAllActivity
+// @Description  查询活动
+// @Param enterprise body string true 企业名称
+// @Param card_type body string true 卡片类型
+// @Success 200
+// @Failure 406 读取文件失败
+// @Failure 503 读取数据库发生错误（服务器端可能有问题）
+// @router /enterprise/allActivity [put]
+func (c *EnterpriseController) ReadAllActivity() {
+	var Activities []models.CardDemo
+	qt := orm.NewOrm().QueryTable("card_demo")
+	if _, err := qt.All(&Activities); err != nil {
+		models.Log.Error("readAllActivity query error:",err)
+		c.Ctx.ResponseWriter.WriteHeader(503)
+		return
+	}
+	resList := make([]struct {
+		Id         int
+		CardType   string
+		Enterprise string
+		State      string
+		City       string
+		Coupons    string
+		Describe   string
+		ExpireTime time.Time
+		BackgroundBase64     string
+	},len(Activities))
+	path := ""
+	for i,v := range Activities{
+		resList[i].Id = v.Id
+		path = "static/base64/" + strconv.Itoa(v.Id) + ".txt"
+		resList[i].CardType = v.CardType
+		resList[i].Enterprise = v.Enterprise
+		resList[i].State = v.State
+		resList[i].City = v.City
+		resList[i].Coupons = v.Coupons
+		resList[i].Describe = v.Describe
+		resList[i].ExpireTime = v.ExpireTime
+		if f,err := os.Open(path); err == nil {
+			if bytes,err := ioutil.ReadAll(f) ; err == nil {
+				resList[i].BackgroundBase64 = string(bytes)
+			} else {
+				models.Log.Error("read file error", err) //读取文件失败
+				c.Ctx.ResponseWriter.WriteHeader(406)
+				return
+			}
+		} else {
+			resList[i].BackgroundBase64 = "empty"
+		}
+	}
+	var Resp struct {
+		Activity interface{} `json:"activity"`
+	}
+	Resp.Activity = resList
+	c.Data["json"] = Resp
+	c.ServeJSON()
+}
+
 // @author:zyj
 // @Title ReadAllEnterprise
 // @Description  查看所有企业
@@ -647,3 +706,4 @@ func (c *EnterpriseController) ReadAllEnterprise() {
 	c.Data["json"] = Resp
 	c.ServeJSON()
 }
+
