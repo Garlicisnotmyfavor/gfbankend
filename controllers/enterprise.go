@@ -434,8 +434,14 @@ func (c *EnterpriseController) EnterpriseInfo(){
 // @author:zyj
 // @Title enterprise release a New Card
 // @Description  发布新的卡片
-// @Param  CardDemo body models.CardDemo true 卡片类型
+// @Param  CardType body string true 卡片类型
 // @Param  Base64 body string true 背景图片的base64编码
+// @Param  Enterprise body string true 公司名称
+// @Param  State body string true 州
+// @Param  City body string true 城市
+// @Param  Coupons body string true 优惠方法
+// @Param  Describe body string true 卡片描述/宣传语
+// @Param  ExpireTime body string true UTC时间格式
 // @Success 200 put successfully
 // @Failure 400 解析body失败
 // @Failure 405 插入数据失败
@@ -443,21 +449,35 @@ func (c *EnterpriseController) EnterpriseInfo(){
 func (c *EnterpriseController) EnterpriseNewDemo() {
 	body := c.Ctx.Input.RequestBody
 	var cardInfo struct {
-		CardDemo   models.CardDemo   `json:"cardDemo"`
+		CardType   string 			 `json:"CardType"`
 		Base64     string            `json:"backgroundBase64"`
+		Enterprise string 			 `json:"Enterprise"`
+		State      string 			 `json:"State"`
+		City       string            `json:"City"`
+		Coupons    string 			 `json:"Coupons"`
+		Describe   string 			 `json:"Describe"`
+		ExpireTime time.Time 		  `json:"ExpireTime"`
 	}
 	if err := json.Unmarshal(body, &cardInfo); err != nil {
 		models.Log.Error("wrong json")
 		c.Ctx.ResponseWriter.WriteHeader(400)
 		return
 	}
+	var demo models.CardDemo
+	demo.CardType = cardInfo.CardType
+	demo.Enterprise = cardInfo.Enterprise
+	demo.State = cardInfo.State
+	demo.City = cardInfo.City
+	demo.Coupons = cardInfo.Coupons
+	demo.Describe = cardInfo.Describe
+	demo.ExpireTime = cardInfo.ExpireTime
 	o := orm.NewOrm()
-	if _,err := o.Insert(&cardInfo.CardDemo); err!= nil {
+	if _,err := o.Insert(&demo); err!= nil {
 		models.Log.Error("insert database error: %s",err)
 		c.Ctx.ResponseWriter.WriteHeader(405) //数据库更新失败
 		return
 	}
-	path := "static/base64/" + strconv.Itoa(cardInfo.CardDemo.Id) + ".txt"
+	path := "static/base64/" + strconv.Itoa(demo.Id) + ".txt"
 	if f,err := os.Create(path); err != nil {
 		models.Log.Error(" fail to create the file",err)
 		c.Ctx.ResponseWriter.WriteHeader(407)
