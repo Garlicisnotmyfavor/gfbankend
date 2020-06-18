@@ -561,6 +561,7 @@ func (c *EnterpriseController) DeleteUser() {
 	return
 }
 
+
 // @author: zjn
 // @Title readUser
 // @Description  商家查询某张已发售卡片的用户
@@ -645,7 +646,7 @@ func (c *EnterpriseController) ReadAllActivity() {
 		return
 	}
 	resList := make([]struct {
-		Id         int
+		TypeId      int
 		CardType   string
 		Enterprise string
 		State      string
@@ -657,7 +658,7 @@ func (c *EnterpriseController) ReadAllActivity() {
 	},len(Activities))
 	path := ""
 	for i,v := range Activities{
-		resList[i].Id = v.Id
+		resList[i].TypeId = v.Id
 		path = "static/base64/" + strconv.Itoa(v.Id) + ".txt"
 		resList[i].CardType = v.CardType
 		resList[i].Enterprise = v.Enterprise
