@@ -170,7 +170,7 @@ func (c *CardController) AddCard() {
 		c.ServeJSON()
 		return
 	}
-	if len(card.UserId) != 0 {
+	if card.UserId == "empty" {
 		models.Log.Error("card already bind")
 		c.Ctx.ResponseWriter.WriteHeader(403) //卡片另有主人
 		return
