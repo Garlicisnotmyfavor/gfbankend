@@ -176,19 +176,20 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	var res struct {
-		manager models.Manager
-		enterpriseId string
+	var Res struct {
+		Manager models.Manager
+		EnterpriseId string
 	}
-	res.manager = manager
+	Res.Manager = manager
 	enterprise := models.Enterprise{}
+	enterprise.Name = manager.Enterprise
 	if err := o.Read(&enterprise, "name"); err != nil {
 		models.Log.Error("enterprise name wrong")
-		c.Ctx.ResponseWriter.WriteHeader(406)
+		c.Ctx.ResponseWriter.WriteHeader(407)
 		return
 	}
-	res.enterpriseId = enterprise.Id
-	c.Data["json"] = res
+	Res.EnterpriseId = enterprise.Id
+	fmt.Println(Res)
 	// 如果需要记住账号密码
 	if eInfo.Remember == true {
 		c.Ctx.SetSecureCookie("miller", "account", eInfo.Account)
@@ -198,6 +199,7 @@ func (c *EnterpriseController) EnterpriseLogin() {
 	// originHeader := c.Ctx.Input.Header("Origin")
 	// c.Ctx.Output.Header("Access-Control-Allow-Origin", "*")
 	c.SetSession("managerInfo", manager) // 登录成功，设置session
+	c.Data["json"] = Res
 	c.ServeJSON()                        // 传用户对象给前端
 }
 
