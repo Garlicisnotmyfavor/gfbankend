@@ -176,7 +176,19 @@ func (c *EnterpriseController) EnterpriseLogin() {
 		c.Ctx.ResponseWriter.WriteHeader(406)
 		return
 	}
-	c.Data["json"] = manager
+	var res struct {
+		manager models.Manager
+		enterpriseId string
+	}
+	res.manager = manager
+	enterprise := models.Enterprise{}
+	if err := o.Read(&enterprise, "name"); err != nil {
+		models.Log.Error("enterprise name wrong")
+		c.Ctx.ResponseWriter.WriteHeader(406)
+		return
+	}
+	res.enterpriseId = enterprise.Id
+	c.Data["json"] = res
 	// 如果需要记住账号密码
 	if eInfo.Remember == true {
 		c.Ctx.SetSecureCookie("miller", "account", eInfo.Account)
